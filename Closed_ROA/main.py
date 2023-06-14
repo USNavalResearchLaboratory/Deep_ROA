@@ -79,7 +79,7 @@ verbose_flag = True                                                             
 
 # Define the newton parameters.
 newton_tolerance = torch.tensor( 1e-6, dtype = torch.float32, device = device )                     # [-] Convergence tolerance for the Newton's root finding method.
-newton_max_iterations = torch.tensor( 1e2, dtype = torch.int32, device = device )                   # [#] Maximum number of Newton's method steps to perform.
+newton_max_iterations = torch.tensor( int( 1e2 ), dtype = torch.int32, device = device )                   # [#] Maximum number of Newton's method steps to perform.
 
 # Define the exploration parameters.
 exploration_volume_percentage = torch.tensor( 1e-2, dtype = torch.float32, device = device )        # [%] The level set method step size represented as a percentage of the domain volume.  This parameter conveniently scales the step size of the level set method as the dimension of the problem is adjusted. # This works for both initial and final times.

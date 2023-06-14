@@ -870,7 +870,7 @@ class neural_network_class( torch.nn.Module ):
         if num_guesses is None:                 # If the number of level set guesses was not provided.
 
             # Set the number of level set guesses to be the default value.
-            num_guesses = torch.tensor( 1e2, dtype = torch.int64, device = self.device )
+            num_guesses = torch.tensor( int( 1e2 ), dtype = torch.int64, device = self.device )
 
         # Return the number of guesses.
         return num_guesses
