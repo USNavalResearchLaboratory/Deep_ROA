@@ -1393,7 +1393,8 @@ class pinn_class(  ):
         if train_flag:                     # If we want to train the network...
 
             # Train the network.
-            network.training_epochs, network.training_losses, network.testing_epochs, network.testing_losses, network.classification_loss = network.train( self.pde, network.training_data, network.testing_data, network.num_batches, network.num_epochs, network.derivative_required_for_residual, network.residual_code, network.epoch_print_frequency, network.verbose_flag )
+            network.training_epochs, network.training_losses, network.testing_epochs, network.testing_losses = network.train( self.pde, network.training_data, network.testing_data, network.num_batches, network.num_epochs, network.derivative_required_for_residual, network.residual_code, network.epoch_print_frequency, network.verbose_flag )
+            # network.training_epochs, network.training_losses, network.testing_epochs, network.testing_losses, network.classification_loss = network.train( self.pde, network.training_data, network.testing_data, network.num_batches, network.num_epochs, network.derivative_required_for_residual, network.residual_code, network.epoch_print_frequency, network.verbose_flag )
 
         # Return the network.
         return network
