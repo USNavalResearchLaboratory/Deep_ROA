@@ -2892,7 +2892,7 @@ class neural_network_class( torch.nn.Module ):
     def compute_percent_completion( self, iterator, total_num_iterators ):
 
         # Compute the percent completion.
-        percent_complete = 100*( ( iterator + 1 )/total_num_iterators )
+        percent_complete = torch.round( 100*( ( iterator + 1 )/total_num_iterators ), decimals = 2 )
 
         # Return the percent completion.
         return percent_complete

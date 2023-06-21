@@ -69,8 +69,10 @@ train_flag = True                                                               
 # train_flag = False                                                                                  # [T/F] Flag that determines whether to train the network after creation or loading.
 
 # Define the printing options.
-batch_print_frequency = torch.tensor( 10, dtype = torch.int16, device = device )                    # [#] Number of batches after which to print training information (during an epoch that has been selected for printing).
-epoch_print_frequency = torch.tensor( 10, dtype = torch.int16, device = device )                    # [#] Number of epochs after which to print training information
+# batch_print_frequency = torch.tensor( 10, dtype = torch.int16, device = device )                    # [#] Number of batches after which to print training information (during an epoch that has been selected for printing).
+# epoch_print_frequency = torch.tensor( 10, dtype = torch.int16, device = device )                    # [#] Number of epochs after which to print training information
+batch_print_frequency = torch.tensor( 10, dtype = torch.float32, device = device )                    # [%] Percent of batches after which to print training information (during an epoch that has been selected for printing).
+epoch_print_frequency = torch.tensor( 10, dtype = torch.float32, device = device )                    # [%] Percent of epochs after which to print training information.
 print_flag = True
 
 # Define the plotting options.
