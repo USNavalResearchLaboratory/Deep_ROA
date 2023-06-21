@@ -1,0 +1,4 @@
+.venv
+./*/Load
+./*/Save
+!/*/*/.gitkeep
