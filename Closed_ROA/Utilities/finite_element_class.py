@@ -1088,7 +1088,8 @@ class finite_element_class:
         local_domain = [ xis_1D_template_integration_points ]*num_dimensions
 
         # Create a list of the element template points.
-        xis_template_integration_points = torch.meshgrid( *local_domain )
+        # xis_template_integration_points = torch.meshgrid( *local_domain )
+        xis_template_integration_points = torch.meshgrid( *local_domain, indexing = 'ij' )
 
         # Convert the element template points list to an element template points tensor.
         xis_template_integration_points = self.tensor_utilities.grid_list2grid_tensor( xis_template_integration_points )
@@ -1154,7 +1155,8 @@ class finite_element_class:
         index_template = torch.tensor( range( integration_order + 1 ), dtype = torch.uint8, device = self.device )
 
         # Create a list of the indexes to use when combining the basis functions.
-        indexes = torch.meshgrid( *[ index_template for _ in range( num_dimensions ) ] )
+        # indexes = torch.meshgrid( *[ index_template for _ in range( num_dimensions ) ] )
+        indexes = torch.meshgrid( *[ index_template for _ in range( num_dimensions ) ], indexing = 'ij' )
 
         # Convert the element template points list to an element template points tensor.
         indexes = self.tensor_utilities.grid_list2grid_tensor( indexes )
@@ -1202,7 +1204,8 @@ class finite_element_class:
         num_elements, num_dimensions, integration_order, num_basis_functions, ws_template_weights = self.setup_integration_weights( ws_template_weights, num_basis_functions, integration_order, num_dimensions, num_elements, set_flag )
 
         # Create a grid of the template integration weights.
-        ws_gl = torch.meshgrid( *[ ws_template_weights for _ in range( num_dimensions ) ] )
+        # ws_gl = torch.meshgrid( *[ ws_template_weights for _ in range( num_dimensions ) ] )
+        ws_gl = torch.meshgrid( *[ ws_template_weights for _ in range( num_dimensions ) ], indexing = 'ij' )
 
         # Convert the template integration weights grid list to a grid tensor.
         ws_gl = self.tensor_utilities.grid_list2grid_tensor( ws_gl )
