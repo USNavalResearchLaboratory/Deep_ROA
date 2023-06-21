@@ -2332,6 +2332,9 @@ class neural_network_class( torch.nn.Module ):
         # Perform an optimizer step on this batch.
         self.optimizer.step(  )
 
+        # Detach the batch loss.
+        batch_loss = batch_loss.detach(  )
+
         # Retrieve the end time.
         end_time = torch.tensor( time.time(  ), dtype = torch.float64, device = self.device ) 
 
@@ -2532,6 +2535,9 @@ class neural_network_class( torch.nn.Module ):
 
         # Compute the loss associated with this batch element.
         test_loss = self.loss( testing_data.initial_condition_data, testing_data.boundary_condition_data, testing_data.residual_data, testing_data.variational_data, derivative_required_for_residual, residual_code )
+
+        # Detach the test loss.
+        test_loss = test_loss.detach(  )
 
         # Return the testing loss.
         return test_loss
