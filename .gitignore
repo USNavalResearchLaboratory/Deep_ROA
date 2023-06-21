@@ -1,4 +1,3 @@
 .venv
-./*/Load
-./*/Save
-!/*/*/.gitkeep
+.pkl
+.png
