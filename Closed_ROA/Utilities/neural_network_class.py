@@ -2548,17 +2548,23 @@ class neural_network_class( torch.nn.Module ):
     # Implement a function to compute the derivative of a tensor with respect to a different tensor.
     def compute_derivative( self, numerator, denominator ):
 
-        # Compute the derivative of tensor num with respect to tensor den.
-        numerator.backward( gradient = torch.ones_like( numerator ), create_graph = True, inputs = denominator )
+        # # Compute the derivative of tensor num with respect to tensor den.
+        # numerator.backward( gradient = torch.ones_like( numerator ), create_graph = True, inputs = denominator )
 
-        # Clone the derivative so that the gradient calculation can be zeroed out.
-        derivative = torch.clone( denominator.grad )
+        # # Clone the derivative so that the gradient calculation can be zeroed out.
+        # derivative = torch.clone( denominator.grad )
 
-        # Zero out the gradient.
-        denominator.grad = torch.zeros_like( denominator.grad )
+        # # Zero out the gradient.
+        # denominator.grad = torch.zeros_like( denominator.grad )
 
-        # Return the gradient.
-        return derivative
+        # # Return the gradient.
+        # return derivative
+
+        # Compute the derivative
+        derivative = torch.autograd.grad( outputs = numerator, inputs = denominator, grad_outputs = torch.ones_like( numerator ), create_graph = True )
+
+        # Return the derivative.
+        return derivative[ 0 ]
 
 
     # Implement a function to compute the nth derivative of a tensor with respect to a different tensor.
