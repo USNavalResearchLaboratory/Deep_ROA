@@ -211,56 +211,6 @@ c_residual = torch.tensor( 1.0, dtype = torch.float32, device = device )        
 c_variational = torch.tensor( 1.0, dtype = torch.float32, device = device )                 # [-] Variational loss weight.
 c_monotonicity = torch.tensor( 10.0, dtype = torch.float32, device = device )               # [-] Monotonicity loss weight.
 
-
-
-# # Store the network parameters.
-# activation_function = 'sigmoid'                                                                # [-] Activation function (e.g., tanh, sigmoid, etc.)
-# num_hidden_layers = torch.tensor( 5, dtype = torch.uint8, device = device )                 # [#] Number of hidden layers.
-# hidden_layer_widths = torch.tensor( 175, dtype = torch.uint8, device = device )              # [#] Hidden layer widths.
-
-# # This set works for variational loss integration order 1.
-# num_training_data = torch.tensor( int( 100e3 ), dtype = torch.int32, device = device )      # [#] Number of training data points.
-# num_testing_data = torch.tensor( int( 20e3 ), dtype = torch.int32, device = device )        # [#] Number of testing data points.
-
-# # Define the percent of training and testing data that should be sampled from the initial condition, the boundary condition, and the interior of the domain.
-# p_initial = torch.tensor( 0.25, dtype = torch.float16, device = device )                    # [%] Percentage of training and testing data associated with the initial condition.
-# p_boundary = torch.tensor( 0.25, dtype = torch.float16, device = device )                   # [%] Percentage of training and testing data associated with the boundary condition.
-# p_residual = torch.tensor( 0.5, dtype = torch.float16, device = device )                    # [%] Percentage of training and testing data associated with the residual.
-
-# # Define the number of training epochs.
-# # num_epochs = torch.tensor( int( 100 ), dtype = torch.int32, device = device )               # [#] Number of training epochs to perform.
-# # num_epochs = torch.tensor( int( 250 ), dtype = torch.int32, device = device )               # [#] Number of training epochs to perform.
-# # num_epochs = torch.tensor( int( 500 ), dtype = torch.int32, device = device )               # [#] Number of training epochs to perform.
-# num_epochs = torch.tensor( int( 1e3 ), dtype = torch.int32, device = device )               # [#] Number of training epochs to perform.
-# # num_epochs = torch.tensor( int( 5e3 ), dtype = torch.int32, device = device )               # [#] Number of training epochs to perform.
-
-# # Define the residual batch size.
-# residual_batch_size = torch.tensor( int( 10e3 ), dtype = torch.int32, device = device )     # [#] Training batch size. # This works for variational loss integration order 1.
-
-# # Store the optimizer parameters.
-# learning_rate = torch.tensor( 0.005, dtype = torch.float32, device = device )                # [-] Learning rate.
-
-# # Define the element computation option.
-# element_computation_option = 'precompute'                                                   # [string] Determines whether to precompute the finite elements associated with the variational loss (costs more memory) or to dynamically generate these elements during training (costs more time per epoch) (e.g., 'precompute, 'dynamic', etc.).
-
-# # Define the element type.
-# element_type = 'rectangular'                                                                # [string] Finite element type associated with the variational loss (e.g., rectangular, spherical, etc.).  Only rectangular elements are currently supported.
-
-# # Define the element volume percentage.
-# element_volume_percent = torch.tensor( 0.01, dtype = torch.float32, device = device )       # [%] The finite element volume size associated with the variational loss represented as a percentage of the domain volume.  
-
-# # Define the integration order.
-# integration_order = torch.tensor( 1, dtype = torch.uint8, device = device )                 # [#] Gauss-Legendre integration order.
-
-# # Store the loss coefficients.
-# c_IC = torch.tensor( 22.1, dtype = torch.float32, device = device )                          # [-] Initial condition loss weight.
-# c_BC = torch.tensor( 31.1, dtype = torch.float32, device = device )                          # [-] Boundary condition loss weight.
-# c_residual = torch.tensor( 69.1, dtype = torch.float32, device = device )                    # [-] Residual loss weight.
-# c_variational = torch.tensor( 39.1, dtype = torch.float32, device = device )                 # [-] Variational loss weight.
-# c_monotonicity = torch.tensor( 80.1, dtype = torch.float32, device = device )               # [-] Monotonicity loss weight.
-
-
-
 # Create the hyper-parameters object.
 hyperparameters = hyperparameters_class( activation_function, num_hidden_layers, hidden_layer_widths, num_training_data, num_testing_data, p_initial, p_boundary, p_residual, num_epochs, residual_batch_size, learning_rate, integration_order, element_volume_percent, element_type, element_computation_option, c_IC, c_BC, c_residual, c_variational, c_monotonicity, save_path, load_path )
 
