@@ -1212,7 +1212,8 @@ class tensor_utilities_class(  ):
 
         # Compute the level function jacobian at the level set points.
         level_set_jacobians = self.compute_function_jacobians( level_function, level_set_points )
-        level_set_jacobian_subspaces = torch.transpose( level_set_jacobians, 1, 2 )
+        level_set_jacobians_normalized = level_set_jacobians/torch.linalg.vector_norm( level_set_jacobians, ord = 2, dim = 2, keepdim = True )
+        level_set_jacobian_subspaces = torch.transpose( level_set_jacobians_normalized, 1, 2 )
 
         # Generate sample points in the jacobian subspaces.
         jacobian_subspace_points = self.generate_subspace_sample_points( level_set_jacobian_subspaces, noise_magnitude, num_level_set_points )
@@ -1224,6 +1225,7 @@ class tensor_utilities_class(  ):
         # Compute the noisy level set points.
         # level_set_points_noisy = torch.unsqueeze( level_set_points, dim = -1 ) + jacobian_subspace_points
         level_set_points_noisy = level_set_points + jacobian_subspace_points
+        # level_set_points_noisy = level_set_points
 
         # # Restructure the noisy level set points.
         # level_set_points_noisy = torch.squeeze( torch.vstack( torch.tensor_split( level_set_points_noisy, level_set_points_noisy.shape[ -1 ], dim = -1 ) ), dim = -1 )

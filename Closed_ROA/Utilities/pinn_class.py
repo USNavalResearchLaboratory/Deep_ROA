@@ -1672,6 +1672,19 @@ class pinn_class(  ):
         return fig, ax
         
 
+    # Implement a function to plot the classification data.
+    def plot_network_classifications( self, network = None, fig = None, dimension_labels = None, save_directory = None, show_plot = False ):
+
+        # Setup for classification plotting.
+        network, save_directory = self.setup_network_plotting( network, save_directory )
+
+        # Plot the classification data.
+        fig, ax = network.plot_classifications( network.classification_data, network.classification_data_forecast, network.actual_classifications, network.network_classifications, fig, dimension_labels, save_directory, as_surface = False, as_stream = False, as_contour = False, show_plot = show_plot )
+
+        # Return the figure and axis.
+        return fig, ax
+
+
     #%% ------------------------------------------------------------ SAVE & LOAD FUNCTIONS ------------------------------------------------------------
 
     # Implement a function to save the pinn.

@@ -287,7 +287,7 @@ class plotting_utilities_class(  ):
         
 
     # Implement a function to plot 1in 1out data.
-    def plot_1in_1out_data( self, input_data, output_data, fig = None, input_labels = [ 'in1' ], title_string = '1i1o Data Plot', save_directory = r'.', show_plot = False ):
+    def plot_1in_1out_data( self, input_data, output_data, fig = None, input_labels = [ 'in1' ], title_string = '1i1o Data Plot', save_directory = r'.', show_plot = False, line_style = '-' ):
 
         # Ensure that the input and output data is valid.
         assert self.validate_data( input_data )
@@ -314,7 +314,8 @@ class plotting_utilities_class(  ):
         ax = plt.gca(  )
 
         # Plot the input and output data.
-        plt.plot( self.plot_process( input_data ), self.plot_process( output_data ) )
+        # plt.plot( self.plot_process( input_data ), self.plot_process( output_data ) )
+        plt.plot( self.plot_process( input_data ), self.plot_process( output_data ), line_style )
 
         # Save the figure.
         plt.savefig( save_directory + '/' + f'Figure_{plt.gcf(  ).number}.png' )
@@ -879,7 +880,7 @@ class plotting_utilities_class(  ):
 
 
     # Implement a function to plot the input-output data.
-    def plot_standard_data( self, input_data, output_data, level = 0, fig = None, input_labels = None, title_string = 'Standard Data Plot', save_directory = r'.', as_surface = True, as_stream = True, as_contour = True, show_plot = False ):
+    def plot_standard_data( self, input_data, output_data, level = 0, fig = None, input_labels = None, title_string = 'Standard Data Plot', save_directory = r'.', as_surface = True, as_stream = True, as_contour = True, show_plot = False, D1_style = '-' ):
 
         # Retrieve the number of input and output dimensions.
         num_input_dimensions = self.tensor_utilities.get_number_of_dimensions( input_data )
@@ -921,7 +922,7 @@ class plotting_utilities_class(  ):
                 if num_output_dimensions[ k ] == 1:                     # If this output source is a scalar... 
 
                     # Create a plot for single input single output data.
-                    fig, ax = self.plot_1in_1out_data( input_data, output_data, fig, input_labels, title_string, save_directory, show_plot )
+                    fig, ax = self.plot_1in_1out_data( input_data, output_data, fig, input_labels, title_string, save_directory, show_plot, D1_style )
 
                 elif num_output_dimensions[ k ] == 2:                   # If this output source is a vector of dimension 2...
 
@@ -1075,7 +1076,7 @@ class plotting_utilities_class(  ):
 
 
     # Implement a function to plot general data (automatically determining whether to project the data).
-    def plot_data( self, input_data, output_data, projection_dimensions = None, projection_values = None, level = 0, fig = None, input_labels = None, title_string = 'Data Plot', save_directory = r'.', as_surface = True, as_stream = True, as_contour = True, show_plot = False ):
+    def plot_data( self, input_data, output_data, projection_dimensions = None, projection_values = None, level = 0, fig = None, input_labels = None, title_string = 'Data Plot', save_directory = r'.', as_surface = True, as_stream = True, as_contour = True, show_plot = False, D1_style = '-' ):
 
         # Determine whether to project the data or to plot it in the standard way.
         if ( projection_dimensions is not None ) and ( projection_values is not None ):         # If we want to project the data...
@@ -1086,7 +1087,7 @@ class plotting_utilities_class(  ):
         elif ( projection_dimensions is None ) and ( projection_values is None ):               # If we do not want to project the data...
 
             # Plot the data in the standard way.
-            figs, axes = self.plot_standard_data( input_data, output_data, level, fig, input_labels, title_string, save_directory, as_surface = as_surface, as_stream = as_stream, as_contour = as_contour, show_plot = show_plot )
+            figs, axes = self.plot_standard_data( input_data, output_data, level, fig, input_labels, title_string, save_directory, as_surface = as_surface, as_stream = as_stream, as_contour = as_contour, show_plot = show_plot, D1_style = D1_style )
 
         else:                                                                                   # Otherwise... ( i.e., it is not clear whether to project the data... )
 
@@ -1111,7 +1112,7 @@ class plotting_utilities_class(  ):
 
 
     # Implement a function to plot a input and output data or input data and an output function (the correct plotting procedure is automatically detected).
-    def plot( self, input_data, output, projection_dimensions = None, projection_values = None, level = 0, fig = None, input_labels = None, title_string = 'Input-Output Plot', save_directory = r'.', as_surface = True, as_stream = True, as_contour = True, show_plot = False ):
+    def plot( self, input_data, output, projection_dimensions = None, projection_values = None, level = 0, fig = None, input_labels = None, title_string = 'Input-Output Plot', save_directory = r'.', as_surface = True, as_stream = True, as_contour = True, show_plot = False, D1_style = '-' ):
 
         # Determine whether the output is a data or a function to evaluate.
         if callable( output ) or ( isinstance( output, list ) and output and all( callable( output[ k ] ) for k in range( len( output ) ) ) ):                      # If the output is a function...
@@ -1122,7 +1123,7 @@ class plotting_utilities_class(  ):
         else:                                       # If the output is data...
 
             # Plot the input and output data.
-            figs, axes = self.plot_data( input_data, output, projection_dimensions, projection_values, level, fig, input_labels, title_string, save_directory, as_surface, as_stream, as_contour, show_plot )
+            figs, axes = self.plot_data( input_data, output, projection_dimensions, projection_values, level, fig, input_labels, title_string, save_directory, as_surface, as_stream, as_contour, show_plot, D1_style )
 
         # Return the figures and axes.
         return figs, axes
