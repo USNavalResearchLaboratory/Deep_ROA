@@ -217,7 +217,7 @@ problem_specifications.save( save_path, r'problem_specifications.pkl' )
 # c_monotonicity = torch.tensor( 10.0, dtype = torch.float32, device = device )               # [-] Monotonicity loss weight.
 
 
----------- OPTIMIZED PARAMETERS ----------
+# ---------- OPTIMIZED PARAMETERS ----------
 
 # Store the network parameters.
 activation_function = 'sigmoid'                                                                # [-] Activation function (e.g., tanh, sigmoid, etc.)
