@@ -499,7 +499,7 @@ class plotting_utilities_class(  ):
             # Determine whether to plot the contour.
             if as_contour:                      # If we want to plot a contour...
 
-                fig, ax = plt.subplots( subplot_kw = { 'projection': '3d' } )
+                # fig, ax = plt.subplots( subplot_kw = { 'projection': '3d' } )
 
                 # Plot the given level set.
                 ax.contour( self.plot_process( input_data[ ..., 0 ] ), self.plot_process( input_data[ ..., 1 ] ), self.plot_process( output_data[ ..., 0 ] ), levels = [ self.plot_process( level ) ], colors = 'red', linewidths = 2.0 )
@@ -518,7 +518,8 @@ class plotting_utilities_class(  ):
             input_data, output_data = self.preprocess_input_output_data( input_data, output_data, flatten_flag = True )
 
             # Plot the input and output data.
-            ax.scatter3D( self.plot_process( input_data[ :, 0 ] ), self.plot_process( input_data[ :, 1 ] ), self.plot_process( output_data ) )
+            # ax.scatter3D( self.plot_process( input_data[ :, 0 ] ), self.plot_process( input_data[ :, 1 ] ), self.plot_process( output_data ) )
+            ax.scatter3D( self.plot_process( input_data[ ..., 0 ] ), self.plot_process( input_data[ ..., 1 ] ), self.plot_process( output_data[ ..., 0 ] ) )
 
         # Save the figure.
         plt.savefig( save_directory + '/' + f'Figure_{plt.gcf(  ).number}.png' )

@@ -2181,23 +2181,40 @@ class neural_network_class( torch.nn.Module ):
         # Setup the data for computing the classification loss.
         classification_data, level_set_guesses, classification_noise_magnitude, unique_tolerance, num_exploration_points, exploration_radius, newton_max_iterations, newton_tolerance, num_guesses, level, plot_time, tspan, dt = self.setup_classification_loss( classification_data, level_set_guesses, classification_noise_magnitude, unique_tolerance, num_exploration_points, exploration_radius, newton_max_iterations, newton_tolerance, num_guesses, level, plot_time, tspan, dt, num_spatial_dimensions, domain, domain_subset_type )
 
-        # Move the classification data along their associated flow lines.
-        classification_data_forecast, _ = pde.integrate_flow( pde.flow_function, tspan = tspan, x0 = classification_data, dt = dt )
+        # Determine how to compute the classification loss.
+        if classification_data.numel(  ) != 0:                  # If their is classification data...
 
-        # Compute the network classifications associated with the classification data.
-        network_classifications = self.classify( classification_data )
+            # Move the classification data along their associated flow lines.
+            classification_data_forecast, _ = pde.integrate_flow( pde.flow_function, tspan = tspan, x0 = classification_data, dt = dt )
 
-        # Compute the network classifications associated with the classification data.
-        actual_classifications = self.classify( classification_data_forecast )
+            # Compute the network classifications associated with the classification data.
+            network_classifications = self.classify( classification_data )
 
-        # Determine whether any of the forecasted data is out-of-bounds.
-        in_bounds_flags = domain.contains( classification_data_forecast[ :, 1: ], domain_type = 'spatial' )
+            # Compute the network classifications associated with the classification data.
+            actual_classifications = self.classify( classification_data_forecast )
 
-        # Update the actual classifications to set all points that went out of bounds to False.
-        actual_classifications[ ~in_bounds_flags ] = False
+            # Determine whether any of the forecasted data is out-of-bounds.
+            in_bounds_flags = domain.contains( classification_data_forecast[ :, 1: ], domain_type = 'spatial' )
 
-        # Compute the classification loss.
-        classification_loss = self.classification_loss_function( network_classifications.type( torch.float32 ), actual_classifications.type( torch.float32 ) )
+            # Update the actual classifications to set all points that went out of bounds to False.
+            actual_classifications[ ~in_bounds_flags ] = False
+
+            # Compute the classification loss.
+            classification_loss = self.classification_loss_function( network_classifications.type( torch.float32 ), actual_classifications.type( torch.float32 ) )
+
+        else:                                                   # Otherwise...
+
+            # Set the forecast classification data to be the classification loss.
+            classification_data_forecast = torch.clone( classification_data )
+
+            # Set the network classifications to be none.
+            network_classifications = None
+
+            # Set the actual classifications to be none.
+            actual_classifications = None
+
+            # Set the classification loss to 100.
+            classification_loss = torch.tensor( 100, dtype = torch.float32, device = self.device )
 
         # Determine whether to store the network classifications, actual classifications, and classification loss.
         if save_data:               # If we want to save the classification information...
@@ -3654,16 +3671,25 @@ class neural_network_class( torch.nn.Module ):
         level_set_points = self.generate_level_set_at_time( num_spatial_dimensions, domain, plot_times, level, level_set_guess, newton_tolerance, newton_max_iterations, exploration_radius, num_exploration_points, unique_tolerance, domain_subset_type )
         # level_set_points = self.generate_classification_data( num_spatial_dimensions, domain, plot_times, level, level_set_guess, newton_tolerance, newton_max_iterations, exploration_radius, num_exploration_points, unique_tolerance, self.classification_noise_magnitude_spatial, domain_subset_type )
 
-        # Compute the values associated with the level set points.
-        level_set_values = self.forward( level_set_points )
-        level_set_values = torch.zeros_like( level_set_values )
+        # Determine whether there is a level set to plot.
+        if level_set_points.numel(  ) != 0:                    # If there is a level set to plot...
 
-        # Set the project dimensions and values to be None.
-        projection_dimensions = None
-        projection_values = None
+            # Compute the values associated with the level set points.
+            level_set_values = self.forward( level_set_points )
+            level_set_values = torch.zeros_like( level_set_values )
 
-        # Plot the level set.
-        figs, axes = self.plotting_utilities.plot( level_set_points[ :, 1: ], level_set_values, projection_dimensions, projection_values, level, fig, input_labels, title_string, save_directory, as_surface, as_stream, as_contour, show_plot )
+            # Set the project dimensions and values to be None.
+            projection_dimensions = None
+            projection_values = None
+
+            # Plot the level set.
+            figs, axes = self.plotting_utilities.plot( level_set_points[ :, 1: ], level_set_values, projection_dimensions, projection_values, level, fig, input_labels, title_string, save_directory, as_surface, as_stream, as_contour, show_plot )
+
+        else:                                                   # Otherwise...
+
+            # Create the figure and axes.
+            figs = fig
+            axes = fig[0].axes
 
         # Return the figures and axes.
         return figs, axes
@@ -3675,59 +3701,67 @@ class neural_network_class( torch.nn.Module ):
         # Setup for plotting the classification data.
         classification_data, classification_data_forecast, actual_classifications, network_classifications = self.setup_classification_data( classification_data, classification_data_forecast, actual_classifications, network_classifications )
 
-        # Generate the input labels.
-        input_labels = self.plotting_utilities.dimension_labels2axis_labels( dimension_labels )
+        # Determine whether there is classification data to plot.
+        if torch.numel( classification_data ) != 0:                 # If the classification data exists...
 
-        # Generate the title string.
-        title_string = f'Network Classification Data'
+            # Generate the input labels.
+            input_labels = self.plotting_utilities.dimension_labels2axis_labels( dimension_labels )
 
-        # Set the level.
-        level = torch.tensor( 0, dtype = torch.float32, device = self.device )
+            # Generate the title string.
+            title_string = f'Network Classification Data'
 
-        # Compute the values associated with the classification points.
-        classification_values = self.forward( classification_data )
-        classification_values = torch.zeros_like( classification_values )
+            # Set the level.
+            level = torch.tensor( 0, dtype = torch.float32, device = self.device )
 
-        # Compute the values associated with the classification forecast points.
-        classification_values_forecast = self.forward( classification_data_forecast )
-        classification_values_forecast = torch.zeros_like( classification_values_forecast )
+            # Compute the values associated with the classification points.
+            classification_values = self.forward( classification_data )
+            classification_values = torch.zeros_like( classification_values )
 
-        # Set the project dimensions and values to be None.
-        projection_dimensions = None
-        projection_values = None
+            # Compute the values associated with the classification forecast points.
+            classification_values_forecast = self.forward( classification_data_forecast )
+            classification_values_forecast = torch.zeros_like( classification_values_forecast )
 
-        # Set the 1D style.
-        D1_style_correct = '.g'
-        D1_style_incorrect = '.y'
-        D1_style_correct_forecast = 'xg'
-        D1_style_incorrect_forecast = 'xy'
+            # Set the project dimensions and values to be None.
+            projection_dimensions = None
+            projection_values = None
 
-        # Compute the correct indexes.
-        correct_indexes = torch.squeeze( actual_classifications == network_classifications )
+            # Set the 1D style.
+            D1_style_correct = '.g'
+            D1_style_incorrect = '.y'
+            D1_style_correct_forecast = 'xg'
+            D1_style_incorrect_forecast = 'xy'
 
-        # Retrieve the correct classification points.
-        classification_data_correct_input = torch.unsqueeze( classification_data[ correct_indexes, 1 ], 1 )
-        classification_data_correct_output = torch.unsqueeze( classification_data[ correct_indexes, 2 ], 1 )
+            # Compute the correct indexes.
+            correct_indexes = torch.squeeze( actual_classifications == network_classifications )
 
-        classification_data_forecast_correct_input = torch.unsqueeze( classification_data_forecast[ correct_indexes, 1 ], 1 )
-        classification_data_forecast_correct_output = torch.unsqueeze( classification_data_forecast[ correct_indexes, 2 ], 1 )
+            # Retrieve the correct classification points.
+            classification_data_correct_input = torch.unsqueeze( classification_data[ correct_indexes, 1 ], 1 )
+            classification_data_correct_output = torch.unsqueeze( classification_data[ correct_indexes, 2 ], 1 )
 
-        # Retrieve the incorrect classification points.
-        classification_data_incorrect_input = torch.unsqueeze( classification_data[ ~correct_indexes, 1 ], 1 )
-        classification_data_incorrect_output = torch.unsqueeze( classification_data[ ~correct_indexes, 2 ], 1 )
+            classification_data_forecast_correct_input = torch.unsqueeze( classification_data_forecast[ correct_indexes, 1 ], 1 )
+            classification_data_forecast_correct_output = torch.unsqueeze( classification_data_forecast[ correct_indexes, 2 ], 1 )
 
-        classification_data_forecast_incorrect_input = torch.unsqueeze( classification_data_forecast[ ~correct_indexes, 1 ], 1 )
-        classification_data_forecast_incorrect_output = torch.unsqueeze( classification_data_forecast[ ~correct_indexes, 2 ], 1 )
+            # Retrieve the incorrect classification points.
+            classification_data_incorrect_input = torch.unsqueeze( classification_data[ ~correct_indexes, 1 ], 1 )
+            classification_data_incorrect_output = torch.unsqueeze( classification_data[ ~correct_indexes, 2 ], 1 )
 
-        # Plot the classification data.
-        figs, axes = self.plotting_utilities.plot( classification_data_correct_input, classification_data_correct_output, projection_dimensions, projection_values, level, fig[ 0 ], input_labels, title_string, save_directory, as_surface, as_stream, as_contour, show_plot, D1_style_correct )
-        figs, axes = self.plotting_utilities.plot( classification_data_incorrect_input, classification_data_incorrect_output, projection_dimensions, projection_values, level, fig[ 0 ], input_labels, title_string, save_directory, as_surface, as_stream, as_contour, show_plot, D1_style_incorrect )
-        
-        # Plot the forecasted classification data.
-        # figs, axes = self.plotting_utilities.plot( classification_data_forecast_correct_input, classification_data_forecast_correct_output, projection_dimensions, projection_values, level, fig[ 0 ], input_labels, title_string, save_directory, as_surface, as_stream, as_contour, show_plot, D1_style_correct_forecast )
-        # figs, axes = self.plotting_utilities.plot( classification_data_forecast_incorrect_input, classification_data_forecast_incorrect_output, projection_dimensions, projection_values, level, fig[ 0 ], input_labels, title_string, save_directory, as_surface, as_stream, as_contour, show_plot, D1_style_incorrect_forecast )
+            classification_data_forecast_incorrect_input = torch.unsqueeze( classification_data_forecast[ ~correct_indexes, 1 ], 1 )
+            classification_data_forecast_incorrect_output = torch.unsqueeze( classification_data_forecast[ ~correct_indexes, 2 ], 1 )
+
+            # Plot the classification data.
+            figs, axes = self.plotting_utilities.plot( classification_data_correct_input, classification_data_correct_output, projection_dimensions, projection_values, level, fig[ 0 ], input_labels, title_string, save_directory, as_surface, as_stream, as_contour, show_plot, D1_style_correct )
+            figs, axes = self.plotting_utilities.plot( classification_data_incorrect_input, classification_data_incorrect_output, projection_dimensions, projection_values, level, fig[ 0 ], input_labels, title_string, save_directory, as_surface, as_stream, as_contour, show_plot, D1_style_incorrect )
+            
+            # Plot the forecasted classification data.
+            # figs, axes = self.plotting_utilities.plot( classification_data_forecast_correct_input, classification_data_forecast_correct_output, projection_dimensions, projection_values, level, fig[ 0 ], input_labels, title_string, save_directory, as_surface, as_stream, as_contour, show_plot, D1_style_correct_forecast )
+            # figs, axes = self.plotting_utilities.plot( classification_data_forecast_incorrect_input, classification_data_forecast_incorrect_output, projection_dimensions, projection_values, level, fig[ 0 ], input_labels, title_string, save_directory, as_surface, as_stream, as_contour, show_plot, D1_style_incorrect_forecast )
+
+        else:                                                                   # Otherwise...
+
+            # Create the figure and axes.
+            figs = fig
+            axes = fig[0].axes
 
         # Return the figure and axes.
         return figs, axes
-
 

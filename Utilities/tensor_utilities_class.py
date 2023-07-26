@@ -1207,28 +1207,36 @@ class tensor_utilities_class(  ):
         # Compute the level set points.
         level_set_points = self.generate_level_set( level_function, level, level_set_guess, newton_tolerance, newton_max_iterations, exploration_radius, num_exploration_points, unique_tolerance )
 
-        # Retrieve the number of level set points.
-        num_level_set_points = level_set_points.shape[ 0 ]
+        # Determine whether there is a level set to process.
+        if level_set_points.numel(  ) != 0:                 # If the level set points exist...
 
-        # Compute the level function jacobian at the level set points.
-        level_set_jacobians = self.compute_function_jacobians( level_function, level_set_points )
-        level_set_jacobians_normalized = level_set_jacobians/torch.linalg.vector_norm( level_set_jacobians, ord = 2, dim = 2, keepdim = True )
-        level_set_jacobian_subspaces = torch.transpose( level_set_jacobians_normalized, 1, 2 )
+            # Retrieve the number of level set points.
+            num_level_set_points = level_set_points.shape[ 0 ]
 
-        # Generate sample points in the jacobian subspaces.
-        jacobian_subspace_points = self.generate_subspace_sample_points( level_set_jacobian_subspaces, noise_magnitude, num_level_set_points )
-        # jacobian_subspace_points = self.generate_subspace_sample_points( level_set_jacobian_subspaces, noise_magnitude, 1 )
+            # Compute the level function jacobian at the level set points.
+            level_set_jacobians = self.compute_function_jacobians( level_function, level_set_points )
+            level_set_jacobians_normalized = level_set_jacobians/torch.linalg.vector_norm( level_set_jacobians, ord = 2, dim = 2, keepdim = True )
+            level_set_jacobian_subspaces = torch.transpose( level_set_jacobians_normalized, 1, 2 )
 
-        # Take the diagonal of the jacobian subspace points.
-        jacobian_subspace_points = torch.transpose( torch.diagonal( jacobian_subspace_points, dim1 = 0, dim2 = 2 ), 0, 1 )
+            # Generate sample points in the jacobian subspaces.
+            jacobian_subspace_points = self.generate_subspace_sample_points( level_set_jacobian_subspaces, noise_magnitude, num_level_set_points )
+            # jacobian_subspace_points = self.generate_subspace_sample_points( level_set_jacobian_subspaces, noise_magnitude, 1 )
 
-        # Compute the noisy level set points.
-        # level_set_points_noisy = torch.unsqueeze( level_set_points, dim = -1 ) + jacobian_subspace_points
-        level_set_points_noisy = level_set_points + jacobian_subspace_points
-        # level_set_points_noisy = level_set_points
+            # Take the diagonal of the jacobian subspace points.
+            jacobian_subspace_points = torch.transpose( torch.diagonal( jacobian_subspace_points, dim1 = 0, dim2 = 2 ), 0, 1 )
 
-        # # Restructure the noisy level set points.
-        # level_set_points_noisy = torch.squeeze( torch.vstack( torch.tensor_split( level_set_points_noisy, level_set_points_noisy.shape[ -1 ], dim = -1 ) ), dim = -1 )
+            # Compute the noisy level set points.
+            # level_set_points_noisy = torch.unsqueeze( level_set_points, dim = -1 ) + jacobian_subspace_points
+            level_set_points_noisy = level_set_points + jacobian_subspace_points
+            # level_set_points_noisy = level_set_points
+
+            # # Restructure the noisy level set points.
+            # level_set_points_noisy = torch.squeeze( torch.vstack( torch.tensor_split( level_set_points_noisy, level_set_points_noisy.shape[ -1 ], dim = -1 ) ), dim = -1 )
+
+        else:                                               # Otherwise...
+
+            # Set the noisy level set points to be empty.
+            level_set_points_noisy = level_set_points
 
         # Return the noisy level set points.
         return level_set_points_noisy
