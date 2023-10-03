@@ -1,0 +1,7 @@
+# ignore specific folders
+#save/
+#load/
+
+# ignore specific file extensions
+*.pkl
+*.png
