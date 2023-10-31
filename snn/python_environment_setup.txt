@@ -1,0 +1,2 @@
+1. Install Lava per Intel's instructions: https://github.com/lava-nc/lava
+2. Install Lava-DL per Intel's instructions: https://github.com/lava-nc/lava-dl

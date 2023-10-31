@@ -1,4 +1,4 @@
-# TORCH-BASED DEEP ROA ESTIMATION
+# DEEP ROA ESTIMATION (TORCH & LAVA)
 
 ## References
 ```
@@ -14,17 +14,37 @@
 ## [License](license.txt)
 
 ## Summary
-This repository contains the code necessary to train a non-spiking deep safety network using Pytorch to predict the boundary of the region of attraction (ROA) associated with a stable equilibrium point of a given autonomous dynamical system.  Our approach is best understood as an application of a modified physics-informed neural network (PINN) framework to a specific partial differential equation (PDE), namely the Yuan-Li PDE, whose solution yields an implicit representation of the ROA boundary as time approaches infinity.
+This repository contains the code necessary to train a Deep ROA network to predict the boundary of the region of attraction (ROA) associated with a stable equilibrium point of a given autonomous dynamical system.  Our approach is best understood as an application of a modified physics-informed neural network (PINN) framework to a specific partial differential equation (PDE) (e.g., the Yuan-Li PDE) whose solution yields an implicit representation of the ROA boundary as time approaches infinity.  We refer to our framework as a "modified PINN" to emphasize the fact that we incorporate the standard PINN loss terms, such as the initial, boundary, and residual losses, as well as additional loss terms, including variational and monotonicity losses.  In the examples shown here we provide the system dynamics of interest directly in the form of differential equations, but this is not strictly necessary.  For example, the system dynamics could instead be represented by collected experimental data or a surrogate model, such as another neural network.
 
-We refer to our methodology as using a modified PINN framework due to the fact that we incorporate the standard PINN loss terms, such as the initial, boundary, and residual losses, as well as additional loss terms, such as the variational loss and monotonicity loss.  In the examples shown here, we provide the system dynamics of interest to the Yuan-Li PDE directly in the form of differential equations, but this is not strictly necessary.
+There are two different variations of our Deep ROA network provided in this repository.  The first is a non-spiking version implemented in Pytorch and located in the "ann" directory; the second is a spiking version implemented in Intel's Lava framework and is located in the "snn" directory.  While the principal of operation of these two Deep ROA implementations is the same, technical details such as the network architectures and requisite python libraries necessarily differ between each version.  These naunces are discussed briefly below.
+
+## Install Instructions
+
+### ANN Version
+Simply pip install the "requirements.txt" file in the "ann" directory.
+
+### SNN Version
+Follow the instructions provided in the "python_environment_setup.txt" file in the "snn" directory.  These instructions are simple:
+
+1. Install Lava per Intel's instructions: https://github.com/lava-nc/lava
+2. Install Lava-DL per Intel's instructions: https://github.com/lava-nc/lava-dl
+
 
 ## Network Structure
-The safety network produced by this code is a fully connected feed-forward non-spiking network with a number of inputs equal to the dimension of the state space of the dynamical system being analyzed plus one for the single temporal variable, a number of hidden layers specified by the user, and a single scalar output representing the stability of the input states.
+The Deep ROA networks produced by this code are fully connected, feed-forward networks with a number of inputs equal to the dimension of the state space of the dynamical system being analyzed plus one for the single temporal variable and a single output representing the stability of the provided input states.  These networks have a number of hidden layers and associated widths as specified by the user.  The non-spiking Deep ROA implementation utilizies sigmoid activation functions on every layer, while the spiking version utilities an LIF model instead.  Input and output spike encoding and decoding is performed by the network itself by augmenting the input and output layers of the spiking Deep ROA network with additional synapse layers.  These layers allow the spiking Deep ROA network to learn an approriate encoding/decoding scheme during training.
 
-When training is successful, the network identifies stable states as those whose output is negative and unstable states as those whose output is positive.
+When training is successful the network identifies stable states as those whose output is negative and unstable states as those whose output is positive.
+
 
 ## Repository Organization
 This repository contains one example directory called "Closed_ROA" which itself contains the main script "main.py" as well as three subfolders: (1) Utilities, (2) Save, and (3) Load.
+
+This repository contains two primary directories.  The first is the "ann" directory where the non-spiking Deep ROA networks are implemented, and the second is the "snn" directory where the spiking Deep ROA networks are implemented.  Each of these two main directories has nearly identical sub-directory structure, including six named example directories that utilitize the Deep ROA framework and a single utilities folder that implements the framework itself.
+
+Since the non-spiking Deep ROA version is only dependent on Python modules that can be pip installed, an appropriate "requirements.txt" file is provided.  On the other hand, since the spiking Deep ROA version requires the use of Lava and Lava-DL, both of which have specific install instructions provided by Intel, a separate document titled "python_environment_setup.txt" is provied in lieu of a requirements file.
+
+At the lowest level, the contents of all twelve example directories is the same.  Each contains a single "main.py" file that serves as the main file that is needed to run the example.  The accompanying "save" and "load" directories are provided so that the network has somewhere to save and load checkpoints, respectively.
+
 
 ### Utilities Directory
 The Utilities folder contains the various classes required to implement this methodology.
@@ -66,10 +86,4 @@ In addition to the aforementioned classes, there are numerous classes whose name
 The utilities classes are leverage by many of the previous classes to perform common basic functions.
 Importantly, the model utilities class stores all of the possible dynamical systems of interest.
 To study a new dynamical system, the associated system of first order ODEs would first need to be added to the model utilities class.
-
-### Save Directory
-The save directory contains all of the projection options, hyperparameters, and problem specifications associated with the most recent network training session.  Depending on user specifications during training, the save directory also includes saved network states during and after training, as well as plots that evaluate network performance.
-
-### Load Directory
-The load directory contains all of the project option, hyperparameters, problem specifications, and network save states that can be loaded before initiating a new training session if specified by the user.
 
