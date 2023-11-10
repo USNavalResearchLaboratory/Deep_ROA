@@ -1,3 +1,12 @@
-*.venv
+# ignore specific folders
+save/
+load/
+
+# Ignore specific file extensions
 *.pkl
 *.png
+*.jpg
+
+# Ignore pycache folders.
+*/ann/utilities/__pycache__
+*/snn/utilities/__pycache__
