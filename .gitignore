@@ -1,6 +1,6 @@
 # ignore specific folders
-save/
-load/
+# save/
+# load/
 
 # Ignore specific file extensions
 *.pkl
