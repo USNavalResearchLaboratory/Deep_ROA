@@ -10,7 +10,9 @@
 
 
 #%% ---------------------------------------- NON-SPIKING CLOSED REGION OF ATTRACTION PINN EXAMPLE MAIN SCRIPT ----------------------------------------
+#%% ---------------------------------------- NON-SPIKING CLOSED REGION OF ATTRACTION PINN EXAMPLE MAIN SCRIPT ----------------------------------------
 
+# This file serves to implement the main code necessary to integrate the Yuan-Li PDE for a dynamical system with a closed ROA using the Non-Spiking Physics Informed Neural Network (PINN) framework.
 # This file serves to implement the main code necessary to integrate the Yuan-Li PDE for a dynamical system with a closed ROA using the Non-Spiking Physics Informed Neural Network (PINN) framework.
 
 
@@ -24,6 +26,7 @@ import matplotlib.pyplot as plt
 import math
 
 # Ensure that the utilities folder for this project is on the system path.
+sys.path.append( r'./ann/utilities' )
 sys.path.append( r'./ann/utilities' )
 
 # Import custom libraries.
@@ -60,6 +63,7 @@ device = 'cuda:8' if torch.cuda.is_available(  ) else 'cpu'
 # Instead, the pinn option parameters are those that define the tasks the user would like performed and adjust quality-of-life factors, such as where and how often to save, print, and plot relevant network data before, during, and after the training process.
 
 # Define the save options.
+save_path = r'./ann/closed_roa/save'                                                                    # [-] Relative path to the directory in which to save network data, figures, etc.
 save_path = r'./ann/closed_roa/save'                                                                    # [-] Relative path to the directory in which to save network data, figures, etc.
 save_frequency = torch.tensor( 10, dtype = torch.int16, device = device )                           # [#] Number of epochs after which to save intermediate networks during training. e.g., 1 = Save after every training epoch, 10 = Save after every ten training epochs, 100 = Save after every hundred training epochs.
 save_flag = True                                                                                    # [T/F] Flag that determines whether to save networks during and after training, as well as training and network analysis plots.

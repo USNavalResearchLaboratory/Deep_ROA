@@ -44,8 +44,13 @@ plt.rcParams.update( { 'figure.max_open_warning': 0 } )                     # Di
 torch.manual_seed( 0 )
 
 # Set the computational device.
+<<<<<<< HEAD
 # device = 'cuda' if torch.cuda.is_available(  ) else 'cpu'
 device = 'cuda:8' if torch.cuda.is_available(  ) else 'cpu'
+=======
+device = 'cuda' if torch.cuda.is_available(  ) else 'cpu'
+# device = 'cuda:9' if torch.cuda.is_available(  ) else 'cpu'
+>>>>>>> 55162c78e9fb0c13d60ea20df5463b1e4d4f30fb
 # device = 'cpu'
 
 #%% ---------------------------------------- DEFINE PINN OPTIONS ----------------------------------------
@@ -79,6 +84,7 @@ plot_flag = True                                                                
 # Define the verbosity setting.
 verbose_flag = True                                                                     # [T/F] Flag that determines whether to print more or less information when printing.
 
+<<<<<<< HEAD
 # Define the newton parameters (used for level set generation).
 newton_tolerance = torch.tensor( 1e-6, dtype = torch.float32, device = device )                     # [-] Convergence tolerance for the Newton's root finding method.
 newton_max_iterations = torch.tensor( int( 1e2 ), dtype = torch.int32, device = device )                   # [#] Maximum number of Newton's method steps to perform.
@@ -96,6 +102,22 @@ classification_tfinal = torch.tensor( 10, dtype = torch.float32, device = device
 
 # Create the pinn options object.
 pinn_options = pinn_options_class( save_path, save_frequency, save_flag, load_path, load_flag, train_flag, batch_print_frequency, epoch_print_frequency, print_flag, num_plotting_samples, newton_tolerance, newton_max_iterations, exploration_volume_percentage, num_exploration_points, unique_volume_percentage, classification_noise_percentage, num_noisy_samples_per_level_set_point, classification_dt, classification_tfinal, plot_flag, device, verbose_flag )
+=======
+# Define the newton parameters.
+newton_tolerance = torch.tensor( 1e-6, dtype = torch.float32, device = device )         # [-] Convergence tolerance for the Newton's root finding method.
+newton_max_iterations = torch.tensor( int( 1e2 ), dtype = torch.int32, device = device )       # [#] Maximum number of Newton's method steps to perform.
+
+# Define the exploration parameters.
+exploration_volume_percentage = torch.tensor( 1e-2, dtype = torch.float32, device = device )        # [%] The level set method step size represented as a percentage of the domain volume.  This parameter conveniently scales the step size of the level set method as the dimension of the problem is adjusted. # This works for both initial and final times.
+num_exploration_points = torch.tensor( int( 1e1 ), dtype = torch.int16, device = device )                   # [#] Number of exploration points to generate at each level set method step.
+unique_volume_percentage = torch.tensor( 1e-4, dtype = torch.float32, device = device )             # [%] The tolerance used to determine whether level set points are unique as a percentage of the domain volume.  This parameter conveniently scales the unique tolerance of the level set points as the dimension of the problem is adjusted.
+
+# Define the classification parameters.
+classification_noise_percentage = torch.tensor( 1e-5, dtype = torch.float32, device = device )      # [%] The classification point noise magnitude represented as a percentage of the domain volume.  This parameter conveniently scales the noise magnitude of the classification points as the dimension of the problem is adjusted.
+
+# Create the pinn options object.
+pinn_options = pinn_options_class( save_path, save_frequency, save_flag, load_path, load_flag, train_flag, batch_print_frequency, epoch_print_frequency, print_flag, num_plotting_samples, newton_tolerance, newton_max_iterations, exploration_volume_percentage, num_exploration_points, unique_volume_percentage, classification_noise_percentage, plot_flag, device, verbose_flag )
+>>>>>>> 55162c78e9fb0c13d60ea20df5463b1e4d4f30fb
 
 # Save the pinn options.
 pinn_options.save( save_path, r'pinn_options.pkl' )
@@ -290,8 +312,11 @@ pinn.save( save_path, 'pinn_after_training.pkl' )
 
 #%% ---------------------------------------- COMPUTE CLASSIFICATION LOSS ----------------------------------------
 
+<<<<<<< HEAD
 pinn.pinn_options.num_noisy_samples_per_level_set_point = num_noisy_samples_per_level_set_point
 
+=======
+>>>>>>> 55162c78e9fb0c13d60ea20df5463b1e4d4f30fb
 # Print out a classification loss starting message.
 print( '\n' )
 print( '------------------------------------------------------------------------------------------------------------------------' )
@@ -301,6 +326,7 @@ print( '------------------------------------------------------------------------
 print( 'Computing classification loss...' )
 
 # Compute the classification loss.
+<<<<<<< HEAD
 classification_loss, num_classification_points = pinn.compute_classification_loss( pde = pinn.pde, network = pinn.network, classification_data = None, num_spatial_dimensions = pinn.domain.num_spatial_dimensions, domain = pinn.domain, plot_time = pinn.domain.temporal_domain[ 1, : ], level = torch.tensor( 0, dtype = torch.float32, device = pinn.pinn_options.device ), level_set_guesses = None, num_guesses = torch.tensor( int( 1e2 ), dtype = torch.int64, device = pinn.pinn_options.device ), newton_tolerance = newton_tolerance, newton_max_iterations = newton_max_iterations, exploration_radius = pinn.network.exploration_radius_spatial, num_exploration_points = num_exploration_points, unique_tolerance = pinn.network.unique_tolerance_spatial, classification_noise_magnitude = pinn.network.classification_noise_magnitude_spatial, num_noisy_samples_per_level_set_point = pinn.pinn_options.num_noisy_samples_per_level_set_point, domain_subset_type = 'spatial', tspan = torch.tensor( [ 0, classification_tfinal.item(  ) ], dtype = classification_tfinal.dtype, device = classification_tfinal.device ), dt = classification_dt )
 
 # Print the classification loss.
@@ -309,6 +335,15 @@ print( '------------------------------------------------------------------------
 print( f'# OF CLASSIFICATION POINTS: {num_classification_points}' )
 print( f'CLASSIFICATION LOSS: {classification_loss}' )
 print( '------------------------------------------------------------------------------------------------------------------------' )
+=======
+classification_loss = pinn.compute_classification_loss( pde = pinn.pde, network = pinn.network, classification_data = None, num_spatial_dimensions = pinn.domain.num_spatial_dimensions, num_timesteps = pinn.hyperparameters.num_timesteps, domain = pinn.domain, plot_time = pinn.domain.temporal_domain[ 1, : ], level = torch.tensor( 0, dtype = torch.float32, device = pinn.pinn_options.device ), level_set_guesses = None, num_guesses = torch.tensor( int( 1e2 ), dtype = torch.int64, device = pinn.pinn_options.device ), newton_tolerance = newton_tolerance, newton_max_iterations = newton_max_iterations, exploration_radius = pinn.network.exploration_radius_spatial, num_exploration_points = num_exploration_points, unique_tolerance = pinn.network.unique_tolerance_spatial, classification_noise_magnitude = pinn.network.classification_noise_magnitude_spatial, domain_subset_type = 'spatial', tspan = torch.tensor( [ 0, 10 ], dtype = torch.float32, device = device ), dt = torch.tensor( 1e-3, dtype = torch.float32, device = device ) )
+
+# Print out a classification loss ending message.
+print( f'Computing classification loss... Done. Classification Loss = {classification_loss}' )
+print( '------------------------------------------------------------------------------------------------------------------------' )
+print( '------------------------------------------------------------------------------------------------------------------------' )
+print( '\n' )
+>>>>>>> 55162c78e9fb0c13d60ea20df5463b1e4d4f30fb
 
 
 #%% ---------------------------------------- PLOT THE NEURAL NETWORK RESULTS ----------------------------------------

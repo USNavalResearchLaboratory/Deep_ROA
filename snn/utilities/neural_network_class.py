@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 ####################################################################################### 
 # THIS SOURCE CODE IS PROPERTY OF THE GOVERNMENT OF THE UNITED STATES OF AMERICA. 
 # BY USING, MODIFYING, OR DISSEMINATING THIS SOURCE CODE, YOU ACCEPT THE TERMS AND 
@@ -9,6 +10,8 @@
 ####################################################################################### 
 
 
+=======
+>>>>>>> 55162c78e9fb0c13d60ea20df5463b1e4d4f30fb
 #%% ------------------------------------------------------------ NEURAL NETWORK CLASS ------------------------------------------------------------
 
 # This file implements a neural network class for the purpose of integrating PDEs.
@@ -64,7 +67,11 @@ class neural_network_class( torch.nn.Module ):
         self.element_computation_option = element_computation_option
 
 
+<<<<<<< HEAD
         #%% -------------------- Store Hyper-parameters --------------------
+=======
+        #%% -------------------- Store Hyperparameters --------------------
+>>>>>>> 55162c78e9fb0c13d60ea20df5463b1e4d4f30fb
 
         # Store the neuron and synapse parameters.
         self.neuron_parameters = neuron_parameters
@@ -144,6 +151,7 @@ class neural_network_class( torch.nn.Module ):
         self.classification_noise_magnitude_spatial = classification_noise_magnitude_spatial
         self.classification_noise_magnitude_spatiotemporal = classification_noise_magnitude_spatiotemporal
 
+<<<<<<< HEAD
         # Store the classification data.
         self.classification_data = torch.tensor( [  ], dtype = torch.float32, device = self.device )
         self.classification_data_forecast = torch.tensor( [  ], dtype = torch.float32, device = self.device )
@@ -151,6 +159,8 @@ class neural_network_class( torch.nn.Module ):
         self.actual_classifications = torch.tensor( [  ], dtype = torch.bool, device = self.device )
         self.classification_loss = torch.tensor( [  ], dtype = torch.float32, device = self.device )
 
+=======
+>>>>>>> 55162c78e9fb0c13d60ea20df5463b1e4d4f30fb
 
         #%% -------------------- Initialization Functions --------------------
 
@@ -887,6 +897,7 @@ class neural_network_class( torch.nn.Module ):
         return classification_noise_magnitude
 
 
+<<<<<<< HEAD
     # Implement a function to preprocess the number of noisy samples per level set point.
     def preprocess_num_noisy_samples_per_level_set_point( self, num_noisy_samples_per_level_set_point = None ):
 
@@ -900,6 +911,8 @@ class neural_network_class( torch.nn.Module ):
         return num_noisy_samples_per_level_set_point
     
 
+=======
+>>>>>>> 55162c78e9fb0c13d60ea20df5463b1e4d4f30fb
     # Implement a function to preprocess the level set guess.
     def preprocess_level_set_guesses( self, level_set_guesses, num_guesses, domain, domain_subset_type = 'spatiotemporal' ):
 
@@ -920,14 +933,22 @@ class neural_network_class( torch.nn.Module ):
         if num_guesses is None:                 # If the number of level set guesses was not provided.
 
             # Set the number of level set guesses to be the default value.
+<<<<<<< HEAD
             num_guesses = torch.tensor( int( 1e2 ), dtype = torch.int64, device = self.device )
+=======
+            num_guesses = torch.tensor( 1e2, dtype = torch.int64, device = self.device )
+>>>>>>> 55162c78e9fb0c13d60ea20df5463b1e4d4f30fb
 
         # Return the number of guesses.
         return num_guesses
 
 
     # Implement a function to preprocess the classification data.
+<<<<<<< HEAD
     def preprocess_classification_data( self, classification_data, num_spatial_dimensions, domain, plot_time, level, level_set_guesses, newton_tolerance, newton_max_iterations, exploration_radius, num_exploration_points, unique_tolerance, classification_noise_magnitude, num_noisy_samples_per_level_set_point, domain_subset_type ):
+=======
+    def preprocess_classification_data( self, classification_data, num_spatial_dimensions, domain, plot_time, level, level_set_guesses, newton_tolerance, newton_max_iterations, exploration_radius, num_exploration_points, unique_tolerance, classification_noise_magnitude, domain_subset_type ):
+>>>>>>> 55162c78e9fb0c13d60ea20df5463b1e4d4f30fb
 
         # Determine whether to generate the classification data at which to compute the classification loss.
         if classification_data is None:                 # If the classification data was not provided...
@@ -936,7 +957,11 @@ class neural_network_class( torch.nn.Module ):
             if ( num_spatial_dimensions is not None ) and ( domain is not None ) and ( plot_time is not None ):
 
                 # Generate the classification data.
+<<<<<<< HEAD
                 classification_data = self.generate_classification_data( num_spatial_dimensions, domain, plot_time, level, level_set_guesses, newton_tolerance, newton_max_iterations, exploration_radius, num_exploration_points, unique_tolerance, classification_noise_magnitude, num_noisy_samples_per_level_set_point, domain_subset_type, True )
+=======
+                classification_data = self.generate_classification_data( num_spatial_dimensions, domain, plot_time, level, level_set_guesses, newton_tolerance, newton_max_iterations, exploration_radius, num_exploration_points, unique_tolerance, classification_noise_magnitude, domain_subset_type )
+>>>>>>> 55162c78e9fb0c13d60ea20df5463b1e4d4f30fb
 
             else:
 
@@ -972,6 +997,7 @@ class neural_network_class( torch.nn.Module ):
         # Return the temporal step size.
         return dt
 
+<<<<<<< HEAD
     
     # Implement a function to preprocess the network classifications.
     def preprocess_network_classifications( self, network_classifications ):
@@ -1024,6 +1050,8 @@ class neural_network_class( torch.nn.Module ):
         # Return the classification forecast data.
         return classification_data_forecast
 
+=======
+>>>>>>> 55162c78e9fb0c13d60ea20df5463b1e4d4f30fb
 
     #%% ------------------------------------------------------------ IS VALID FUNCTIONS ------------------------------------------------------------
 
@@ -1708,6 +1736,7 @@ class neural_network_class( torch.nn.Module ):
         return level, level_set_guess, newton_tolerance, newton_max_iterations, exploration_radius, num_exploration_points, unique_tolerance
 
 
+<<<<<<< HEAD
     # Implement a function to setup for the classification data.
     def setup_classification_data( self, classification_data, classification_data_forecast, actual_classifications, network_classifications ):
 
@@ -1729,6 +1758,10 @@ class neural_network_class( torch.nn.Module ):
 
     # Implement a function to setup for the classification loss.
     def setup_classification_loss( self, classification_data = None, level_set_guesses = None, classification_noise_magnitude = None, num_noisy_samples_per_level_set_point = None, unique_tolerance = None, num_exploration_points = None, exploration_radius = None, newton_max_iterations = None, newton_tolerance = None, num_guesses = None, level = None, plot_time = None, tspan = None, dt = None, num_spatial_dimensions = None, domain = None, domain_subset_type = 'spatial' ):
+=======
+    # Implement a function to setup for the classification loss.
+    def setup_classification_loss( self, classification_data = None, level_set_guesses = None, classification_noise_magnitude = None, unique_tolerance = None, num_exploration_points = None, exploration_radius = None, newton_max_iterations = None, newton_tolerance = None, num_guesses = None, level = None, plot_time = None, tspan = None, dt = None, num_spatial_dimensions = None, domain = None, domain_subset_type = 'spatial' ):
+>>>>>>> 55162c78e9fb0c13d60ea20df5463b1e4d4f30fb
 
         # Preprocess the integration time step size.
         dt = self.preprocess_temporal_step_size( dt )
@@ -1763,14 +1796,21 @@ class neural_network_class( torch.nn.Module ):
         # Preprocess the classification noise magnitude.
         classification_noise_magnitude = self.preprocess_classification_noise_magnitude( classification_noise_magnitude, domain_subset_type )
 
+<<<<<<< HEAD
         # Preprocess the number of noisy sample points per level set point.
         num_noisy_samples_per_level_set_point = self.preprocess_num_noisy_samples_per_level_set_point( num_noisy_samples_per_level_set_point )
 
+=======
+>>>>>>> 55162c78e9fb0c13d60ea20df5463b1e4d4f30fb
         # Preprocess the level set guesses.
         level_set_guesses = self.preprocess_level_set_guesses( level_set_guesses, num_guesses, domain, domain_subset_type )
 
         # Preprocess the classification data.
+<<<<<<< HEAD
         classification_data = self.preprocess_classification_data( classification_data, num_spatial_dimensions, domain, plot_time, level, level_set_guesses, newton_tolerance, newton_max_iterations, exploration_radius, num_exploration_points, unique_tolerance, classification_noise_magnitude, num_noisy_samples_per_level_set_point, domain_subset_type )
+=======
+        classification_data = self.preprocess_classification_data( classification_data, num_spatial_dimensions, domain, plot_time, level, level_set_guesses, newton_tolerance, newton_max_iterations, exploration_radius, num_exploration_points, unique_tolerance, classification_noise_magnitude, domain_subset_type )
+>>>>>>> 55162c78e9fb0c13d60ea20df5463b1e4d4f30fb
 
         # Return the classification loss setup data.
         return classification_data, level_set_guesses, classification_noise_magnitude, unique_tolerance, num_exploration_points, exploration_radius, newton_max_iterations, newton_tolerance, num_guesses, level, plot_time, tspan, dt
@@ -2043,6 +2083,37 @@ class neural_network_class( torch.nn.Module ):
         return num_batches, initial_condition_batch_size, boundary_condition_batch_size
 
 
+<<<<<<< HEAD
+=======
+    # # Implement a function to initialize the forward stack.
+    # def initialize_forward_stack( self, layers = None, activation = None ):
+
+    #     # Preprocess the network layers.
+    #     layers = self.preprocess_layers( layers )
+
+    #     # Compute the number of hidden layers.
+    #     num_hidden_layers = self.compute_num_hidden_layers( layers )
+
+    #     # Initialize the forward stack.
+    #     forward_stack = torch.nn.Sequential(  )
+
+    #     # Create each of the layers in the forward stack.
+    #     for k in range( num_hidden_layers ):                                                   # Iterate through each of the hidden layers...
+
+    #         # Create the linear step for this layer.
+    #         forward_stack.append( torch.nn.Linear( layers[ k ], layers[ k + 1 ] ) )
+
+    #         # Create the activation step for this layer.
+    #         forward_stack.append( activation )
+
+    #     # Create the final linear layer.
+    #     forward_stack.append( torch.nn.Linear( layers[ -2 ], layers[ -1 ] ) )
+
+    #     # Return the forward stack.
+    #     return forward_stack
+
+
+>>>>>>> 55162c78e9fb0c13d60ea20df5463b1e4d4f30fb
     # Implement a function to initialize the forward stack.
     def initialize_forward_stack( self, layers = None, neuron_parameters = None, synapse_parameters = None ):
 
@@ -2244,6 +2315,7 @@ class neural_network_class( torch.nn.Module ):
 
     #%% ------------------------------------------------------------ LOSS FUNCTIONS ------------------------------------------------------------
 
+<<<<<<< HEAD
     # Implement a function to compute the classification loss.
     def compute_classification_loss( self, pde, classification_data = None, num_spatial_dimensions = None, domain = None, plot_time = None, level = None, level_set_guesses = None, num_guesses = None, newton_tolerance = None, newton_max_iterations = None, exploration_radius = None, num_exploration_points = None, unique_tolerance = None, classification_noise_magnitude = None, num_noisy_samples_per_level_set_point = None, domain_subset_type = 'spatial', tspan = None, dt = None, save_data = True ):
 
@@ -2252,6 +2324,41 @@ class neural_network_class( torch.nn.Module ):
 
         # Compute the number of classification points.
         num_classification_points = classification_data.shape[ 0 ]
+=======
+    # # Implement a function to compute the classification loss.
+    # def compute_classification_loss( self, pde, classification_data = None, num_spatial_dimensions = None, domain = None, plot_time = None, level = None, level_set_guesses = None, num_guesses = None, newton_tolerance = None, newton_max_iterations = None, exploration_radius = None, num_exploration_points = None, unique_tolerance = None, classification_noise_magnitude = None, domain_subset_type = 'spatial', tspan = None, dt = None ):
+
+    #     # Setup the data for computing the classification loss.
+    #     classification_data, level_set_guesses, classification_noise_magnitude, unique_tolerance, num_exploration_points, exploration_radius, newton_max_iterations, newton_tolerance, num_guesses, level, plot_time, tspan, dt = self.setup_classification_loss( classification_data, level_set_guesses, classification_noise_magnitude, unique_tolerance, num_exploration_points, exploration_radius, newton_max_iterations, newton_tolerance, num_guesses, level, plot_time, tspan, dt, num_spatial_dimensions, domain, domain_subset_type )
+
+    #     # Move the classification data along their associated flow lines.
+    #     classification_data_forecast, _ = pde.integrate_flow( pde.flow_function, tspan = tspan, x0 = classification_data, dt = dt )
+
+    #     # Compute the network classifications associated with the classification data.
+    #     network_classifications = self.classify( classification_data )
+
+    #     # Compute the network classifications associated with the classification data.
+    #     actual_classifications = self.classify( classification_data_forecast )
+
+    #     # Determine whether any of the forecasted data is out-of-bounds.
+    #     in_bounds_flags = domain.contains( classification_data_forecast[ :, 1: ], domain_type = 'spatial' )
+
+    #     # Update the actual classifications to set all points that went out of bounds to False.
+    #     actual_classifications[ ~in_bounds_flags ] = False
+
+    #     # Compute the classification loss.
+    #     classification_loss = self.classification_loss_function( network_classifications.type( torch.float32 ), actual_classifications.type( torch.float32 ) )
+
+    #     # Return the classification loss.
+    #     return classification_loss
+
+
+    # Implement a function to compute the classification loss.
+    def compute_classification_loss( self, pde, classification_data = None, num_spatial_dimensions = None, domain = None, plot_time = None, level = None, level_set_guesses = None, num_guesses = None, newton_tolerance = None, newton_max_iterations = None, exploration_radius = None, num_exploration_points = None, unique_tolerance = None, classification_noise_magnitude = None, domain_subset_type = 'spatial', tspan = None, dt = None, save_data = True ):
+
+        # Setup the data for computing the classification loss.
+        classification_data, level_set_guesses, classification_noise_magnitude, unique_tolerance, num_exploration_points, exploration_radius, newton_max_iterations, newton_tolerance, num_guesses, level, plot_time, tspan, dt = self.setup_classification_loss( classification_data, level_set_guesses, classification_noise_magnitude, unique_tolerance, num_exploration_points, exploration_radius, newton_max_iterations, newton_tolerance, num_guesses, level, plot_time, tspan, dt, num_spatial_dimensions, domain, domain_subset_type )
+>>>>>>> 55162c78e9fb0c13d60ea20df5463b1e4d4f30fb
 
         # Determine how to compute the classification loss.
         if classification_data.numel(  ) != 0:                  # If their is classification data...
@@ -2298,7 +2405,11 @@ class neural_network_class( torch.nn.Module ):
             self.classification_loss = classification_loss
 
         # Return the classification loss.
+<<<<<<< HEAD
         return classification_loss, num_classification_points
+=======
+        return classification_loss
+>>>>>>> 55162c78e9fb0c13d60ea20df5463b1e4d4f30fb
 
 
     # Implement a function to compute the initial-boundary condition loss.
@@ -2337,6 +2448,10 @@ class neural_network_class( torch.nn.Module ):
                 # targets = torch.repeat_interleave( torch.unsqueeze( initial_boundary_condition_data[ k1 ].output_data_batch[ k2 ], dim = 2 ), initial_boundary_condition_data[ k1 ].input_data_batch.shape[ 2 ], dim = 2 )
 
                 # Retrieve the values associated with this output source.
+<<<<<<< HEAD
+=======
+                # values = network_derivative[ initial_boundary_condition_data[ k1 ].output_derivative_order[ k2 ].item(  ) ]
+>>>>>>> 55162c78e9fb0c13d60ea20df5463b1e4d4f30fb
                 values = network_derivative[ initial_boundary_condition_data[ k1 ].output_derivative_order[ k2 ].item(  ) ][ ..., -1 ]
 
                 # Compute the loss associated with this output source of this initial-boundary condition.
@@ -2388,6 +2503,10 @@ class neural_network_class( torch.nn.Module ):
         residual = self.compute_residual( residual_data, derivative_required_for_residual, residual_code )
 
         # Compute the residual loss.
+<<<<<<< HEAD
+=======
+        # residual_loss = torch.nn.functional.mse_loss( residual, torch.zeros_like( residual ) )
+>>>>>>> 55162c78e9fb0c13d60ea20df5463b1e4d4f30fb
         residual_loss = torch.nn.functional.mse_loss( residual[ ..., -1 ], torch.zeros_like( residual[ ..., -1 ] ) )
 
         # Return the residual loss.
@@ -2435,6 +2554,10 @@ class neural_network_class( torch.nn.Module ):
         rectified_temporal_derivative = torch.maximum( temporal_derivative, torch.zeros_like( temporal_derivative ) )
 
         # Compute the monotonicity loss.
+<<<<<<< HEAD
+=======
+        # monotonicity_loss = torch.nn.functional.mse_loss( rectified_temporal_derivative, torch.zeros_like( rectified_temporal_derivative ) )
+>>>>>>> 55162c78e9fb0c13d60ea20df5463b1e4d4f30fb
         monotonicity_loss = torch.nn.functional.mse_loss( rectified_temporal_derivative[ ..., -1 ], torch.zeros_like( rectified_temporal_derivative[ ..., -1 ] ) )
 
         # Return the monotonicity loss.
@@ -2726,10 +2849,26 @@ class neural_network_class( torch.nn.Module ):
     # Implement a function to compute the derivative of a tensor with respect to a different tensor.
     def compute_derivative( self, numerator, denominator ):
 
+<<<<<<< HEAD
         # Compute the derivative
         derivative = torch.autograd.grad( outputs = numerator, inputs = denominator, grad_outputs = torch.ones_like( numerator ), create_graph = True )
 
         # Return the derivative.
+=======
+        # # Compute the derivative of tensor num with respect to tensor den.
+        # numerator.backward( gradient = torch.ones_like( numerator ), create_graph = True, inputs = denominator )
+
+        # # Clone the derivative so that the gradient calculation can be zeroed out.
+        # derivative = torch.clone( denominator.grad )
+
+        # # Zero out the gradient.
+        # denominator.grad = torch.zeros_like( denominator.grad )
+
+        # Compute the derivative
+        derivative = torch.autograd.grad( outputs = numerator, inputs = denominator, grad_outputs = torch.ones_like( numerator ), create_graph = True )
+
+        # Return the gradient.
+>>>>>>> 55162c78e9fb0c13d60ea20df5463b1e4d4f30fb
         return derivative[ 0 ]
 
 
@@ -3250,6 +3389,10 @@ class neural_network_class( torch.nn.Module ):
         level_values = level_values_network*masks + level_values_distance*( ~masks )
 
         # Retrieve only the final timestep result.
+<<<<<<< HEAD
+=======
+        # level_values = torch.squeeze( level_values, dim = 2 )
+>>>>>>> 55162c78e9fb0c13d60ea20df5463b1e4d4f30fb
         level_values = level_values[ ..., -1 ]
 
         # Return the level values.
@@ -3295,7 +3438,11 @@ class neural_network_class( torch.nn.Module ):
 
 
     # Implement a function to generate classification data.
+<<<<<<< HEAD
     def generate_classification_data( self, num_spatial_dimensions, num_timesteps, domain, plot_time, level = None, level_set_guess = None, newton_tolerance = None, newton_max_iterations = None, exploration_radius = None, num_exploration_points = None, unique_tolerance = None, classification_noise_magnitude = None, num_noisy_samples_per_level_set_point = None, domain_subset_type = 'spatial', save_data = True ):
+=======
+    def generate_classification_data( self, num_spatial_dimensions, num_timesteps, domain, plot_time, level = None, level_set_guess = None, newton_tolerance = None, newton_max_iterations = None, exploration_radius = None, num_exploration_points = None, unique_tolerance = None, classification_noise_magnitude = None, domain_subset_type = 'spatial' ):
+>>>>>>> 55162c78e9fb0c13d60ea20df5463b1e4d4f30fb
 
         # Setup for the classification data generation.
         level, level_set_guess, newton_tolerance, newton_max_iterations, exploration_radius, num_exploration_points, unique_tolerance = self.setup_level_set( num_spatial_dimensions, level, level_set_guess, newton_tolerance, newton_max_iterations, exploration_radius, num_exploration_points, unique_tolerance, domain_subset_type, at_time_flag = True )
@@ -3303,24 +3450,34 @@ class neural_network_class( torch.nn.Module ):
         # Preprocess the classification noise magnitude.
         classification_noise_magnitude = self.preprocess_classification_noise_magnitude( classification_noise_magnitude, domain_subset_type )
 
+<<<<<<< HEAD
         # Preprocess the number of noisy sample points per level set point.
         num_noisy_samples_per_level_set_point = self.preprocess_num_noisy_samples_per_level_set_point( num_noisy_samples_per_level_set_point )
 
+=======
+>>>>>>> 55162c78e9fb0c13d60ea20df5463b1e4d4f30fb
         # Define the level function.
         level_function = lambda x: self.level_function_at_time( x, plot_time, num_timesteps, domain )
 
         # Generate the level set points at the given time.        
+<<<<<<< HEAD
         level_set_points_noisy = self.tensor_utilities.generate_noisy_level_set( level_function, level, level_set_guess, newton_tolerance, newton_max_iterations, exploration_radius, num_exploration_points, unique_tolerance, classification_noise_magnitude, num_noisy_samples_per_level_set_point, domain.spatial_domain )
+=======
+        level_set_points_noisy = self.tensor_utilities.generate_noisy_level_set( level_function, level, level_set_guess, newton_tolerance, newton_max_iterations, exploration_radius, num_exploration_points, unique_tolerance, classification_noise_magnitude )
+>>>>>>> 55162c78e9fb0c13d60ea20df5463b1e4d4f30fb
 
         # Concatenate the plot time onto each of the level set points.
         level_set_points_noisy = torch.cat( ( plot_time*torch.ones( ( level_set_points_noisy.shape[ 0 ], 1 ), dtype = torch.float32, device = self.device ), level_set_points_noisy ), dim = 1 )
 
+<<<<<<< HEAD
         # Determine whether to store the classification data.
         if save_data:               # If we want to save the classification data...
 
             # Save the classification data.
             self.classification_data = level_set_points_noisy
 
+=======
+>>>>>>> 55162c78e9fb0c13d60ea20df5463b1e4d4f30fb
         # Return the noisy level set points.
         return level_set_points_noisy
 
@@ -3738,6 +3895,10 @@ class neural_network_class( torch.nn.Module ):
 
         # Generate the level set points associated with the network.
         level_set_points = self.generate_level_set_at_time( num_spatial_dimensions, num_timesteps, domain, plot_times, level, level_set_guess, newton_tolerance, newton_max_iterations, exploration_radius, num_exploration_points, unique_tolerance, domain_subset_type )
+<<<<<<< HEAD
+=======
+        # level_set_points = self.generate_classification_data( num_spatial_dimensions, domain, plot_times, level, level_set_guess, newton_tolerance, newton_max_iterations, exploration_radius, num_exploration_points, unique_tolerance, self.classification_noise_magnitude_spatial, domain_subset_type )
+>>>>>>> 55162c78e9fb0c13d60ea20df5463b1e4d4f30fb
 
         # Determine whether there is a level set to plot.
         if level_set_points.numel(  ) != 0:                    # If there is a level set to plot...
@@ -3769,6 +3930,10 @@ class neural_network_class( torch.nn.Module ):
                 level_set_points = level_set_points[ :, 1: ]
 
             # Plot the level set.
+<<<<<<< HEAD
+=======
+            # figs, axes = self.plotting_utilities.plot( level_set_points[ :, 1: ], level_set_values, projection_dimensions, projection_values, level, fig, input_labels, title_string, save_directory, as_surface, as_stream, as_contour, show_plot )
+>>>>>>> 55162c78e9fb0c13d60ea20df5463b1e4d4f30fb
             figs, axes = self.plotting_utilities.plot( level_set_points, level_set_values, projection_dimensions, projection_values, level, fig, input_labels, title_string, save_directory, as_surface, as_stream, as_contour, show_plot )
 
         else:                                                   # Otherwise...
@@ -3779,6 +3944,7 @@ class neural_network_class( torch.nn.Module ):
 
         # Return the figures and axes.
         return figs, axes
+<<<<<<< HEAD
 
 
     # Implement a function to plot classification data.
@@ -3858,3 +4024,5 @@ class neural_network_class( torch.nn.Module ):
 
         # Return the figures and axes.
         return figs, axes
+=======
+>>>>>>> 55162c78e9fb0c13d60ea20df5463b1e4d4f30fb
