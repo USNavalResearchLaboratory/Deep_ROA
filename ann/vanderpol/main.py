@@ -21,7 +21,6 @@ import os
 import sys
 import torch
 import matplotlib.pyplot as plt
-import math
 
 # Ensure that the utilities folder for this project is on the system path.
 sys.path.append( r'./ann/utilities' )
