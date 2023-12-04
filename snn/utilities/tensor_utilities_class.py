@@ -1,4 +1,3 @@
-<<<<<<< HEAD
 ####################################################################################### 
 # THIS SOURCE CODE IS PROPERTY OF THE GOVERNMENT OF THE UNITED STATES OF AMERICA. 
 # BY USING, MODIFYING, OR DISSEMINATING THIS SOURCE CODE, YOU ACCEPT THE TERMS AND 
@@ -10,8 +9,6 @@
 ####################################################################################### 
 
 
-=======
->>>>>>> 55162c78e9fb0c13d60ea20df5463b1e4d4f30fb
 #%% ------------------------------------------------------------ TENSOR UTILITIES CLASS ------------------------------------------------------------
 
 # This file implements a class for storing and managing tensor utilities information.
@@ -186,11 +183,6 @@ class tensor_utilities_class(  ):
 
         # Return the validity flag.
         return valid_flag
-<<<<<<< HEAD
-
-=======
-    
->>>>>>> 55162c78e9fb0c13d60ea20df5463b1e4d4f30fb
 
     # Implement a function to check that a given nontemporal grid and subgrid indexes are compatible.
     def validate_nontemporal_grid_subgrid_indexes_compatibility( self, grid, subgrid_indexes ):
@@ -615,25 +607,6 @@ class tensor_utilities_class(  ):
         return flattened_temporal_grid
     
 
-<<<<<<< HEAD
-=======
-    # # Implement a function to convert a grid tensor to a network input tensor.
-    # def flatten_grid( self, expanded_grid ):
-
-    #     # Preallocate a tensor to store the network input tensor.
-    #     flattened_grid = torch.empty( size = ( expanded_grid[ ..., 0 ].numel(  ), expanded_grid.shape[ -1 ] ), dtype = expanded_grid.dtype, device = expanded_grid.device )
-
-    #     # Store the grid data in the input data tensor.
-    #     for k in range( expanded_grid.shape[ -1 ] ):                   # Iterate through each of the final grid dimension elements...
-
-    #         # Store the input data associated with this input.
-    #         flattened_grid[ :, k ] = expanded_grid[ ..., k ].ravel(  )
-
-    #     # Return the input data.
-    #     return flattened_grid
-
-
->>>>>>> 55162c78e9fb0c13d60ea20df5463b1e4d4f30fb
     # Implement a function to convert a grid tensor to a network input tensor.
     def flatten_grid( self, expanded_grid ):
 
@@ -650,11 +623,7 @@ class tensor_utilities_class(  ):
 
         # Return the flattened grid.
         return flattened_grid
-<<<<<<< HEAD
 
-=======
-    
->>>>>>> 55162c78e9fb0c13d60ea20df5463b1e4d4f30fb
 
     # Implement a function to expand a nontemporal grid.
     def expand_nontemporal_grid( self, flattened_grid, subgrid_dims ):
@@ -689,25 +658,6 @@ class tensor_utilities_class(  ):
         return expanded_grid
 
 
-<<<<<<< HEAD
-=======
-    # # Implement a function to convert a network output tensor to a grid tensor.
-    # def expand_grid( self, flattened_grid, subgrid_dims ):
-
-    #     # Preallocate a tensor to store the output grid.
-    #     expanded_grid = torch.empty( size = tuple( subgrid_dims ) + ( flattened_grid.shape[ 1 ], ), dtype = torch.float32, device = flattened_grid.device )
-
-    #     # Store the output data in the grid.
-    #     for k in range( flattened_grid.shape[ 1 ] ):                # Iterate through each of the network output channels...
-
-    #         # Store the output data associated with this channel in the grid.
-    #         expanded_grid[ ..., k ] = flattened_grid.reshape( subgrid_dims )
-
-    #     # Return the output grid.
-    #     return expanded_grid
-
-
->>>>>>> 55162c78e9fb0c13d60ea20df5463b1e4d4f30fb
     # Implement a function to convert a network output tensor to a grid tensor.
     def expand_grid( self, flattened_grid, subgrid_dims ):
 
@@ -1215,11 +1165,7 @@ class tensor_utilities_class(  ):
 
 
     # Implement a function to generate a given number of random points in spherical coordinates.
-<<<<<<< HEAD
     def generate_spherical_sample_points( self, radius, num_dimensions, num_points, match_sign = False ):
-=======
-    def generate_spherical_sample_points( self, radius, num_dimensions, num_points ):
->>>>>>> 55162c78e9fb0c13d60ea20df5463b1e4d4f30fb
 
         # Initialize the spherical coordinates.
         spherical_coordinates = math.pi*torch.ones( ( num_points, num_dimensions ), dtype = torch.float32, device = radius.device )
@@ -1242,25 +1188,18 @@ class tensor_utilities_class(  ):
             spherical_coordinates[ :, 0 ] *= ( -1 )**signs
 
         # Randomly generate magnitudes in this spherical space.
-<<<<<<< HEAD
         # magnitudes = torch.rand( ( num_points, num_dimensions ), dtype = torch.float32, device = radius.device )
         magnitudes = torch.normal( torch.zeros( num_points, num_dimensions ), ( 1/3 )*torch.ones( num_points, num_dimensions ) ).to( radius.device )
-=======
-        magnitudes = torch.rand( ( num_points, num_dimensions ), dtype = torch.float32, device = radius.device )
->>>>>>> 55162c78e9fb0c13d60ea20df5463b1e4d4f30fb
 
         # Adjust the magnitudes of the spherical coordinates.
         spherical_coordinates *= magnitudes
 
-<<<<<<< HEAD
         # Determine whether to match the sign of the spherical coordinates with the sign of the radius.
         if match_sign:                  # If we want to match the sign of the spherical coordinates with the sign of the radius.
 
             # Ensure the the sign of the spherical coordinates matches that of the radius.
             spherical_coordinates = torch.sign( radius )*torch.abs( spherical_coordinates )
 
-=======
->>>>>>> 55162c78e9fb0c13d60ea20df5463b1e4d4f30fb
         # Return the spherical coordinates.
         return spherical_coordinates
 
@@ -1296,21 +1235,13 @@ class tensor_utilities_class(  ):
 
 
     # Implement a function to generate a sample from a subspace.
-<<<<<<< HEAD
     def generate_subspace_sample_points( self, subspace, radius, num_points, match_sign = False ):
-=======
-    def generate_subspace_sample_points( self, subspace, radius, num_points ):
->>>>>>> 55162c78e9fb0c13d60ea20df5463b1e4d4f30fb
 
         # Retrieve the dimension of the subspace.
         num_dimensions = subspace.shape[ -1 ]
 
         # Generate the desired number of spherical sample points.
-<<<<<<< HEAD
         spherical_coordinates = self.generate_spherical_sample_points( radius, num_dimensions, num_points, match_sign )
-=======
-        spherical_coordinates = self.generate_spherical_sample_points( radius, num_dimensions, num_points )
->>>>>>> 55162c78e9fb0c13d60ea20df5463b1e4d4f30fb
 
         # Convert the spherical coordinates to cartesian coordinates.
         cartesian_coordinates = self.spherical_coordinates2cartesian_coordinates( spherical_coordinates )
@@ -1407,7 +1338,6 @@ class tensor_utilities_class(  ):
         # Return the explored level set points.
         return explored_level_set_points
 
-<<<<<<< HEAD
     # # Implement a function to generate points nearby a level set.
     # def generate_noisy_level_set( self, level_function, level, level_set_guess, newton_tolerance, newton_max_iterations, exploration_radius, num_exploration_points, unique_tolerance, noise_magnitude, num_noisy_samples_per_level_set_point, spatial_domain ):
 
@@ -1453,11 +1383,6 @@ class tensor_utilities_class(  ):
 
     # Implement a function to generate points nearby a level set.
     def generate_noisy_level_set( self, level_function, level, level_set_guess, newton_tolerance, newton_max_iterations, exploration_radius, num_exploration_points, unique_tolerance, noise_magnitude, num_noisy_samples_per_level_set_point, spatial_domain ):
-=======
-    
-    # Implement a function to generate points nearby a level set.
-    def generate_noisy_level_set( self, level_function, level, level_set_guess, newton_tolerance, newton_max_iterations, exploration_radius, num_exploration_points, unique_tolerance, noise_magnitude ):
->>>>>>> 55162c78e9fb0c13d60ea20df5463b1e4d4f30fb
 
         # Compute the level set points.
         level_set_points = self.generate_level_set( level_function, level, level_set_guess, newton_tolerance, newton_max_iterations, exploration_radius, num_exploration_points, unique_tolerance )
@@ -1468,7 +1393,6 @@ class tensor_utilities_class(  ):
             # Retrieve the number of level set points.
             num_level_set_points = level_set_points.shape[ 0 ]
 
-<<<<<<< HEAD
             # Retrieve the number of dimensions.
             num_dims = level_set_points.shape[ 1 ]
 
@@ -1573,82 +1497,6 @@ class tensor_utilities_class(  ):
 
 
     #%% ------------------------------------------------------------ QUERY FUNCTIONS ------------------------------------------------------------
-=======
-            # Compute the level function jacobian at the level set points.
-            level_set_jacobians = self.compute_function_jacobians( level_function, level_set_points )
-            level_set_jacobian_subspaces = torch.transpose( level_set_jacobians, 1, 2 )
-
-            # Generate sample points in the jacobian subspaces.
-            jacobian_subspace_points = self.generate_subspace_sample_points( level_set_jacobian_subspaces, noise_magnitude, num_level_set_points )
-            # jacobian_subspace_points = self.generate_subspace_sample_points( level_set_jacobian_subspaces, noise_magnitude, 1 )
-
-            # Take the diagonal of the jacobian subspace points.
-            jacobian_subspace_points = torch.transpose( torch.diagonal( jacobian_subspace_points, dim1 = 0, dim2 = 2 ), 0, 1 )
-
-            # Compute the noisy level set points.
-            # level_set_points_noisy = torch.unsqueeze( level_set_points, dim = -1 ) + jacobian_subspace_points
-            level_set_points_noisy = level_set_points + jacobian_subspace_points
-
-            # # Restructure the noisy level set points.
-            # level_set_points_noisy = torch.squeeze( torch.vstack( torch.tensor_split( level_set_points_noisy, level_set_points_noisy.shape[ -1 ], dim = -1 ) ), dim = -1 )
-
-        else:                                               # Otherwise...
-
-            # Set the noisy level set points to be empty.
-            level_set_points_noisy = level_set_points
-
-        # Return the noisy level set points.
-        return level_set_points_noisy
-
-
-    #%% ------------------------------------------------------------ QUERY FUNCTIONS ------------------------------------------------------------
-
-    # # Implement a function to determine whether a given grid is flat or expanded.
-    # def is_grid_flat( self, grid ):
-
-    #     # Determine whether the given grid is flattened or expanded.
-    #     if grid.dim(  ) > 2:                                        # If the number of grid dimensions is greater than two...
-
-    #         # Set the flat flag to false.
-    #         flat_flag = False
-
-    #     elif ( grid.dim(  ) > 0 ) and ( grid.dim(  ) <= 2 ):        # If the number of grid dimensions is greater than zero and less than equal to two...
-
-    #         # Set the flat flag to true.
-    #         flat_flag = True
-
-    #     else:                                                       # Otherwise... ( i.e., the number of grid dimensions is not valid... )
-
-    #         # Throw an error.
-    #         raise ValueError( f'Invalid number of grid dimensions: {grid.dim(  )}' )
-
-    #     # Return the flat flag.
-    #     return flat_flag
-
-
-    # # Implement a function to determine whether a given grid is flat or expanded.
-    # def is_grid_flat( self, grid ):
-
-    #     # Determine whether the given grid is flattened or expanded.
-    #     if grid.dim(  ) > 3:                                        # If the number of grid dimensions is greater than two...
-
-    #         # Set the flat flag to false.
-    #         flat_flag = False
-
-    #     elif ( grid.dim(  ) > 0 ) and ( grid.dim(  ) <= 3 ):        # If the number of grid dimensions is greater than zero and less than equal to two...
-
-    #         # Set the flat flag to true.
-    #         flat_flag = True
-
-    #     else:                                                       # Otherwise... ( i.e., the number of grid dimensions is not valid... )
-
-    #         # Throw an error.
-    #         raise ValueError( f'Invalid number of grid dimensions: {grid.dim(  )}' )
-
-    #     # Return the flat flag.
-    #     return flat_flag
-
->>>>>>> 55162c78e9fb0c13d60ea20df5463b1e4d4f30fb
 
     # Implement a function to determine whether a given grid is flat or expanded.
     def is_grid_flat( self, grid ):
@@ -1723,31 +1571,6 @@ class tensor_utilities_class(  ):
         return num_consecutive_dims
 
 
-<<<<<<< HEAD
-=======
-    # # Implement a function to determine whether a grid is expanded.
-    # def is_grid_expanded( self, grid ):
-
-    #     # Compute the number of consecutive dimensions.
-    #     k = self.get_num_of_consecutive_dimensions( grid )
-
-    #     # Determine whether the number of consistent grid dimensions is congruent with an expanded grid.
-    #     # if ( k != grid.dim(  ) ) and ( grid.shape[ k ] == k ):                # If we did not examine all of the grid dimensions and the next dimension equals the number of consistent dimensions...
-    #     if ( ( k != grid.dim(  ) ) and ( grid.shape[ k ] == k ) ) or ( grid.dim(  ) > 3 ):                # If we did not examine all of the grid dimensions and the next dimension equals the number of consistent dimensions...
-
-    #         # Set the is grid expanded flag to true.
-    #         is_grid_expanded_flag = True
-
-    #     else:                                                       # Otherwise...
-
-    #         # Set the is grid expanded flag to false.
-    #         is_grid_expanded_flag = False
-
-    #     # Return the is grid expanded flag.
-    #     return is_grid_expanded_flag
-    
-
->>>>>>> 55162c78e9fb0c13d60ea20df5463b1e4d4f30fb
     # Implement a function to determine whether a grid is expanded.
     def is_grid_expanded( self, grid ):
 
@@ -1807,59 +1630,6 @@ class tensor_utilities_class(  ):
         return grid_type
 
 
-<<<<<<< HEAD
-=======
-    # # Implement a function to determine where an expanded grid is temporal.
-    # def is_expanded_grid_temporal( self, grid ):
-
-    #     # Compute the number of consecutive grid dimensions.
-    #     num_consecutive_dims = self.get_num_of_consecutive_dimensions( grid )
-
-    #     # Determine whether all of the dimensions are consecutive.
-    #     if num_consecutive_dims == grid.dim(  ):                    # If all of the dimensions are consecutive...
-
-    #         # Compute the proposed channel index.
-    #         proposed_channel_index = num_consecutive_dims - 1
-
-    #     else:                                                       # Otherwise...
-
-    #         # Compute the proposed channel index.
-    #         proposed_channel_index = num_consecutive_dims
-
-    #     # Determine whether this proposed channel index has the correct value.
-    #     if grid.shape[ proposed_channel_index ] == proposed_channel_index:              # If the proposed channel index has the correct value...
-
-    #         # Determine the temporal grid type.
-    #         if ( proposed_channel_index + 1 ) == grid.dim(  ):                  # If the proposed channel index is the last dimension...
-
-    #             # Set the temporal grid flag to false.
-    #             temporal_grid_flag = False
-
-    #         elif ( proposed_channel_index + 2 ) == grid.dim(  ):            # If the proposed channel index is the second to last dimension...
-
-    #             # Set the temporal grid flag to true.
-    #             temporal_grid_flag = True
-
-    #         else:                                                       # Otherwise...
-
-    #             # Throw an error.
-    #             raise ValueError( 'Grid is neither temporal nor non-temporal and is therefore invalid.' )
-
-    #     elif grid.shape[ proposed_channel_index - 1 ] == proposed_channel_index - 1:    # If the previous proposed channel index has the correct value...
-
-    #         # Set the temporal grid flag to true.
-    #         temporal_grid_flag = True
-
-    #     else:                                                                           # Otherwise...
-
-    #         # Throw an error.
-    #         raise ValueError( 'Grid dimensions are not congruent with those expected of an expanded grid.' )
-
-    #     # Return the temporal grid flag.
-    #     return temporal_grid_flag
-    
-
->>>>>>> 55162c78e9fb0c13d60ea20df5463b1e4d4f30fb
     # Implement a function to determine where an expanded grid is temporal.
     def is_expanded_grid_temporal( self, grid ):
 
@@ -1943,38 +1713,6 @@ class tensor_utilities_class(  ):
         return temporal_grid_flag
 
 
-<<<<<<< HEAD
-=======
-    # # Implement a function to determine whether a grid is temporal.
-    # def is_grid_temporal( self, grid, grid_expanded_flat_type = None ):
-
-    #     # Determine whether it is necessary to compute the grid type.
-    #     if grid_expanded_flat_type is None:               # If the grid type was not provided...
-
-    #         # Compute the grid type.
-    #         grid_expanded_flat_type = self.get_grid_expanded_flat_type( grid )
-
-    #     # Determine how to determine whether the grid is temporal.
-    #     if grid_expanded_flat_type.lower(  ) == 'expanded':                 # If the grid expanded / flat type is expanded...
-
-    #         # Detemine whether the grid is temporal.
-    #         temporal_grid_flag = self.is_expanded_grid_temporal( grid )
-
-    #     elif grid_expanded_flat_type.lower(  ) == 'flat':               # If the grid expanded / flat type is flat...
-
-    #         # Detemine whether the grid is temporal.
-    #         temporal_grid_flag = self.is_flattened_grid_temporal( grid )
-            
-    #     else:
-
-    #         # Throw an error.
-    #         raise ValueError( 'Grid is neither expanded nor flat and is therefore invalid.' )
-
-    #     # Return the grid temporal flag.
-    #     return temporal_grid_flag
-    
-
->>>>>>> 55162c78e9fb0c13d60ea20df5463b1e4d4f30fb
     # Implement a function to determine the temporal type of a grid.
     def get_grid_temporal_type( self, grid, grid_expanded_flat_type = None ):
 
