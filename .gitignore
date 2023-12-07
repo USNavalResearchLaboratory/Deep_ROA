@@ -10,3 +10,4 @@
 # Ignore pycache folders.
 */ann/utilities/__pycache__
 */snn/utilities/__pycache__
+**/*.pyc
