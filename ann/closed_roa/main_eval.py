@@ -10,9 +10,7 @@
 
 
 #%% ---------------------------------------- NON-SPIKING CLOSED REGION OF ATTRACTION PINN EXAMPLE MAIN SCRIPT ----------------------------------------
-#%% ---------------------------------------- NON-SPIKING CLOSED REGION OF ATTRACTION PINN EXAMPLE MAIN SCRIPT ----------------------------------------
 
-# This file serves to implement the main code necessary to integrate the Yuan-Li PDE for a dynamical system with a closed ROA using the Non-Spiking Physics Informed Neural Network (PINN) framework.
 # This file serves to implement the main code necessary to integrate the Yuan-Li PDE for a dynamical system with a closed ROA using the Non-Spiking Physics Informed Neural Network (PINN) framework.
 
 
@@ -48,11 +46,15 @@ BASE_CONFIG = {
         'load_path': r'./ann/closed_roa/load',
     },
     'runtime': {
+        'batch_print_frequency': int(10),
+        'epoch_print_frequency': int(10),
         'device': 'cuda' if torch.cuda.is_available() else 'cpu',
         'load_flag': bool(False),
+        'print_flag': bool(True),
         'save_flag': bool(True),
         'save_frequency': int(10),
         'seed': int(0),
+        'train_flag': bool(True),
         'verbose': bool(True),
     }
 
@@ -74,28 +76,53 @@ def eval_closed_roa(config: dict = {}) -> int:
     device = torch.device(config['runtime']['device'])
 
 
-    #%% ---------------------------------------- DEFINE PINN OPTIONS ----------------------------------------
+    #%%  DEFINE PINN OPTIONS ----------------------------------------
 
-    # The pinn options are parameters that have no impact on the pde initial-boundary value problem being solved or the neural network that is being trained to solve it.
-    # Instead, the pinn option parameters are those that define the tasks the user would like performed and adjust quality-of-life factors, such as where and how often to save, print, and plot relevant network data before, during, and after the training process.
+    # The pinn options are parameters that have no impact on the pde
+    # initial-boundary value problem being solved or the neural network that is
+    # being trained to solve it. Instead, the pinn option parameters are those
+    # that define the tasks the user would like performed and adjust
+    # quality-of-life factors, such as where and how often to save, print, and
+    # plot relevant network data before, during, and after the training process.
 
+    # -------------------------
     # Define the save options.
-    save_path = str(config['paths']['save_path'])                                                                  # [-] Relative path to the directory in which to save network data, figures, etc.
-    save_frequency = torch.tensor(int(config['runtime']['save_frequency']), dtype = torch.int64, device = device )   # [#] Number of epochs after which to save intermediate networks during training. e.g., 1 = Save after every training epoch, 10 = Save after every ten training epochs, 100 = Save after every hundred training epochs.
-    save_flag = bool(config['runtime']['save_flag'])                                                                 # [T/F] Flag that determines whether to save networks during and after training, as well as training and network analysis plots.
+    # -------------------------
+    # [-] Relative path to the directory in which to save network data, etc.
+    save_path = str(config['paths']['save_path'])  
+
+    # [#] Number of epochs after which to save intermediate networks during
+    #     training. e.g., 1 = Save after every training epoch, 10 = Save after
+    #     every ten training epochs, 100 = Save after every hundred epochs.
+    save_frequency = torch.tensor(                 
+        int(config['runtime']['save_frequency']),    
+        dtype=torch.int64,     
+        device=device
+    )   
+    
+    # [T/F] Flag that determines whether to save networks during and after
+    #       training, as well as training and network analysis plots.
+    save_flag = bool(config['runtime']['save_flag']) 
 
     # Define the load options.
-    load_path = str(config['paths']['load_path'])                                                                   # [-] Relative path to the directory from which to load network data.
-    load_flag = bool(config['runtime']['load_flag'])                                                                                    # [T/F] Flag that determines whether to load network data from the given load directory before training.
+    load_path = str(config['paths']['load_path'])    # [-] Relative path to the directory from which to load network data.
+    load_flag = bool(config['runtime']['load_flag']) # [T/F] Flag that determines whether to load network data from the given load directory before training.
 
     # Define the training options.
-    train_flag = True                                                                                  # [T/F] Flag that determines whether to train the network after creation or loading.
-    # train_flag = False                                                                                  # [T/F] Flag that determines whether to train the network after creation or loading.
+    train_flag = bool(config['runtime']['train_flag']) # [T/F] Flag that determines whether to train the network after creation or loading.
 
     # Define the printing options.
-    batch_print_frequency = torch.tensor( 10, dtype = torch.float32, device = device )                    # [%] Percent of batches after which to print training information (during an epoch that has been selected for printing).
-    epoch_print_frequency = torch.tensor( 10, dtype = torch.float32, device = device )                    # [%] Percent of epochs after which to print training information.
-    print_flag = True
+    batch_print_frequency = torch.tensor(
+        int(config['runtime']['batch_print_frequency']), # [%] Percent of batches after which to print training information
+        dtype=torch.float32,                             #     (during an epoch that has been selected for printing).
+        device=device,
+    )                    
+    epoch_print_frequency = torch.tensor( # [%] Percent of epochs after which to print training information.
+        config['runtime']['epoch_print_frequency'],
+        dtype=torch.float32,
+        device=device
+    )                    
+    print_flag = bool(config['runtime']['print_flag']) # [T/F] Flag that determines whether to print more or less information when printing.
 
     # Define the plotting options.
     num_plotting_samples = torch.tensor( int( 1e2 ), dtype = torch.int16, device = device )                     # [#] Number of sample points to use per dimension when plotting network results.
@@ -106,7 +133,7 @@ def eval_closed_roa(config: dict = {}) -> int:
 
     # Define the newton parameters (used for level set generation).
     newton_tolerance = torch.tensor( 1e-6, dtype = torch.float32, device = device )                     # [-] Convergence tolerance for the Newton's root finding method.
-    newton_max_iterations = torch.tensor( int( 1e2 ), dtype = torch.int32, device = device )                   # [#] Maximum number of Newton's method steps to perform.
+    newton_max_iterations = torch.tensor( int( 1e2 ), dtype = torch.int32, device = device )            # [#] Maximum number of Newton's method steps to perform.
 
     # Define the exploration parameters (used for level set generation).
     exploration_volume_percentage = torch.tensor( 1e-2, dtype = torch.float32, device = device )        # [%] The level set method step size represented as a percentage of the domain volume.  This parameter conveniently scales the step size of the level set method as the dimension of the problem is adjusted. # This works for both initial and final times.
@@ -158,14 +185,10 @@ def eval_closed_roa(config: dict = {}) -> int:
     # Define the residual code.
     residual_code = [ None, torch.tensor( [ 0 ], dtype = torch.uint8, device = device ), torch.tensor( [ 1 ], dtype = torch.uint8, device = device ), torch.tensor( [ 2 ], dtype = torch.uint8, device = device ) ]                                             # [-] Residual code.  This list specifies which derivatives with respect to the network inputs are required for the residual function inputs.
 
-    # Define the temporal code.
-    temporal_code = [ torch.tensor( [ 0 ], dtype = torch.uint8, device = device ) ]                                                                                                                                                                             # [-] Temporal code.  Determines how to compute the temporal derivative of the network output.      
+    # Define the temporal code. Determines how to compute the temporal derivative of the network output.    
+    temporal_code = [ torch.tensor( [ 0 ], dtype = torch.uint8, device = device ) ]                                                                                                                                                                             # [-]    
 
     # Define the initial-boundary condition functions.
-    # f_ic = lambda s: A0/( 1 + torch.exp( -S0*( torch.norm( s[ :, 1: ] - P0_shift, 2, dim = 1, keepdim = True ) - R0 ) ) ) + z0_shift                # [-] Initial condition function.
-    # f_bc_1 = lambda s: A0/( 1 + torch.exp( -S0*( torch.norm( s[ :, 1: ] - P0_shift, 2, dim = 1, keepdim = True ) - R0 ) ) ) + z0_shift              # [-] Boundary condition function.
-    # f_bc_2 = lambda s: A0/( 1 + torch.exp( -S0*( torch.norm( s[ :, 1: ] - P0_shift, 2, dim = 1, keepdim = True ) - R0 ) ) ) + z0_shift              # [-] Boundary condition function.
-
     f_ic = lambda s: A0/( 1 + torch.exp( -S0*( torch.norm( s[ :, 1: ] - P0_shift, 2, dim = 1, keepdim = True ) - R0 ) ) ) + z0_shift                # [-] Initial condition function.
     f_bc_1 = lambda s: A0/( 1 + torch.exp( -S0*( torch.norm( s[ :, 1: ] - P0_shift, 2, dim = 1, keepdim = True ) - R0 ) ) ) + z0_shift              # [-] Boundary condition function.
     f_bc_2 = lambda s: A0/( 1 + torch.exp( -S0*( torch.norm( s[ :, 1: ] - P0_shift, 2, dim = 1, keepdim = True ) - R0 ) ) ) + z0_shift              # [-] Boundary condition function.
@@ -173,11 +196,6 @@ def eval_closed_roa(config: dict = {}) -> int:
     f_bc_4 = lambda s: A0/( 1 + torch.exp( -S0*( torch.norm( s[ :, 1: ] - P0_shift, 2, dim = 1, keepdim = True ) - R0 ) ) ) + z0_shift              # [-] Boundary condition function.
 
     # Define the initial-boundary condition information.
-    # ibc_types = [ 'dirichlet', 'dirichlet', 'dirichlet' ]                                                                                           # [-] Initial-Boundary condition types (e.g., dirichlet, neumann, etc.).
-    # ibc_dimensions = torch.tensor( [ 0, 1, 2 ], dtype = torch.uint8, device = device )                                                              # [-] Dimensions associated with each initial-boundary condition.
-    # ibc_condition_functions = [ f_ic, f_bc_1, f_bc_2 ]                                                                                              # [-] List of initial-boundary conditions.
-    # ibc_placements = [ 'lower', 'lower', 'lower' ]                                                                                                  # [Lower/Upper] Initial-Boundary condition placement.
-
     ibc_types = [ 'dirichlet', 'dirichlet', 'dirichlet', 'dirichlet', 'dirichlet' ]                                                                                           # [-] Initial-Boundary condition types (e.g., dirichlet, neumann, etc.).
     ibc_dimensions = torch.tensor( [ 0, 1, 1, 2, 2 ], dtype = torch.uint8, device = device )                                                              # [-] Dimensions associated with each initial-boundary condition.
     ibc_condition_functions = [ f_ic, f_bc_1, f_bc_2, f_bc_3, f_bc_4 ]                                                                                              # [-] List of initial-boundary conditions.
@@ -194,54 +212,15 @@ def eval_closed_roa(config: dict = {}) -> int:
     problem_specifications.save( save_path, r'problem_specifications.pkl' )
 
 
-    #%% ---------------------------------------- DEFINE HYPER-PARAMETERS ----------------------------------------
+    #%% ----------------- DEFINE HYPER-PARAMETERS --------------------
 
-    # The hyper-parameters are those that do not affect the problem that is being solved but impact how that problem is being solved, typically by adjusting the underlying neural architecture under consideration or the techniques used to train this network.
-    # Examples of several hyper-parameters include the number of network hidden layers, along with their widths and activation functions, as well as the optimizer learning rate and training data quantity.
-
-    # # ---------- UNOPTIMIZED PARAMETERS ----------
-
-    # # Store the network parameters.
-    # activation_function = 'tanh'                                                                # [-] Activation function (e.g., tanh, sigmoid, etc.)
-    # num_hidden_layers = torch.tensor( 3, dtype = torch.uint8, device = device )                 # [#] Number of hidden layers.
-    # hidden_layer_widths = torch.tensor( 50, dtype = torch.uint8, device = device )              # [#] Hidden layer widths.
-
-    # # This set works for variational loss integration order 1.
-    # num_training_data = torch.tensor( int( 100e3 ), dtype = torch.int32, device = device )      # [#] Number of training data points.
-    # num_testing_data = torch.tensor( int( 20e3 ), dtype = torch.int32, device = device )        # [#] Number of testing data points.
-
-    # # Define the percent of training and testing data that should be sampled from the initial condition, the boundary condition, and the interior of the domain.
-    # p_initial = torch.tensor( 0.25, dtype = torch.float16, device = device )                    # [%] Percentage of training and testing data associated with the initial condition.
-    # p_boundary = torch.tensor( 0.25, dtype = torch.float16, device = device )                   # [%] Percentage of training and testing data associated with the boundary condition.
-    # p_residual = torch.tensor( 0.5, dtype = torch.float16, device = device )                    # [%] Percentage of training and testing data associated with the residual.
-
-    # # Define the number of training epochs.
-    # num_epochs = torch.tensor( int( 1e3 ), dtype = torch.int32, device = device )               # [#] Number of training epochs to perform.
-
-    # # Define the residual batch size.
-    # residual_batch_size = torch.tensor( int( 10e3 ), dtype = torch.int32, device = device )     # [#] Training batch size. # This works for variational loss integration order 1.
-
-    # # Store the optimizer parameters.
-    # learning_rate = torch.tensor( 5e-3, dtype = torch.float32, device = device )                # [-] Learning rate.
-
-    # # Define the element computation option.
-    # element_computation_option = 'precompute'                                                   # [string] Determines whether to precompute the finite elements associated with the variational loss (costs more memory) or to dynamically generate these elements during training (costs more time per epoch) (e.g., 'precompute, 'dynamic', etc.).
-
-    # # Define the element type.
-    # element_type = 'rectangular'                                                                # [string] Finite element type associated with the variational loss (e.g., rectangular, spherical, etc.).  Only rectangular elements are currently supported.
-
-    # # Define the element volume percentage.
-    # element_volume_percent = torch.tensor( 0.01, dtype = torch.float32, device = device )       # [%] The finite element volume size associated with the variational loss represented as a percentage of the domain volume.  
-
-    # # Define the integration order.
-    # integration_order = torch.tensor( 1, dtype = torch.uint8, device = device )                 # [#] Gauss-Legendre integration order.
-
-    # # Store the loss coefficients.
-    # c_IC = torch.tensor( 1.0, dtype = torch.float32, device = device )                          # [-] Initial condition loss weight.
-    # c_BC = torch.tensor( 1.0, dtype = torch.float32, device = device )                          # [-] Boundary condition loss weight.
-    # c_residual = torch.tensor( 1.0, dtype = torch.float32, device = device )                    # [-] Residual loss weight.
-    # c_variational = torch.tensor( 1.0, dtype = torch.float32, device = device )                 # [-] Variational loss weight.
-    # c_monotonicity = torch.tensor( 10.0, dtype = torch.float32, device = device )               # [-] Monotonicity loss weight.
+    # The hyper-parameters are those that do not affect the problem that is
+    # being solved but impact how that problem is being solved, typically by
+    # adjusting the underlying neural architecture under consideration or the
+    # techniques used to train this network. Examples of several
+    # hyper-parameters include the number of network hidden layers, along with
+    # their widths and activation functions, as well as the optimizer learning
+    # rate and training data quantity.
 
 
     # ---------- OPTIMIZED PARAMETERS ----------
