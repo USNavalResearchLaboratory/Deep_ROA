@@ -50,12 +50,14 @@ BASE_CONFIG = {
         'epoch_print_frequency': int(10),
         'device': 'cuda' if torch.cuda.is_available() else 'cpu',
         'load_flag': bool(False),
+        'num_plotting_samples': int(1e2),
+        'plot_flag': bool(True),
         'print_flag': bool(True),
         'save_flag': bool(True),
         'save_frequency': int(10),
         'seed': int(0),
         'train_flag': bool(True),
-        'verbose': bool(True),
+        'verbose_flag': bool(True),
     }
 
 }
@@ -126,11 +128,11 @@ def eval_closed_roa(config: dict = {}) -> int:
     print_flag = bool(config['runtime']['print_flag']) # [T/F] Flag that determines whether to print more or less information when printing.
 
     # Define the plotting options.
-    num_plotting_samples = torch.tensor( int( 1e2 ), dtype = torch.int16, device = device )                     # [#] Number of sample points to use per dimension when plotting network results.
-    plot_flag = True                                                                                    # [T/F] Flag that determines whether training and network analysis plots are created.
+    num_plotting_samples = torch.tensor( int(config['runtime']['num_plotting_samples']), dtype = torch.int32, device = device )                     # [#] Number of sample points to use per dimension when plotting network results.
+    plot_flag = bool(config['runtime']['plot_flag'])                                                                                    # [T/F] Flag that determines whether training and network analysis plots are created.
 
     # Define the verbosity setting.
-    verbose_flag = True                                                                                 # [T/F] Flag that determines whether to print more or less information when printing.
+    verbose_flag = bool(config['runtime']['verbose_flag'])                                                                                # [T/F] Flag that determines whether to print more or less information when printing.
 
     # Define the newton parameters (used for level set generation).
     newton_tolerance = torch.tensor( 1e-6, dtype = torch.float32, device = device )                     # [-] Convergence tolerance for the Newton's root finding method.
