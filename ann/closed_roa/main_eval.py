@@ -75,8 +75,9 @@ def eval_closed_roa(config: dict = {}) -> int:
     # Set the computational device.
     device = torch.device(config['runtime']['device'])
 
-
-    #%%  DEFINE PINN OPTIONS ----------------------------------------
+    # ------------------------------------------------------------
+    # DEFINE PINN OPTIONS
+    # ------------------------------------------------------------
 
     # The pinn options are parameters that have no impact on the pde
     # initial-boundary value problem being solved or the neural network that is
