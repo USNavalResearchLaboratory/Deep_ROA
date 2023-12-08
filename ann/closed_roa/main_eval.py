@@ -41,23 +41,50 @@ os.system( 'cls' if os.name == 'nt' else 'clear' )
 plt.rcParams.update( { 'figure.max_open_warning': 0 } )                     # Disable maximum open figure warning.
 
 BASE_CONFIG = {
+    'classification_parameters': {
+        'num_noisy_samples_per_level_set_point': int(5),
+        'noise_percentage': float(1e-3),
+        'dt': float(1e-3),
+        'tfinal': float(10),
+    },
+    'exploration_parameters': {
+        'volume_percentage': float(1e-2),
+        'num_points': int(50),
+        'unique_percentage': float(1e-4),
+    },
+    'hyperparameters': {
+        'activation_function': 'sigmoid',
+        'hidden_layer_widths': int(175),
+        'num_hidden_layers': int(5),
+        'num_training_data': int(100e3),
+    },
+    'newton_parameters': {
+        'tolerance': float(1e-6),
+        'max_iterations': int(1e2),
+    },
     'paths': {
         'save_path': r'./ann/closed_roa/save',
         'load_path': r'./ann/closed_roa/load',
     },
-    'runtime': {
-        'batch_print_frequency': int(10),
-        'epoch_print_frequency': int(10),
-        'device': 'cuda' if torch.cuda.is_available() else 'cpu',
-        'load_flag': bool(False),
+    'plotting_parameters': {
         'num_plotting_samples': int(1e2),
         'plot_flag': bool(True),
+    },
+    'printing_parameters': {
+        'batch_print_frequency': int(10),
+        'epoch_print_frequency': int(10),
         'print_flag': bool(True),
-        'save_flag': bool(True),
-        'save_frequency': int(10),
+    },
+    'runtime': {
+        'device': 'cuda' if torch.cuda.is_available() else 'cpu',
+        'load_flag': bool(False),
         'seed': int(0),
         'train_flag': bool(True),
         'verbose_flag': bool(True),
+    },
+    'saving_parameters': {
+        'save_flag': bool(True),
+        'save_frequency': int(10),
     }
 
 }
@@ -98,14 +125,14 @@ def eval_closed_roa(config: dict = {}) -> int:
     #     training. e.g., 1 = Save after every training epoch, 10 = Save after
     #     every ten training epochs, 100 = Save after every hundred epochs.
     save_frequency = torch.tensor(                 
-        int(config['runtime']['save_frequency']),    
+        int(config['saving_parameters']['save_frequency']),    
         dtype=torch.int64,     
         device=device
     )   
     
     # [T/F] Flag that determines whether to save networks during and after
     #       training, as well as training and network analysis plots.
-    save_flag = bool(config['runtime']['save_flag']) 
+    save_flag = bool(config['saving_parameters']['save_flag']) 
 
     # Define the load options.
     load_path = str(config['paths']['load_path'])    # [-] Relative path to the directory from which to load network data.
@@ -116,38 +143,38 @@ def eval_closed_roa(config: dict = {}) -> int:
 
     # Define the printing options.
     batch_print_frequency = torch.tensor(
-        int(config['runtime']['batch_print_frequency']), # [%] Percent of batches after which to print training information
+        int(config['printing_parameters']['batch_print_frequency']), # [%] Percent of batches after which to print training information
         dtype=torch.float32,                             #     (during an epoch that has been selected for printing).
         device=device,
     )                    
     epoch_print_frequency = torch.tensor( # [%] Percent of epochs after which to print training information.
-        config['runtime']['epoch_print_frequency'],
+        config['printing_parameters']['epoch_print_frequency'],
         dtype=torch.float32,
         device=device
     )                    
-    print_flag = bool(config['runtime']['print_flag']) # [T/F] Flag that determines whether to print more or less information when printing.
+    print_flag = bool(config['printing_parameters']['print_flag']) # [T/F] Flag that determines whether to print more or less information when printing.
 
     # Define the plotting options.
-    num_plotting_samples = torch.tensor( int(config['runtime']['num_plotting_samples']), dtype = torch.int32, device = device )                     # [#] Number of sample points to use per dimension when plotting network results.
-    plot_flag = bool(config['runtime']['plot_flag'])                                                                                    # [T/F] Flag that determines whether training and network analysis plots are created.
+    num_plotting_samples = torch.tensor( int(config['plotting_parameters']['num_plotting_samples']), dtype = torch.int32, device = device )                     # [#] Number of sample points to use per dimension when plotting network results.
+    plot_flag = bool(config['plotting_parameters']['plot_flag'])                                                                                    # [T/F] Flag that determines whether training and network analysis plots are created.
 
     # Define the verbosity setting.
     verbose_flag = bool(config['runtime']['verbose_flag'])                                                                                # [T/F] Flag that determines whether to print more or less information when printing.
 
     # Define the newton parameters (used for level set generation).
-    newton_tolerance = torch.tensor( 1e-6, dtype = torch.float32, device = device )                     # [-] Convergence tolerance for the Newton's root finding method.
-    newton_max_iterations = torch.tensor( int( 1e2 ), dtype = torch.int32, device = device )            # [#] Maximum number of Newton's method steps to perform.
+    newton_tolerance = torch.tensor(float(config['newton_parameters']['tolerance']), dtype = torch.float32, device = device )                     # [-] Convergence tolerance for the Newton's root finding method.
+    newton_max_iterations = torch.tensor(int(config['newton_parameters']['max_iterations']), dtype = torch.int32, device = device )            # [#] Maximum number of Newton's method steps to perform.
 
     # Define the exploration parameters (used for level set generation).
-    exploration_volume_percentage = torch.tensor( 1e-2, dtype = torch.float32, device = device )        # [%] The level set method step size represented as a percentage of the domain volume.  This parameter conveniently scales the step size of the level set method as the dimension of the problem is adjusted. # This works for both initial and final times.
-    num_exploration_points = torch.tensor( 50, dtype = torch.int16, device = device )                   # [#] Number of exploration points to generate at each level set method step.
-    unique_volume_percentage = torch.tensor( 1e-4, dtype = torch.float32, device = device )             # [%] The tolerance used to determine whether level set points are unique as a percentage of the domain volume.  This parameter conveniently scales the unique tolerance of the level set points as the dimension of the problem is adjusted.
+    exploration_volume_percentage = torch.tensor(float(config['exploration_parameters']['volume_percentage']), dtype = torch.float32, device = device )        # [%] The level set method step size represented as a percentage of the domain volume.  This parameter conveniently scales the step size of the level set method as the dimension of the problem is adjusted. # This works for both initial and final times.
+    num_exploration_points = torch.tensor( int(config['exploration_parameters']['num_points']), dtype = torch.int16, device = device )                   # [#] Number of exploration points to generate at each level set method step.
+    unique_volume_percentage = torch.tensor( float(config['exploration_parameters']['unique_percentage']), dtype = torch.float32, device = device )             # [%] The tolerance used to determine whether level set points are unique as a percentage of the domain volume.  This parameter conveniently scales the unique tolerance of the level set points as the dimension of the problem is adjusted.
 
     # Define the classification parameters.
-    num_noisy_samples_per_level_set_point = torch.tensor( 5, dtype = torch.int16, device = device )   # [#] Number of noisy samples per level set point.
-    classification_noise_percentage = torch.tensor( 1e-3, dtype = torch.float32, device = device )      # [%] The classification point noise magnitude represented as a percentage of the domain volume.  This parameter conveniently scales the noise magnitude of the classification points as the dimension of the problem is adjusted.
-    classification_dt = torch.tensor( 1e-3, dtype = torch.float32, device = device )                    # [s] The classification simulation timestep used to forecast classification points.
-    classification_tfinal = torch.tensor( 10, dtype = torch.float32, device = device )                  # [s] The classification simulation duration used to forecast classification points.
+    num_noisy_samples_per_level_set_point = torch.tensor(int(config['classification_parameters']['num_noisy_samples_per_level_set_point']), dtype = torch.int16, device = device )   # [#] Number of noisy samples per level set point.
+    classification_noise_percentage = torch.tensor(float(config['classification_parameters']['noise_percentage']), dtype = torch.float32, device = device )      # [%] The classification point noise magnitude represented as a percentage of the domain volume.  This parameter conveniently scales the noise magnitude of the classification points as the dimension of the problem is adjusted.
+    classification_dt = torch.tensor(float(config['classification_parameters']['dt']), dtype = torch.float32, device = device )                    # [s] The classification simulation timestep used to forecast classification points.
+    classification_tfinal = torch.tensor(float(config['classification_parameters']['tfinal']), dtype = torch.float32, device = device )                  # [s] The classification simulation duration used to forecast classification points.
 
     # Create the pinn options object.
     pinn_options = pinn_options_class( save_path, save_frequency, save_flag, load_path, load_flag, train_flag, batch_print_frequency, epoch_print_frequency, print_flag, num_plotting_samples, newton_tolerance, newton_max_iterations, exploration_volume_percentage, num_exploration_points, unique_volume_percentage, classification_noise_percentage, num_noisy_samples_per_level_set_point, classification_dt, classification_tfinal, plot_flag, device, verbose_flag )
@@ -229,12 +256,12 @@ def eval_closed_roa(config: dict = {}) -> int:
     # ---------- OPTIMIZED PARAMETERS ----------
 
     # Store the network parameters.
-    activation_function = 'sigmoid'                                                                # [-] Activation function (e.g., tanh, sigmoid, etc.)
-    num_hidden_layers = torch.tensor( 5, dtype = torch.uint8, device = device )                 # [#] Number of hidden layers.
-    hidden_layer_widths = torch.tensor( 175, dtype = torch.int16, device = device )              # [#] Hidden layer widths.
+    activation_function = str(config['hyperparameters']['activation_function'])                                                                # [-] Activation function (e.g., tanh, sigmoid, etc.)
+    num_hidden_layers = torch.tensor(int(config['hyperparameters']['num_hidden_layers']), dtype = torch.uint16, device = device )                 # [#] Number of hidden layers.
+    hidden_layer_widths = torch.tensor(int(config['hyperparameters']['hidden_layer_widths']), dtype = torch.int16, device = device )              # [#] Hidden layer widths.
 
     # This set works for variational loss integration order 1.
-    num_training_data = torch.tensor( int( 100e3 ), dtype = torch.int32, device = device )      # [#] Number of training data points.
+    num_training_data = torch.tensor( int( config['hyperparameters']['num_training_data'] ), dtype = torch.int32, device = device )      # [#] Number of training data points.
     num_testing_data = torch.tensor( int( 20e3 ), dtype = torch.int32, device = device )        # [#] Number of testing data points.
 
     # Define the percent of training and testing data that should be sampled from the initial condition, the boundary condition, and the interior of the domain.
