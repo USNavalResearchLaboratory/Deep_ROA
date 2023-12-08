@@ -55,8 +55,11 @@ BASE_CONFIG = {
     'hyperparameters': {
         'activation_function': 'sigmoid',
         'hidden_layer_widths': int(175),
+        'num_epochs': int(1e3),
         'num_hidden_layers': int(5),
         'num_training_data': int(100e3),
+        'num_testing_data': int(20e3),
+        'learning_rate': float(0.005),
     },
     'newton_parameters': {
         'tolerance': float(1e-6),
@@ -257,12 +260,12 @@ def eval_closed_roa(config: dict = {}) -> int:
 
     # Store the network parameters.
     activation_function = str(config['hyperparameters']['activation_function'])                                                                # [-] Activation function (e.g., tanh, sigmoid, etc.)
-    num_hidden_layers = torch.tensor(int(config['hyperparameters']['num_hidden_layers']), dtype = torch.uint16, device = device )                 # [#] Number of hidden layers.
+    num_hidden_layers = torch.tensor(int(config['hyperparameters']['num_hidden_layers']), dtype = torch.int16, device = device )                 # [#] Number of hidden layers.
     hidden_layer_widths = torch.tensor(int(config['hyperparameters']['hidden_layer_widths']), dtype = torch.int16, device = device )              # [#] Hidden layer widths.
 
     # This set works for variational loss integration order 1.
     num_training_data = torch.tensor( int( config['hyperparameters']['num_training_data'] ), dtype = torch.int32, device = device )      # [#] Number of training data points.
-    num_testing_data = torch.tensor( int( 20e3 ), dtype = torch.int32, device = device )        # [#] Number of testing data points.
+    num_testing_data = torch.tensor( int( config['hyperparameters']['num_testing_data'] ), dtype = torch.int32, device = device )        # [#] Number of testing data points.
 
     # Define the percent of training and testing data that should be sampled from the initial condition, the boundary condition, and the interior of the domain.
     p_initial = torch.tensor( 0.25, dtype = torch.float16, device = device )                    # [%] Percentage of training and testing data associated with the initial condition.
@@ -273,14 +276,14 @@ def eval_closed_roa(config: dict = {}) -> int:
     # num_epochs = torch.tensor( int( 100 ), dtype = torch.int32, device = device )               # [#] Number of training epochs to perform.
     # num_epochs = torch.tensor( int( 250 ), dtype = torch.int32, device = device )               # [#] Number of training epochs to perform.
     # num_epochs = torch.tensor( int( 500 ), dtype = torch.int32, device = device )               # [#] Number of training epochs to perform.
-    num_epochs = torch.tensor( int( 1e3 ), dtype = torch.int32, device = device )               # [#] Number of training epochs to perform.
+    num_epochs = torch.tensor( int( config['hyperparameters']['num_epochs'] ), dtype = torch.int32, device = device )               # [#] Number of training epochs to perform.
     # num_epochs = torch.tensor( int( 5e3 ), dtype = torch.int32, device = device )               # [#] Number of training epochs to perform.
 
     # Define the residual batch size.
     residual_batch_size = torch.tensor( int( 10e3 ), dtype = torch.int32, device = device )     # [#] Training batch size. # This works for variational loss integration order 1.
 
     # Store the optimizer parameters.
-    learning_rate = torch.tensor( 0.005, dtype = torch.float32, device = device )                # [-] Learning rate.
+    learning_rate = torch.tensor( float(config['hyperparameters']['learning_rate']), dtype = torch.float32, device = device )                # [-] Learning rate.
 
     # Define the element computation option.
     element_computation_option = 'precompute'                                                   # [string] Determines whether to precompute the finite elements associated with the variational loss (costs more memory) or to dynamically generate these elements during training (costs more time per epoch) (e.g., 'precompute, 'dynamic', etc.).
