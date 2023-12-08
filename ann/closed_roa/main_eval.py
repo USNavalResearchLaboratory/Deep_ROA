@@ -54,8 +54,13 @@ BASE_CONFIG = {
     },
     'hyperparameters': {
         'activation_function': 'sigmoid',
+        'c_IC': float(22.1),
+        'c_BC': float(31.1),
+        'c_residual': float(69.1),
+        'c_variational': float(39.1),
+        'c_monotonicity': float(80.1),
         'hidden_layer_widths': int(175),
-        'num_epochs': int(1e3),
+        'num_epochs': int(1),
         'num_hidden_layers': int(5),
         'num_training_data': int(100e3),
         'num_testing_data': int(20e3),
@@ -298,11 +303,11 @@ def eval_closed_roa(config: dict = {}) -> int:
     integration_order = torch.tensor( 1, dtype = torch.uint8, device = device )                 # [#] Gauss-Legendre integration order.
 
     # Store the loss coefficients.
-    c_IC = torch.tensor( 22.1, dtype = torch.float32, device = device )                          # [-] Initial condition loss weight.
-    c_BC = torch.tensor( 31.1, dtype = torch.float32, device = device )                          # [-] Boundary condition loss weight.
-    c_residual = torch.tensor( 69.1, dtype = torch.float32, device = device )                    # [-] Residual loss weight.
-    c_variational = torch.tensor( 39.1, dtype = torch.float32, device = device )                 # [-] Variational loss weight.
-    c_monotonicity = torch.tensor( 80.1, dtype = torch.float32, device = device )               # [-] Monotonicity loss weight.
+    c_IC = torch.tensor( float(config['hyperparameters']['c_IC']), dtype = torch.float32, device = device )                          # [-] Initial condition loss weight.
+    c_BC = torch.tensor( float(config['hyperparameters']['c_BC']), dtype = torch.float32, device = device )                          # [-] Boundary condition loss weight.
+    c_residual = torch.tensor( float(config['hyperparameters']['c_residual']), dtype = torch.float32, device = device )                    # [-] Residual loss weight.
+    c_variational = torch.tensor( float(config['hyperparameters']['c_variational']), dtype = torch.float32, device = device )                 # [-] Variational loss weight.
+    c_monotonicity = torch.tensor( float(config['hyperparameters']['c_monotonicity']), dtype = torch.float32, device = device )               # [-] Monotonicity loss weight.
 
     # Create the hyper-parameters object.
     hyperparameters = hyperparameters_class( activation_function, num_hidden_layers, hidden_layer_widths, num_training_data, num_testing_data, p_initial, p_boundary, p_residual, num_epochs, residual_batch_size, learning_rate, integration_order, element_volume_percent, element_type, element_computation_option, c_IC, c_BC, c_residual, c_variational, c_monotonicity, save_path, load_path )
@@ -405,5 +410,9 @@ def eval_closed_roa(config: dict = {}) -> int:
     print( '------------------------------------------------------------------------------------------------------------------------' )
     print( '\n' )
 
+    return classification_loss.cpu().detach().numpy().item()
+
 if __name__ == "__main__":
-    eval_closed_roa()
+    loss = eval_closed_roa()
+    
+    print(loss)
