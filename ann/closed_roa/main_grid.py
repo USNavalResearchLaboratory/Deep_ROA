@@ -25,15 +25,20 @@ SEARCH_SPACE = {
     'learning_rate':       [float(0.01), float(0.005), float(0.001)],
 }
 
-def main():
-    base_config = BASE_CONFIG.copy()
-    base_config['paths']['save_path'] = os.path.join(SAVE_DIR, SEARCH_ID + '/')
+def main(base_config=BASE_CONFIG,
+         num_repeats=NUM_REPEATS,
+         search_id=SEARCH_ID,
+         save_dir=SAVE_DIR,
+         search_space=SEARCH_SPACE):
+    
+    base_config = base_config.copy()
+    base_config['paths']['save_path'] = os.path.join(save_dir, search_id + '/')
     os.makedirs(base_config['paths']['save_path'], exist_ok=True)
 
-    parameter_configs = itertools.product(*SEARCH_SPACE.values())
+    parameter_configs = itertools.product(*search_space.values())
     parameter_configs = list(parameter_configs)
 
-    named_parameter_configs: List[dict] = [dict(zip(SEARCH_SPACE.keys(), config)) for config in parameter_configs]
+    named_parameter_configs: List[dict] = [dict(zip(search_space.keys(), config)) for config in parameter_configs]
 
     save_dir = base_config['paths']['save_path']
 
@@ -56,7 +61,7 @@ def main():
         for idx, config in enumerate(named_parameter_configs):
             losses = []
 
-            for repeat in range(NUM_REPEATS):
+            for repeat in range(num_repeats):
                 eval_config = deepcopy(base_config)
                 eval_config['hyperparameters'].update(config)
                 eval_config['runtime']['seed'] = repeat
