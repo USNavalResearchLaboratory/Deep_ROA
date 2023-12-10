@@ -19,11 +19,16 @@
 #%% ---------------------------------------- IMPORT LIBRARIES ----------------------------------------
 
 # Import standard libraries.
+import numpy as np
 import os
+import random
 import sys
 import torch
 import matplotlib.pyplot as plt
 import math
+
+random.seed( 0 )
+np.random.seed( 0 )
 
 # Ensure that the utilities folder for this project is on the system path.
 sys.path.append( r'./ann/utilities' )
@@ -53,7 +58,7 @@ torch.manual_seed( 0 )
 
 # Set the computational device.
 # device = 'cuda' if torch.cuda.is_available(  ) else 'cpu'
-device = 'cuda:8' if torch.cuda.is_available(  ) else 'cpu'
+device = 'cuda:0' if torch.cuda.is_available(  ) else 'cpu'
 # device = 'cpu'
 
 
