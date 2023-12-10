@@ -17,8 +17,11 @@
 #%% ---------------------------------------- IMPORT LIBRARIES ----------------------------------------
 
 # Import standard libraries.
+import numpy as np
 import os
+import random
 import sys
+import time
 import torch
 import matplotlib.pyplot as plt
 import math
@@ -42,12 +45,16 @@ os.system( 'cls' if os.name == 'nt' else 'clear' )
 plt.rcParams.update( { 'figure.max_open_warning': 0 } )                     # Disable maximum open figure warning.
 
 # Set the random seeds.
+random.seed( 0 )
+np.random.seed( 0 )
 torch.manual_seed( 0 )
 
 # Set the computational device.
 # device = 'cuda' if torch.cuda.is_available(  ) else 'cpu'
-device = 'cuda:8' if torch.cuda.is_available(  ) else 'cpu'
+device = 'cuda:0' if torch.cuda.is_available(  ) else 'cpu'
 # device = 'cpu'
+
+start_time = time.time(  )
 
 
 #%% ---------------------------------------- DEFINE PINN OPTIONS ----------------------------------------
@@ -335,3 +342,5 @@ print( 'COMPLETE' )
 print( '------------------------------------------------------------------------------------------------------------------------' )
 print( '\n' )
 
+end_time = time.time(  )
+print( f'RUN TIME: {end_time - start_time} seconds' )
