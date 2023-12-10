@@ -17,6 +17,7 @@
 #%% ---------------------------------------- IMPORT LIBRARIES ----------------------------------------
 
 # Import standard libraries.
+from copy import deepcopy
 import numpy as np
 import os
 import random
@@ -110,7 +111,9 @@ def eval_simple_pendulum(config: dict = {}) -> int:
     TODO Finish Documentation
     """
 
-    config = BASE_CONFIFG
+    new_config = deepcopy(BASE_CONFIFG)
+    new_config['hyperparameters'].update(config)
+    config = deepcopy(new_config)
 
     # Set the random seeds.
     np.random.seed(config['runtime']['seed'])
