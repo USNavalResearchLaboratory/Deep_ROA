@@ -24,6 +24,7 @@ import sys
 import torch
 import matplotlib.pyplot as plt
 import math
+import time
 
 # Ensure that the utilities folder for this project is on the system path.
 sys.path.append( r'./ann/utilities' )
@@ -60,7 +61,7 @@ BASE_CONFIG = {
         'c_variational': float(39.1),
         'c_monotonicity': float(80.1),
         'hidden_layer_widths': int(175),
-        'num_epochs': int(1),
+        'num_epochs': int(1000),
         'num_hidden_layers': int(5),
         'num_training_data': int(100e3),
         'num_testing_data': int(20e3),
@@ -101,6 +102,8 @@ def eval_closed_roa(config: dict = {}) -> int:
     """
     TODO Finish Documentation
     """
+
+    start_time = time.time()
 
     config = BASE_CONFIG
 
@@ -409,6 +412,9 @@ def eval_closed_roa(config: dict = {}) -> int:
     print( 'COMPLETE' )
     print( '------------------------------------------------------------------------------------------------------------------------' )
     print( '\n' )
+
+    end_time = time.time(  )
+    print( f'RUN TIME: {end_time - start_time} seconds' )
 
     return classification_loss.cpu().detach().numpy().item()
 
