@@ -76,7 +76,8 @@ epoch_print_frequency = torch.tensor( 10, dtype = torch.float32, device = device
 print_flag = True
 
 # Define the plotting options.
-num_plotting_samples = torch.tensor( int( 1e2 ), dtype = torch.int16, device = device )                     # [#] Number of sample points to use per dimension when plotting network results.
+num_plotting_samples = torch.tensor( 20, dtype = torch.int16, device = device )                     # [#] Number of sample points to use per dimension when plotting network results.
+# num_plotting_samples = torch.tensor( int( 1e2 ), dtype = torch.int16, device = device )                     # [#] Number of sample points to use per dimension when plotting network results.
 plot_flag = True                                                                                    # [T/F] Flag that determines whether training and network analysis plots are created.
 
 # Define the verbosity setting.
@@ -193,7 +194,8 @@ problem_specifications.save( save_path, r'problem_specifications.pkl' )
 # activation_function = 'tanh'                                                                # [-] Activation function (e.g., tanh, sigmoid, etc.)
 activation_function = 'sigmoid'                                                                # [-] Activation function (e.g., tanh, sigmoid, etc.)
 num_hidden_layers = torch.tensor( 5, dtype = torch.uint8, device = device )                 # [#] Number of hidden layers.
-hidden_layer_widths = torch.tensor( 500, dtype = torch.int16, device = device )              # [#] Hidden layer widths.
+# hidden_layer_widths = torch.tensor( 500, dtype = torch.int16, device = device )              # [#] Hidden layer widths.
+hidden_layer_widths = torch.tensor( 244, dtype = torch.int16, device = device )              # [#] Hidden layer widths.
 
 # This set works for variational loss integration order 1.
 num_training_data = torch.tensor( int( 100e3 ), dtype = torch.int32, device = device )      # [#] Number of training data points.
@@ -227,12 +229,19 @@ element_volume_percent = torch.tensor( 0.01, dtype = torch.float32, device = dev
 # Define the integration order.
 integration_order = torch.tensor( 1, dtype = torch.uint8, device = device )                 # [#] Gauss-Legendre integration order.
 
+# # Store the loss coefficients.
+# c_IC = torch.tensor( 1.0, dtype = torch.float32, device = device )                          # [-] Initial condition loss weight.
+# c_BC = torch.tensor( 1.0, dtype = torch.float32, device = device )                          # [-] Boundary condition loss weight.
+# c_residual = torch.tensor( 3e-4, dtype = torch.float32, device = device )                    # [-] Residual loss weight.
+# c_variational = torch.tensor( 3e-4, dtype = torch.float32, device = device )                 # [-] Variational loss weight.
+# c_monotonicity = torch.tensor( 1e1, dtype = torch.float32, device = device )               # [-] Monotonicity loss weight.
+
 # Store the loss coefficients.
-c_IC = torch.tensor( 1.0, dtype = torch.float32, device = device )                          # [-] Initial condition loss weight.
-c_BC = torch.tensor( 1.0, dtype = torch.float32, device = device )                          # [-] Boundary condition loss weight.
-c_residual = torch.tensor( 3e-4, dtype = torch.float32, device = device )                    # [-] Residual loss weight.
-c_variational = torch.tensor( 3e-4, dtype = torch.float32, device = device )                 # [-] Variational loss weight.
-c_monotonicity = torch.tensor( 1e1, dtype = torch.float32, device = device )               # [-] Monotonicity loss weight.
+c_IC = torch.tensor( 9.90147542e-02, dtype = torch.float32, device = device )                          # [-] Initial condition loss weight.
+c_BC = torch.tensor( 9.90147542e-02, dtype = torch.float32, device = device )                          # [-] Boundary condition loss weight.
+c_residual = torch.tensor( 2.97044263e-05, dtype = torch.float32, device = device )                    # [-] Residual loss weight.
+c_variational = torch.tensor( 2.97044263e-05, dtype = torch.float32, device = device )                 # [-] Variational loss weight.
+c_monotonicity = torch.tensor( 9.90147542e-01, dtype = torch.float32, device = device )               # [-] Monotonicity loss weight.
 
 # Create the hyper-parameters object.
 hyperparameters = hyperparameters_class( activation_function, num_hidden_layers, hidden_layer_widths, num_training_data, num_testing_data, p_initial, p_boundary, p_residual, num_epochs, residual_batch_size, learning_rate, integration_order, element_volume_percent, element_type, element_computation_option, c_IC, c_BC, c_residual, c_variational, c_monotonicity, save_path, load_path )
@@ -266,8 +275,6 @@ pinn.save( save_path, 'pinn_after_training.pkl' )
 
 
 #%% ---------------------------------------- COMPUTE CLASSIFICATION LOSS ----------------------------------------
-
-pinn.pinn_options.num_noisy_samples_per_level_set_point = num_noisy_samples_per_level_set_point
 
 # Compute the classification loss.
 classification_loss, num_classification_points = pinn.compute_classification_loss( pde = pinn.pde, network = pinn.network, classification_data = None, num_spatial_dimensions = pinn.domain.num_spatial_dimensions, domain = pinn.domain, plot_time = pinn.domain.temporal_domain[ 1, : ], level = torch.tensor( 0, dtype = torch.float32, device = pinn.pinn_options.device ), level_set_guesses = None, num_guesses = torch.tensor( int( 1e2 ), dtype = torch.int64, device = pinn.pinn_options.device ), newton_tolerance = newton_tolerance, newton_max_iterations = newton_max_iterations, exploration_radius = pinn.network.exploration_radius_spatial, num_exploration_points = num_exploration_points, unique_tolerance = pinn.network.unique_tolerance_spatial, classification_noise_magnitude = pinn.network.classification_noise_magnitude_spatial, num_noisy_samples_per_level_set_point = pinn.pinn_options.num_noisy_samples_per_level_set_point, domain_subset_type = 'spatial', tspan = torch.tensor( [ 0, classification_tfinal.item(  ) ], dtype = classification_tfinal.dtype, device = classification_tfinal.device ), dt = classification_dt )

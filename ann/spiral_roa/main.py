@@ -75,8 +75,8 @@ epoch_print_frequency = torch.tensor( 10, dtype = torch.float32, device = device
 print_flag = True
 
 # Define the plotting options.
-# num_plotting_samples = torch.tensor( 20, dtype = torch.int16, device = device )                     # [#] Number of sample points to use per dimension when plotting network results.
-num_plotting_samples = torch.tensor( int( 1e2 ), dtype = torch.int16, device = device )                     # [#] Number of sample points to use per dimension when plotting network results.
+num_plotting_samples = torch.tensor( 20, dtype = torch.int16, device = device )                     # [#] Number of sample points to use per dimension when plotting network results.
+# num_plotting_samples = torch.tensor( int( 1e2 ), dtype = torch.int16, device = device )                     # [#] Number of sample points to use per dimension when plotting network results.
 plot_flag = True                                                                                    # [T/F] Flag that determines whether training and network analysis plots are created.
 
 # Define the verbosity setting.
@@ -272,12 +272,19 @@ element_volume_percent = torch.tensor( 0.01, dtype = torch.float32, device = dev
 # Define the integration order.
 integration_order = torch.tensor( 1, dtype = torch.uint8, device = device )                 # [#] Gauss-Legendre integration order.
 
+# # Store the loss coefficients.
+# c_IC = torch.tensor( 1, dtype = torch.float32, device = device )                          # [-] Initial condition loss weight.
+# c_BC = torch.tensor( 1, dtype = torch.float32, device = device )                          # [-] Boundary condition loss weight.
+# c_residual = torch.tensor( 1, dtype = torch.float32, device = device )                    # [-] Residual loss weight.
+# c_variational = torch.tensor( 1, dtype = torch.float32, device = device )                 # [-] Variational loss weight.
+# c_monotonicity = torch.tensor( 1, dtype = torch.float32, device = device )               # [-] Monotonicity loss weight.
+
 # Store the loss coefficients.
-c_IC = torch.tensor( 1, dtype = torch.float32, device = device )                          # [-] Initial condition loss weight.
-c_BC = torch.tensor( 1, dtype = torch.float32, device = device )                          # [-] Boundary condition loss weight.
-c_residual = torch.tensor( 1, dtype = torch.float32, device = device )                    # [-] Residual loss weight.
-c_variational = torch.tensor( 1, dtype = torch.float32, device = device )                 # [-] Variational loss weight.
-c_monotonicity = torch.tensor( 1, dtype = torch.float32, device = device )               # [-] Monotonicity loss weight.
+c_IC = torch.tensor( 0.4472136, dtype = torch.float32, device = device )                          # [-] Initial condition loss weight.
+c_BC = torch.tensor( 0.4472136, dtype = torch.float32, device = device )                          # [-] Boundary condition loss weight.
+c_residual = torch.tensor( 0.4472136, dtype = torch.float32, device = device )                    # [-] Residual loss weight.
+c_variational = torch.tensor( 0.4472136, dtype = torch.float32, device = device )                 # [-] Variational loss weight.
+c_monotonicity = torch.tensor( 0.4472136, dtype = torch.float32, device = device )               # [-] Monotonicity loss weight.
 
 # Create the hyper-parameters object.
 hyperparameters = hyperparameters_class( activation_function, num_hidden_layers, hidden_layer_widths, num_training_data, num_testing_data, p_initial, p_boundary, p_residual, num_epochs, residual_batch_size, learning_rate, integration_order, element_volume_percent, element_type, element_computation_option, c_IC, c_BC, c_residual, c_variational, c_monotonicity, save_path, load_path )
