@@ -5,7 +5,7 @@ sys.path.append("./ann/closed_roa")
 sys.path.append("./general")
 
 from main_eval import BASE_CONFIG, eval_closed_roa
-from general.grid import run_grid_search
+from grid import run_grid_search
 
 DEVICE: str = 'cuda:0' if torch.cuda.is_available() else 'cpu'
 NUM_REPEATS = 3
