@@ -118,3 +118,17 @@ SAVE_DIR = '/scratch/ssnyde9/boroa/ann/closed_roa/'
 SEARCH_SPACE = {
     'c_IC': [1, 5, 10, 15, 20, 25, 30, 35, 40, 45]
 }
+
+# -------------------------------------------------
+# Name: space space 8 - evaluating c_BC
+# Size: 10
+# -------------------------------------------------
+
+DEVICE: str = 'cuda:0' if torch.cuda.is_available() else 'cpu'
+NUM_REPEATS = 1
+SEARCH_ID = 'grid_search_8'
+SAVE_DIR = '/scratch/ssnyde9/boroa/ann/closed_roa/'
+
+SEARCH_SPACE = {
+    'c_BC': [1, 5, 10, 15, 20, 25, 30, 35, 40, 45]
+}
