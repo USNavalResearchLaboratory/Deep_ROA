@@ -10,9 +10,7 @@
 
 
 #%% ---------------------------------------- NON-SPIKING CLOSED REGION OF ATTRACTION PINN EXAMPLE MAIN SCRIPT ----------------------------------------
-#%% ---------------------------------------- NON-SPIKING CLOSED REGION OF ATTRACTION PINN EXAMPLE MAIN SCRIPT ----------------------------------------
 
-# This file serves to implement the main code necessary to integrate the Yuan-Li PDE for a dynamical system with a closed ROA using the Non-Spiking Physics Informed Neural Network (PINN) framework.
 # This file serves to implement the main code necessary to integrate the Yuan-Li PDE for a dynamical system with a closed ROA using the Non-Spiking Physics Informed Neural Network (PINN) framework.
 
 

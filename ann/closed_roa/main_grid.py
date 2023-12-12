@@ -1,3 +1,5 @@
+
+# Import standard libraries.
 from copy import deepcopy
 import itertools
 import matplotlib.pyplot as plt
@@ -6,14 +8,18 @@ import os
 import sys
 from typing import List
 
+# Edit the system path to include the working directory.
 sys.path.append(r'./ann/closed_roa')
 
+# Import custom libraries.
 from main_eval import BASE_CONFIG, eval_closed_roa
 
+# Define grid parameters.
 NUM_REPEATS = 3
 SEARCH_ID = 'grid_search_0_test'
 SAVE_DIR = '/scratch/ssnyde9/boroa/ann/closed_roa/'
 
+# Define the search space.
 SEARCH_SPACE = {
     'c_IC': [float(17), float(22.1), float(27)],
     'c_BC': [float(27), float(31.1), float(36)],
@@ -25,82 +31,96 @@ SEARCH_SPACE = {
     'learning_rate':       [float(0.01), float(0.005), float(0.001)],
 }
 
-def main(base_config=BASE_CONFIG,
-         num_repeats=NUM_REPEATS,
-         search_id=SEARCH_ID,
-         save_dir=SAVE_DIR,
-         search_space=SEARCH_SPACE):
+
+# Implement the main function.
+def main( base_config = BASE_CONFIG,
+          num_repeats = NUM_REPEATS,
+          search_id = SEARCH_ID,
+          save_dir = SAVE_DIR,
+          search_space = SEARCH_SPACE ):
     
-    base_config = base_config.copy()
-    base_config['paths']['save_path'] = os.path.join(save_dir, search_id + '/')
-    os.makedirs(base_config['paths']['save_path'], exist_ok=True)
+    base_config = base_config.copy(  )
+    base_config[ 'paths' ][ 'save_path' ] = os.path.join( save_dir, search_id + '/' )
+    os.makedirs( base_config[ 'paths' ][ 'save_path' ], exist_ok = True )
 
-    parameter_configs = itertools.product(*search_space.values())
-    parameter_configs = list(parameter_configs)
+    parameter_configs = itertools.product( *search_space.values(  ) )
+    parameter_configs = list( parameter_configs )
 
-    named_parameter_configs: List[dict] = [dict(zip(search_space.keys(), config)) for config in parameter_configs]
+    named_parameter_configs: List[ dict ] = [ dict( zip( search_space.keys(  ), config ) ) for config in parameter_configs ]
 
-    save_dir = base_config['paths']['save_path']
+    save_dir = base_config[ 'paths' ][ 'save_path' ]
 
-    std_out_path = os.path.join(save_dir, 'std_out.txt')
+    std_out_path = os.path.join( save_dir, 'std_out.txt' )
 
-    configs_save_path = os.path.join(save_dir, 'configs.pkl')
-    with open(configs_save_path, 'wb') as f:
-        pkl.dump(named_parameter_configs, f)
+    configs_save_path = os.path.join( save_dir, 'configs.pkl' )
 
-    avg_config_losses_save_path = os.path.join(save_dir, 'avg_config_losses.pkl')
-    config_losses_save_path = os.path.join(save_dir, 'config_losses.pkl')
+    with open( configs_save_path, 'wb' ) as f:
+
+        pkl.dump( named_parameter_configs, f )
+
+    avg_config_losses_save_path = os.path.join( save_dir, 'avg_config_losses.pkl' )
+    config_losses_save_path = os.path.join( save_dir, 'config_losses.pkl' )
     
-    avg_config_losses: List[float] = []
-    config_losses: List[float] = []
+    avg_config_losses: List[ float ] = [  ]
+    config_losses: List[ float ] = [  ]
 
 
-    best_loss = float('inf')
+    best_loss = float( 'inf' )
 
-    with open(std_out_path, 'w') as f:
-        for idx, config in enumerate(named_parameter_configs):
-            losses = []
+    with open( std_out_path, 'w' ) as f:
+        
+        for idx, config in enumerate( named_parameter_configs ):
+            
+            losses = [  ]
 
-            for repeat in range(num_repeats):
-                eval_config = deepcopy(base_config)
-                eval_config['hyperparameters'].update(config)
-                eval_config['runtime']['seed'] = repeat
-                eval_config['paths']['save_path'] = os.path.join(
-                    base_config['paths']['save_path'],
+            for repeat in range( num_repeats ):
+                
+                eval_config = deepcopy( base_config )
+                eval_config[ 'hyperparameters' ].update( config )
+                eval_config[ 'runtime' ][ 'seed' ] = repeat
+                eval_config[ 'paths' ][ 'save_path' ] = os.path.join(
+                    base_config[ 'paths' ][ 'save_path' ],
                     'individual_configs/',
-                    SEARCH_ID + '_config' + str(idx) + '_repeat' + str(repeat) + '/'
+                    SEARCH_ID + '_config' + str( idx ) + '_repeat' + str( repeat ) + '/'
                 )
 
-                os.makedirs(eval_config['paths']['save_path'], exist_ok=True)
+                os.makedirs( eval_config[ 'paths' ][ 'save_path' ], exist_ok = True )
 
-                # loss = eval_closed_roa(eval_config)
+                # loss = eval_closed_roa( eval_config )
 
                 import random
-                loss = random.random()
+                loss = random.random(  )
 
-                losses.append(loss)
+                losses.append( loss )
 
-            mean_loss = sum(losses) / len(losses)
+            mean_loss = sum( losses ) / len( losses )
 
-            avg_config_losses.append(mean_loss)
-            config_losses.append(losses)
+            avg_config_losses.append( mean_loss )
+            config_losses.append( losses )
 
             if mean_loss < best_loss:
+
                 best_loss = mean_loss
 
-            iter_update_message: str = f"Config {idx} / {len(named_parameter_configs)} -  Mean Loss: {mean_loss} - Best Loss: {best_loss}"
-            print(iter_update_message)
-            f.write(iter_update_message + '\n')
+            iter_update_message: str = f"Config {idx} / {len( named_parameter_configs )} -  Mean Loss: {mean_loss} - Best Loss: {best_loss}"
+            print( iter_update_message )
+            f.write( iter_update_message + '\n' )
 
-            with open(avg_config_losses_save_path, 'wb') as losses_writer:
-                pkl.dump(avg_config_losses, losses_writer)
+            with open( avg_config_losses_save_path, 'wb' ) as losses_writer:
 
-            with open(config_losses_save_path, 'wb') as avg_losses_writer:
-                pkl.dump(config_losses, avg_losses_writer)
+                pkl.dump( avg_config_losses, losses_writer )
 
-            plt.plot(sorted(avg_config_losses))
-            plt.savefig(os.path.join(save_dir, 'loss_plot.png'))
-            plt.close()
+            with open( config_losses_save_path, 'wb') as avg_losses_writer:
 
+                pkl.dump( config_losses, avg_losses_writer )
+
+            plt.plot( sorted( avg_config_losses ) )
+            plt.savefig( os.path.join( save_dir, 'loss_plot.png' ) )
+            plt.close(  )
+
+
+# Define behavior when running as main.
 if __name__ == '__main__':
-    main()
+    
+    # Run the main function.
+    main(  )

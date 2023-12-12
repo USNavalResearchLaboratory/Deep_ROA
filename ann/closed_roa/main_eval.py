@@ -41,79 +41,83 @@ os.system( 'cls' if os.name == 'nt' else 'clear' )
 # Set matplotlib options.
 plt.rcParams.update( { 'figure.max_open_warning': 0 } )                     # Disable maximum open figure warning.
 
+# Define the base configuration.
 BASE_CONFIG = {
     'classification_parameters': {
-        'num_noisy_samples_per_level_set_point': int(5),
-        'noise_percentage': float(1e-3),
-        'dt': float(1e-3),
-        'tfinal': float(10),
+        'num_noisy_samples_per_level_set_point': int( 5 ),
+        'noise_percentage': float( 1e-3 ),
+        'dt': float( 1e-3 ),
+        'tfinal': float( 10 ),
     },
     'exploration_parameters': {
-        'volume_percentage': float(1e-2),
-        'num_points': int(50),
-        'unique_percentage': float(1e-4),
+        'volume_percentage': float( 1e-2 ),
+        'num_points': int( 50 ),
+        'unique_percentage': float( 1e-4 ),
     },
     'hyperparameters': {
         'activation_function': 'sigmoid',
-        'c_IC': float(22.1),
-        'c_BC': float(31.1),
-        'c_residual': float(69.1),
-        'c_variational': float(39.1),
-        'c_monotonicity': float(80.1),
-        'hidden_layer_widths': int(175),
-        'num_epochs': int(1000),
-        'num_hidden_layers': int(5),
-        'num_training_data': int(100e3),
-        'num_testing_data': int(20e3),
-        'learning_rate': float(0.005),
+        'c_IC': float( 22.1 ),
+        'c_BC': float( 31.1 ),
+        'c_residual': float( 69.1 ),
+        'c_variational': float( 39.1 ),
+        'c_monotonicity': float( 80.1 ),
+        'hidden_layer_widths': int( 175 ),
+        'num_epochs': int( 1000 ),
+        'num_hidden_layers': int( 5 ),
+        'num_training_data': int( 100e3 ),
+        'num_testing_data': int( 20e3 ),
+        'learning_rate': float( 0.005 ),
     },
     'newton_parameters': {
-        'tolerance': float(1e-6),
-        'max_iterations': int(1e2),
+        'tolerance': float( 1e-6 ),
+        'max_iterations': int( 1e2 ),
     },
     'paths': {
         'save_path': r'./ann/closed_roa/save',
         'load_path': r'./ann/closed_roa/load',
     },
     'plotting_parameters': {
-        'num_plotting_samples': int(1e2),
-        'plot_flag': bool(True),
+        'num_plotting_samples': int( 1e2 ),
+        'plot_flag': bool( True ),
     },
     'printing_parameters': {
-        'batch_print_frequency': int(10),
-        'epoch_print_frequency': int(10),
-        'print_flag': bool(True),
+        'batch_print_frequency': int( 10 ),
+        'epoch_print_frequency': int( 10 ),
+        'print_flag': bool( True ),
     },
     'runtime': {
-        'device': 'cuda' if torch.cuda.is_available() else 'cpu',
-        'load_flag': bool(False),
-        'seed': int(0),
-        'train_flag': bool(True),
-        'verbose_flag': bool(True),
+        'device': 'cuda' if torch.cuda.is_available(  ) else 'cpu',
+        'load_flag': bool( False ),
+        'seed': int( 0 ),
+        'train_flag': bool( True ),
+        'verbose_flag': bool( True ),
     },
     'saving_parameters': {
-        'save_flag': bool(True),
-        'save_frequency': int(10),
+        'save_flag': bool( True ),
+        'save_frequency': int( 10 ),
     }
 
 }
 
-def eval_closed_roa(config: dict = {}) -> int:
+
+# Implement a function to evaluate the closed roa.
+def eval_closed_roa( config: dict = {  } ) -> int:
+    
     """
     TODO Finish Documentation
     """
 
-    start_time = time.time()
+    start_time = time.time(  )
 
     config = BASE_CONFIG
 
     # Set the random seeds.
-    np.random.seed(config['runtime']['seed'])
-    random.seed(config['runtime']['seed'])
-    torch.manual_seed(config['runtime']['seed'])
+    np.random.seed( config[ 'runtime' ][ 'seed' ] )
+    random.seed( config[ 'runtime' ][ 'seed' ] )
+    torch.manual_seed( config[ 'runtime' ][ 'seed' ] )
 
     # Set the computational device.
-    device = torch.device(config['runtime']['device'])
+    device = torch.device( config[ 'runtime' ][ 'device' ] )
 
     # ------------------------------------------------------------
     # DEFINE PINN OPTIONS
@@ -130,62 +134,62 @@ def eval_closed_roa(config: dict = {}) -> int:
     # Define the save options.
     # -------------------------
     # [-] Relative path to the directory in which to save network data, etc.
-    save_path = str(config['paths']['save_path'])  
+    save_path = str( config[ 'paths' ][ 'save_path' ] )  
 
     # [#] Number of epochs after which to save intermediate networks during
     #     training. e.g., 1 = Save after every training epoch, 10 = Save after
     #     every ten training epochs, 100 = Save after every hundred epochs.
     save_frequency = torch.tensor(                 
-        int(config['saving_parameters']['save_frequency']),    
-        dtype=torch.int64,     
-        device=device
+        int( config[ 'saving_parameters ' ][ 'save_frequency' ] ),    
+        dtype = torch.int64,     
+        device = device
     )   
     
     # [T/F] Flag that determines whether to save networks during and after
     #       training, as well as training and network analysis plots.
-    save_flag = bool(config['saving_parameters']['save_flag']) 
+    save_flag = bool( config[ 'saving_parameters' ][ 'save_flag' ] ) 
 
     # Define the load options.
-    load_path = str(config['paths']['load_path'])    # [-] Relative path to the directory from which to load network data.
-    load_flag = bool(config['runtime']['load_flag']) # [T/F] Flag that determines whether to load network data from the given load directory before training.
+    load_path = str( config[ 'paths' ][ 'load_path' ] )    # [-] Relative path to the directory from which to load network data.
+    load_flag = bool( config[ 'runtime' ][ 'load_flag' ] ) # [T/F] Flag that determines whether to load network data from the given load directory before training.
 
     # Define the training options.
-    train_flag = bool(config['runtime']['train_flag']) # [T/F] Flag that determines whether to train the network after creation or loading.
+    train_flag = bool( config[ 'runtime' ][ 'train_flag' ] ) # [T/F] Flag that determines whether to train the network after creation or loading.
 
     # Define the printing options.
     batch_print_frequency = torch.tensor(
-        int(config['printing_parameters']['batch_print_frequency']), # [%] Percent of batches after which to print training information
-        dtype=torch.float32,                             #     (during an epoch that has been selected for printing).
-        device=device,
+        int( config[ 'printing_parameters' ][ 'batch_print_frequency' ] ), # [%] Percent of batches after which to print training information
+        dtype = torch.float32,                             #     (during an epoch that has been selected for printing).
+        device = device,
     )                    
     epoch_print_frequency = torch.tensor( # [%] Percent of epochs after which to print training information.
-        config['printing_parameters']['epoch_print_frequency'],
-        dtype=torch.float32,
-        device=device
+        config[ 'printing_parameters' ][ 'epoch_print_frequency' ],
+        dtype = torch.float32,
+        device = device
     )                    
-    print_flag = bool(config['printing_parameters']['print_flag']) # [T/F] Flag that determines whether to print more or less information when printing.
+    print_flag = bool( config[ 'printing_parameters' ][ 'print_flag' ] ) # [T/F] Flag that determines whether to print more or less information when printing.
 
     # Define the plotting options.
-    num_plotting_samples = torch.tensor( int(config['plotting_parameters']['num_plotting_samples']), dtype = torch.int32, device = device )                     # [#] Number of sample points to use per dimension when plotting network results.
-    plot_flag = bool(config['plotting_parameters']['plot_flag'])                                                                                    # [T/F] Flag that determines whether training and network analysis plots are created.
+    num_plotting_samples = torch.tensor( int( config[ 'plotting_parameters' ][ 'num_plotting_samples' ] ), dtype = torch.int32, device = device )                     # [#] Number of sample points to use per dimension when plotting network results.
+    plot_flag = bool( config[ 'plotting_parameters' ][ 'plot_flag' ] )                                                                                    # [T/F] Flag that determines whether training and network analysis plots are created.
 
     # Define the verbosity setting.
-    verbose_flag = bool(config['runtime']['verbose_flag'])                                                                                # [T/F] Flag that determines whether to print more or less information when printing.
+    verbose_flag = bool( config[ 'runtime' ][ 'verbose_flag' ] )                                                                                # [T/F] Flag that determines whether to print more or less information when printing.
 
     # Define the newton parameters (used for level set generation).
-    newton_tolerance = torch.tensor(float(config['newton_parameters']['tolerance']), dtype = torch.float32, device = device )                     # [-] Convergence tolerance for the Newton's root finding method.
-    newton_max_iterations = torch.tensor(int(config['newton_parameters']['max_iterations']), dtype = torch.int32, device = device )            # [#] Maximum number of Newton's method steps to perform.
+    newton_tolerance = torch.tensor( float( config[ 'newton_parameters' ][ 'tolerance' ] ), dtype = torch.float32, device = device )                     # [-] Convergence tolerance for the Newton's root finding method.
+    newton_max_iterations = torch.tensor( int( config[ 'newton_parameters' ][ 'max_iterations' ] ), dtype = torch.int32, device = device )            # [#] Maximum number of Newton's method steps to perform.
 
     # Define the exploration parameters (used for level set generation).
-    exploration_volume_percentage = torch.tensor(float(config['exploration_parameters']['volume_percentage']), dtype = torch.float32, device = device )        # [%] The level set method step size represented as a percentage of the domain volume.  This parameter conveniently scales the step size of the level set method as the dimension of the problem is adjusted. # This works for both initial and final times.
-    num_exploration_points = torch.tensor( int(config['exploration_parameters']['num_points']), dtype = torch.int16, device = device )                   # [#] Number of exploration points to generate at each level set method step.
-    unique_volume_percentage = torch.tensor( float(config['exploration_parameters']['unique_percentage']), dtype = torch.float32, device = device )             # [%] The tolerance used to determine whether level set points are unique as a percentage of the domain volume.  This parameter conveniently scales the unique tolerance of the level set points as the dimension of the problem is adjusted.
+    exploration_volume_percentage = torch.tensor( float( config[ 'exploration_parameters' ][ 'volume_percentage' ] ), dtype = torch.float32, device = device )        # [%] The level set method step size represented as a percentage of the domain volume.  This parameter conveniently scales the step size of the level set method as the dimension of the problem is adjusted. # This works for both initial and final times.
+    num_exploration_points = torch.tensor( int( config[ 'exploration_parameters' ][ 'num_points' ] ), dtype = torch.int16, device = device )                   # [#] Number of exploration points to generate at each level set method step.
+    unique_volume_percentage = torch.tensor( float( config[ 'exploration_parameters' ][ 'unique_percentage' ] ), dtype = torch.float32, device = device )             # [%] The tolerance used to determine whether level set points are unique as a percentage of the domain volume.  This parameter conveniently scales the unique tolerance of the level set points as the dimension of the problem is adjusted.
 
     # Define the classification parameters.
-    num_noisy_samples_per_level_set_point = torch.tensor(int(config['classification_parameters']['num_noisy_samples_per_level_set_point']), dtype = torch.int16, device = device )   # [#] Number of noisy samples per level set point.
-    classification_noise_percentage = torch.tensor(float(config['classification_parameters']['noise_percentage']), dtype = torch.float32, device = device )      # [%] The classification point noise magnitude represented as a percentage of the domain volume.  This parameter conveniently scales the noise magnitude of the classification points as the dimension of the problem is adjusted.
-    classification_dt = torch.tensor(float(config['classification_parameters']['dt']), dtype = torch.float32, device = device )                    # [s] The classification simulation timestep used to forecast classification points.
-    classification_tfinal = torch.tensor(float(config['classification_parameters']['tfinal']), dtype = torch.float32, device = device )                  # [s] The classification simulation duration used to forecast classification points.
+    num_noisy_samples_per_level_set_point = torch.tensor( int( config[ 'classification_parameters' ][ 'num_noisy_samples_per_level_set_point' ] ), dtype = torch.int16, device = device )   # [#] Number of noisy samples per level set point.
+    classification_noise_percentage = torch.tensor( float( config[ 'classification_parameters' ][ 'noise_percentage' ] ), dtype = torch.float32, device = device )      # [%] The classification point noise magnitude represented as a percentage of the domain volume.  This parameter conveniently scales the noise magnitude of the classification points as the dimension of the problem is adjusted.
+    classification_dt = torch.tensor( float( config[ 'classification_parameters' ][ 'dt' ] ), dtype = torch.float32, device = device )                    # [s] The classification simulation timestep used to forecast classification points.
+    classification_tfinal = torch.tensor( float( config[ 'classification_parameters' ][ 'tfinal' ] ), dtype = torch.float32, device = device )                  # [s] The classification simulation duration used to forecast classification points.
 
     # Create the pinn options object.
     pinn_options = pinn_options_class( save_path, save_frequency, save_flag, load_path, load_flag, train_flag, batch_print_frequency, epoch_print_frequency, print_flag, num_plotting_samples, newton_tolerance, newton_max_iterations, exploration_volume_percentage, num_exploration_points, unique_volume_percentage, classification_noise_percentage, num_noisy_samples_per_level_set_point, classification_dt, classification_tfinal, plot_flag, device, verbose_flag )
@@ -267,13 +271,13 @@ def eval_closed_roa(config: dict = {}) -> int:
     # ---------- OPTIMIZED PARAMETERS ----------
 
     # Store the network parameters.
-    activation_function = str(config['hyperparameters']['activation_function'])                                                                # [-] Activation function (e.g., tanh, sigmoid, etc.)
-    num_hidden_layers = torch.tensor(int(config['hyperparameters']['num_hidden_layers']), dtype = torch.int16, device = device )                 # [#] Number of hidden layers.
-    hidden_layer_widths = torch.tensor(int(config['hyperparameters']['hidden_layer_widths']), dtype = torch.int16, device = device )              # [#] Hidden layer widths.
+    activation_function = str( config[ 'hyperparameters' ][ 'activation_function' ] )                                                                # [-] Activation function (e.g., tanh, sigmoid, etc.)
+    num_hidden_layers = torch.tensor( int( config[ 'hyperparameters' ][ 'num_hidden_layers' ] ), dtype = torch.int16, device = device )                 # [#] Number of hidden layers.
+    hidden_layer_widths = torch.tensor( int( config[ 'hyperparameters' ][ 'hidden_layer_widths' ] ), dtype = torch.int16, device = device )              # [#] Hidden layer widths.
 
     # This set works for variational loss integration order 1.
-    num_training_data = torch.tensor( int( config['hyperparameters']['num_training_data'] ), dtype = torch.int32, device = device )      # [#] Number of training data points.
-    num_testing_data = torch.tensor( int( config['hyperparameters']['num_testing_data'] ), dtype = torch.int32, device = device )        # [#] Number of testing data points.
+    num_training_data = torch.tensor( int( config[ 'hyperparameters' ][ 'num_training_data' ] ), dtype = torch.int32, device = device )      # [#] Number of training data points.
+    num_testing_data = torch.tensor( int( config[ 'hyperparameters' ][ 'num_testing_data' ] ), dtype = torch.int32, device = device )        # [#] Number of testing data points.
 
     # Define the percent of training and testing data that should be sampled from the initial condition, the boundary condition, and the interior of the domain.
     p_initial = torch.tensor( 0.25, dtype = torch.float16, device = device )                    # [%] Percentage of training and testing data associated with the initial condition.
@@ -284,14 +288,14 @@ def eval_closed_roa(config: dict = {}) -> int:
     # num_epochs = torch.tensor( int( 100 ), dtype = torch.int32, device = device )               # [#] Number of training epochs to perform.
     # num_epochs = torch.tensor( int( 250 ), dtype = torch.int32, device = device )               # [#] Number of training epochs to perform.
     # num_epochs = torch.tensor( int( 500 ), dtype = torch.int32, device = device )               # [#] Number of training epochs to perform.
-    num_epochs = torch.tensor( int( config['hyperparameters']['num_epochs'] ), dtype = torch.int32, device = device )               # [#] Number of training epochs to perform.
+    num_epochs = torch.tensor( int( config[ 'hyperparameters' ][ 'num_epochs' ] ), dtype = torch.int32, device = device )               # [#] Number of training epochs to perform.
     # num_epochs = torch.tensor( int( 5e3 ), dtype = torch.int32, device = device )               # [#] Number of training epochs to perform.
 
     # Define the residual batch size.
     residual_batch_size = torch.tensor( int( 10e3 ), dtype = torch.int32, device = device )     # [#] Training batch size. # This works for variational loss integration order 1.
 
     # Store the optimizer parameters.
-    learning_rate = torch.tensor( float(config['hyperparameters']['learning_rate']), dtype = torch.float32, device = device )                # [-] Learning rate.
+    learning_rate = torch.tensor( float( config[ 'hyperparameters' ][ 'learning_rate' ] ), dtype = torch.float32, device = device )                # [-] Learning rate.
 
     # Define the element computation option.
     element_computation_option = 'precompute'                                                   # [string] Determines whether to precompute the finite elements associated with the variational loss (costs more memory) or to dynamically generate these elements during training (costs more time per epoch) (e.g., 'precompute, 'dynamic', etc.).
@@ -306,11 +310,11 @@ def eval_closed_roa(config: dict = {}) -> int:
     integration_order = torch.tensor( 1, dtype = torch.uint8, device = device )                 # [#] Gauss-Legendre integration order.
 
     # Store the loss coefficients.
-    c_IC = torch.tensor( float(config['hyperparameters']['c_IC']), dtype = torch.float32, device = device )                          # [-] Initial condition loss weight.
-    c_BC = torch.tensor( float(config['hyperparameters']['c_BC']), dtype = torch.float32, device = device )                          # [-] Boundary condition loss weight.
-    c_residual = torch.tensor( float(config['hyperparameters']['c_residual']), dtype = torch.float32, device = device )                    # [-] Residual loss weight.
-    c_variational = torch.tensor( float(config['hyperparameters']['c_variational']), dtype = torch.float32, device = device )                 # [-] Variational loss weight.
-    c_monotonicity = torch.tensor( float(config['hyperparameters']['c_monotonicity']), dtype = torch.float32, device = device )               # [-] Monotonicity loss weight.
+    c_IC = torch.tensor( float( config[ 'hyperparameters' ][ 'c_IC' ] ), dtype = torch.float32, device = device )                          # [-] Initial condition loss weight.
+    c_BC = torch.tensor( float( config[ 'hyperparameters' ][ 'c_BC' ] ), dtype = torch.float32, device = device )                          # [-] Boundary condition loss weight.
+    c_residual = torch.tensor( float( config[ 'hyperparameters' ][ 'c_residual' ] ), dtype = torch.float32, device = device )                    # [-] Residual loss weight.
+    c_variational = torch.tensor( float( config[ 'hyperparameters' ][ 'c_variational' ] ), dtype = torch.float32, device = device )                 # [-] Variational loss weight.
+    c_monotonicity = torch.tensor( float( config[ 'hyperparameters' ][ 'c_monotonicity' ] ), dtype = torch.float32, device = device )               # [-] Monotonicity loss weight.
 
     # Create the hyper-parameters object.
     hyperparameters = hyperparameters_class( activation_function, num_hidden_layers, hidden_layer_widths, num_training_data, num_testing_data, p_initial, p_boundary, p_residual, num_epochs, residual_batch_size, learning_rate, integration_order, element_volume_percent, element_type, element_computation_option, c_IC, c_BC, c_residual, c_variational, c_monotonicity, save_path, load_path )
@@ -413,12 +417,20 @@ def eval_closed_roa(config: dict = {}) -> int:
     print( '------------------------------------------------------------------------------------------------------------------------' )
     print( '\n' )
 
+    # Retrieve the end time.
     end_time = time.time(  )
+
+    # Print the run time.
     print( f'RUN TIME: {end_time - start_time} seconds' )
 
-    return classification_loss.cpu().detach().numpy().item()
+    # Return the classification loss.
+    return classification_loss.cpu(  ).detach(  ).numpy(  ).item(  )
 
+
+# Define behavior when running as main.
 if __name__ == "__main__":
-    loss = eval_closed_roa()
     
-    print(loss)
+    # Compute the classification loss of the closed roa example.
+    loss = eval_closed_roa(  )
+    
+    print( loss )
