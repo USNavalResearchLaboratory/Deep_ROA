@@ -18,7 +18,7 @@ SEARCH_SPACE = {
 
 # -------------------------------------------------
 # Name: base space 1 expanded around base config
-# Size: 405
+# Size: 45
 # -------------------------------------------------
 
 DEVICE: str = 'cuda:0' if torch.cuda.is_available() else 'cpu'
