@@ -1,9 +1,13 @@
 import sys
+import torch
 
 sys.path.append("./ann/closed_roa")
+sys.path.append("./general")
 
-from main_grid import main
+from main_eval import BASE_CONFIG, eval_closed_roa
+from general.grid import run_grid_search
 
+DEVICE: str = 'cuda:0' if torch.cuda.is_available() else 'cpu'
 NUM_REPEATS = 3
 SEARCH_ID = 'grid_search_0'
 SAVE_DIR = '/scratch/ssnyde9/boroa/ann/closed_roa/'
@@ -20,7 +24,10 @@ SEARCH_SPACE = {
 }
 
 if __name__ == '__main__':
-    main(
+    run_grid_search(
+        eval_func=eval_closed_roa,
+        base_config=BASE_CONFIG,
+        device=DEVICE,
         num_repeats=NUM_REPEATS,
         search_id=SEARCH_ID,
         save_dir=SAVE_DIR,
