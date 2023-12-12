@@ -144,5 +144,33 @@ SEARCH_ID = 'grid_search_9'
 SAVE_DIR = '/scratch/ssnyde9/boroa/ann/closed_roa/'
 
 SEARCH_SPACE = {
-    'c_BC': [40, 45, 50, 55, 60, 65, 69, 75, 80, 85, 90, 95, 100]
+    'c_residual': [40, 45, 50, 55, 60, 65, 69, 75, 80, 85, 90, 95, 100]
+}
+
+# -------------------------------------------------
+# Name: space space 10 - evaluating c_variational
+# Size: 9
+# -------------------------------------------------
+
+DEVICE: str = 'cuda:0' if torch.cuda.is_available() else 'cpu'
+NUM_REPEATS = 1
+SEARCH_ID = 'grid_search_10'
+SAVE_DIR = '/scratch/ssnyde9/boroa/ann/closed_roa/'
+
+SEARCH_SPACE = {
+    'c_variational': [20, 25, 30, 35, 40, 45, 50, 55, 60]
+}
+
+# -------------------------------------------------
+# Name: space space 11 - evaluating c_monotonicity
+# Size: 13
+# -------------------------------------------------
+
+DEVICE: str = 'cuda:0' if torch.cuda.is_available() else 'cpu'
+NUM_REPEATS = 1
+SEARCH_ID = 'grid_search_11'
+SAVE_DIR = '/scratch/ssnyde9/boroa/ann/closed_roa/'
+
+SEARCH_SPACE = {
+    'c_monotonicity': [60, 65, 70, 75, 80, 85, 90, 95, 100]
 }
