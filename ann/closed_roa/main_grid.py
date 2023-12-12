@@ -73,10 +73,10 @@ def main(base_config=BASE_CONFIG,
 
                 os.makedirs(eval_config['paths']['save_path'], exist_ok=True)
 
-                # loss = eval_closed_roa(eval_config)
+                loss = eval_closed_roa(eval_config)
 
-                import random
-                loss = random.random()
+                # import random
+                # loss = random.random()
 
                 losses.append(loss)
 
@@ -98,9 +98,11 @@ def main(base_config=BASE_CONFIG,
             with open(config_losses_save_path, 'wb') as avg_losses_writer:
                 pkl.dump(config_losses, avg_losses_writer)
 
+            plt.clf()
+            plt.figure()
             plt.plot(sorted(avg_config_losses))
             plt.savefig(os.path.join(save_dir, 'loss_plot.png'))
-            plt.close()
+            plt.clf()
 
 if __name__ == '__main__':
     main()
