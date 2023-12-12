@@ -1,8 +1,10 @@
+# -------------------------------------------------
 # Name: base space 0 expanded around base config
 # Size: 243
+# -------------------------------------------------
 
 DEVICE: str = 'cuda:0' if torch.cuda.is_available() else 'cpu'
-NUM_REPEATS = 3
+NUM_REPEATS = 1
 SEARCH_ID = 'grid_search_0'
 SAVE_DIR = '/scratch/ssnyde9/boroa/ann/closed_roa/'
 
@@ -14,11 +16,13 @@ SEARCH_SPACE = {
     'c_monotonicity': [float(75), float(80.1), float(85)],
 }
 
+# -------------------------------------------------
 # Name: base space 1 expanded around base config
 # Size: 405
+# -------------------------------------------------
 
 DEVICE: str = 'cuda:0' if torch.cuda.is_available() else 'cpu'
-NUM_REPEATS = 3
+NUM_REPEATS = 1
 SEARCH_ID = 'grid_search_1'
 SAVE_DIR = '/scratch/ssnyde9/boroa/ann/closed_roa/'
 
@@ -28,11 +32,12 @@ SEARCH_SPACE = {
     'learning_rate':       [float(0.01), float(0.005), float(0.001)],
 }
 
+# -------------------------------------------------
 # Name: space space 2 expanded around base config
 # Size: 405
-
+# -------------------------------------------------
 DEVICE: str = 'cuda:0' if torch.cuda.is_available() else 'cpu'
-NUM_REPEATS = 3
+NUM_REPEATS = 1
 SEARCH_ID = 'grid_search_2'
 SAVE_DIR = '/scratch/ssnyde9/boroa/ann/closed_roa/'
 
@@ -42,4 +47,74 @@ SEARCH_SPACE = {
     'hidden_layer_widths': [int(115), int(130), int(145), int(160), int(175)],
     'num_hidden_layers':   [int(3), int(4), int(5)],
     'learning_rate':       [float(0.01), float(0.005), float(0.001)],
+}
+
+# -------------------------------------------------
+# Name: space space 3 - evaluating hidden_layer_widths
+# Size: 10
+# -------------------------------------------------
+
+DEVICE: str = 'cuda:0' if torch.cuda.is_available() else 'cpu'
+NUM_REPEATS = 1
+SEARCH_ID = 'grid_search_3'
+SAVE_DIR = '/scratch/ssnyde9/boroa/ann/closed_roa/'
+
+SEARCH_SPACE = { 
+    'hidden_layer_widths': [40, 55, 70, 85, 100, 115, 130, 145, 160, 175],
+}
+
+# -------------------------------------------------
+# Name: space space 4 - evaluating number of hidden layers
+# Size: 5
+# -------------------------------------------------
+
+DEVICE: str = 'cuda:0' if torch.cuda.is_available() else 'cpu'
+NUM_REPEATS = 1
+SEARCH_ID = 'grid_search_4'
+SAVE_DIR = '/scratch/ssnyde9/boroa/ann/closed_roa/'
+
+SEARCH_SPACE = { 
+    'num_hidden_layers': [int(1), int(2), int(3), int(4), int(4)],
+}
+
+# -------------------------------------------------
+# Name: space space 5 - evaluating activation function
+# Size: 3
+# -------------------------------------------------
+
+DEVICE: str = 'cuda:0' if torch.cuda.is_available() else 'cpu'
+NUM_REPEATS = 1
+SEARCH_ID = 'grid_search_5'
+SAVE_DIR = '/scratch/ssnyde9/boroa/ann/closed_roa/'
+
+SEARCH_SPACE = { 
+    'activation_function': ["sigmoid", "tanh", "relu"],
+}
+
+# -------------------------------------------------
+# Name: space space 6 - evaluating learning_rate
+# Size: 5
+# -------------------------------------------------
+
+DEVICE: str = 'cuda:0' if torch.cuda.is_available() else 'cpu'
+NUM_REPEATS = 1
+SEARCH_ID = 'grid_search_6'
+SAVE_DIR = '/scratch/ssnyde9/boroa/ann/closed_roa/'
+
+SEARCH_SPACE = {
+    'learning_rate': [0.1, 0.05, 0.01, 0.005, 0.001, 0.0005, 0.0001]
+}
+
+# -------------------------------------------------
+# Name: space space 7 - evaluating learning_rate
+# Size: 5
+# -------------------------------------------------
+
+DEVICE: str = 'cuda:0' if torch.cuda.is_available() else 'cpu'
+NUM_REPEATS = 1
+SEARCH_ID = 'grid_search_7'
+SAVE_DIR = '/scratch/ssnyde9/boroa/ann/closed_roa/'
+
+SEARCH_SPACE = {
+    'learning_rate': [0.1, 0.05, 0.01, 0.005, 0.001, 0.0005, 0.0001]
 }
