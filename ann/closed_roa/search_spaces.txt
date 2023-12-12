@@ -174,3 +174,19 @@ SAVE_DIR = '/scratch/ssnyde9/boroa/ann/closed_roa/'
 SEARCH_SPACE = {
     'c_monotonicity': [60, 65, 70, 75, 80, 85, 90, 95, 100]
 }
+
+# -------------------------------------------------
+# Name: space space 12 - evaluating c_monotonicity
+# Size: 64
+# -------------------------------------------------
+
+DEVICE: str = 'cuda:0' if torch.cuda.is_available() else 'cpu'
+NUM_REPEATS = 1
+SEARCH_ID = 'grid_search_12'
+SAVE_DIR = '/scratch/ssnyde9/boroa/ann/closed_roa/'
+
+SEARCH_SPACE = {
+    'num_hidden_layers': [50, 100, 150, 175],
+    'hidden_layer_widths': [1, 2, 3, 4],
+    'learning_rate': [0.01, 0.05, 0.005, 0.001]
+}
