@@ -62,6 +62,7 @@ def main(base_config=BASE_CONFIG,
             losses = []
 
             for repeat in range(num_repeats):
+
                 eval_config = deepcopy(base_config)
                 eval_config['hyperparameters'].update(config)
                 eval_config['runtime']['seed'] = repeat
@@ -70,6 +71,10 @@ def main(base_config=BASE_CONFIG,
                     'individual_configs/',
                     SEARCH_ID + '_config' + str(idx) + '_repeat' + str(repeat) + '/'
                 )
+
+                if len(eval_config) != len(base_config):
+                    raise ValueError("Invalid configuration\n\n" + str(eval_config) + "\n\n" + str(base_config))
+
 
                 os.makedirs(eval_config['paths']['save_path'], exist_ok=True)
 
