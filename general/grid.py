@@ -13,28 +13,30 @@ def run_grid_search(eval_func: Callable, base_config: dict, device: str,
     TODO Add Documentation
     """
     
-    base_config = base_config.copy()
+    base_config = deepcopy(base_config)
+    base_config_len: int = len(base_config)
 
     base_config['runtime']['device'] = device
 
     base_config['paths']['save_path'] = os.path.join(save_dir, search_id + '/')
     os.makedirs(base_config['paths']['save_path'], exist_ok=True)
 
+    if len(base_config) != base_config_len:
+        raise ValueError("Invalid configuration\n\n" + str(base_config))
+
     parameter_configs = itertools.product(*search_space.values())
     parameter_configs = list(parameter_configs)
 
     named_parameter_configs: List[dict] = [dict(zip(search_space.keys(), config)) for config in parameter_configs]
 
-    save_dir = base_config['paths']['save_path']
-
     std_out_path = os.path.join(save_dir, 'std_out.txt')
 
-    configs_save_path = os.path.join(save_dir, 'configs.pkl')
+    configs_save_path = os.path.join(base_config['paths']['save_path'], 'configs.pkl')
     with open(configs_save_path, 'wb') as f:
         pkl.dump(named_parameter_configs, f)
 
-    avg_config_losses_save_path = os.path.join(save_dir, 'avg_config_losses.pkl')
-    config_losses_save_path = os.path.join(save_dir, 'config_losses.pkl')
+    avg_config_losses_save_path = os.path.join(base_config['paths']['save_path'], 'avg_config_losses.pkl')
+    config_losses_save_path = os.path.join(base_config['paths']['save_path'], 'config_losses.pkl')
     
     avg_config_losses: List[float] = []
     config_losses: List[float] = []
