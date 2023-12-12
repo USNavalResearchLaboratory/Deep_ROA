@@ -93,7 +93,7 @@ SEARCH_SPACE = {
 
 # -------------------------------------------------
 # Name: space space 6 - evaluating learning_rate
-# Size: 5
+# Size: 7
 # -------------------------------------------------
 
 DEVICE: str = 'cuda:0' if torch.cuda.is_available() else 'cpu'
