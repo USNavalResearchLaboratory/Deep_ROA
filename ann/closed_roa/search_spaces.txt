@@ -118,3 +118,17 @@ SAVE_DIR = '/scratch/ssnyde9/boroa/ann/closed_roa/'
 SEARCH_SPACE = {
     'learning_rate': [0.1, 0.05, 0.01, 0.005, 0.001, 0.0005, 0.0001]
 }
+
+# -------------------------------------------------
+# Name: space space 8 - evaluating c_IC
+# Size: 5
+# -------------------------------------------------
+
+DEVICE: str = 'cuda:0' if torch.cuda.is_available() else 'cpu'
+NUM_REPEATS = 1
+SEARCH_ID = 'grid_search_8'
+SAVE_DIR = '/scratch/ssnyde9/boroa/ann/closed_roa/'
+
+SEARCH_SPACE = {
+    'c_IC': [0.001, 0.01, 0.1, 1.0, 10.0, 100.0]
+}
