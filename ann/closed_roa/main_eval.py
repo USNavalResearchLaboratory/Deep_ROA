@@ -42,11 +42,67 @@ os.system( 'cls' if os.name == 'nt' else 'clear' )
 plt.rcParams.update( { 'figure.max_open_warning': 0 } )                     # Disable maximum open figure warning.
 
 # Define the base configuration.
+# BASE_CONFIG = {
+#     'classification_parameters': {
+#         'num_noisy_samples_per_level_set_point': int( 5 ),
+#         'noise_percentage': float( 1e-3 ),
+#         'dt': float( 1e-3 ),
+#         'tfinal': float( 10 ),
+#     },
+#     'exploration_parameters': {
+#         'volume_percentage': float( 1e-2 ),
+#         'num_points': int( 50 ),
+#         'unique_percentage': float( 1e-4 ),
+#     },
+#     'hyperparameters': {
+#         'activation_function': 'sigmoid',
+#         'c_IC': float( 22.1 ),
+#         'c_BC': float( 31.1 ),
+#         'c_residual': float( 69.1 ),
+#         'c_variational': float( 39.1 ),
+#         'c_monotonicity': float( 80.1 ),
+#         'hidden_layer_widths': int( 175 ),
+#         'num_epochs': int( 1000 ),
+#         'num_hidden_layers': int( 5 ),
+#         'num_training_data': int( 100e3 ),
+#         'num_testing_data': int( 20e3 ),
+#         'learning_rate': float( 0.005 ),
+#     },
+#     'newton_parameters': {
+#         'tolerance': float( 1e-6 ),
+#         'max_iterations': int( 1e2 ),
+#     },
+#     'paths': {
+#         'save_path': r'./ann/closed_roa/save',
+#         'load_path': r'./ann/closed_roa/load',
+#     },
+#     'plotting_parameters': {
+#         'num_plotting_samples': int( 20 ),
+#         'plot_flag': bool( True ),
+#     },
+#     'printing_parameters': {
+#         'batch_print_frequency': int( 10 ),
+#         'epoch_print_frequency': int( 10 ),
+#         'print_flag': bool( True ),
+#     },
+#     'runtime': {
+#         'device': 'cuda:8' if torch.cuda.is_available(  ) else 'cpu',
+#         'load_flag': bool( False ),
+#         'seed': int( 0 ),
+#         'train_flag': bool( True ),
+#         'verbose_flag': bool( True ),
+#     },
+#     'saving_parameters': {
+#         'save_flag': bool( True ),
+#         'save_frequency': int( 10 ),
+#     }
+# }
+
 BASE_CONFIG = {
     'classification_parameters': {
         'num_noisy_samples_per_level_set_point': int( 5 ),
         'noise_percentage': float( 1e-3 ),
-        'dt': float( 1e-3 ),
+        'dt': float( 1e-2 ),
         'tfinal': float( 10 ),
     },
     'exploration_parameters': {
@@ -77,7 +133,7 @@ BASE_CONFIG = {
         'load_path': r'./ann/closed_roa/load',
     },
     'plotting_parameters': {
-        'num_plotting_samples': int( 1e2 ),
+        'num_plotting_samples': int( 20 ),
         'plot_flag': bool( True ),
     },
     'printing_parameters': {
@@ -86,7 +142,7 @@ BASE_CONFIG = {
         'print_flag': bool( True ),
     },
     'runtime': {
-        'device': 'cuda' if torch.cuda.is_available(  ) else 'cpu',
+        'device': 'cuda:8' if torch.cuda.is_available(  ) else 'cpu',
         'load_flag': bool( False ),
         'seed': int( 0 ),
         'train_flag': bool( True ),
@@ -96,9 +152,63 @@ BASE_CONFIG = {
         'save_flag': bool( True ),
         'save_frequency': int( 10 ),
     }
-
 }
 
+# BASE_CONFIG = {
+#     'classification_parameters': {
+#         'num_noisy_samples_per_level_set_point': int( 5 ),
+#         'noise_percentage': float( 1e-3 ),
+#         'dt': float( 1e-3 ),
+#         'tfinal': float( 5 ),
+#     },
+#     'exploration_parameters': {
+#         'volume_percentage': float( 1e-2 ),
+#         'num_points': int( 50 ),
+#         'unique_percentage': float( 1e-4 ),
+#     },
+#     'hyperparameters': {
+#         'activation_function': 'sigmoid',
+#         'c_IC': float( 22.1 ),
+#         'c_BC': float( 31.1 ),
+#         'c_residual': float( 69.1 ),
+#         'c_variational': float( 39.1 ),
+#         'c_monotonicity': float( 80.1 ),
+#         'hidden_layer_widths': int( 175 ),
+#         'num_epochs': int( 1000 ),
+#         'num_hidden_layers': int( 5 ),
+#         'num_training_data': int( 100e3 ),
+#         'num_testing_data': int( 20e3 ),
+#         'learning_rate': float( 0.005 ),
+#     },
+#     'newton_parameters': {
+#         'tolerance': float( 1e-6 ),
+#         'max_iterations': int( 1e2 ),
+#     },
+#     'paths': {
+#         'save_path': r'./ann/closed_roa/save',
+#         'load_path': r'./ann/closed_roa/load',
+#     },
+#     'plotting_parameters': {
+#         'num_plotting_samples': int( 20 ),
+#         'plot_flag': bool( True ),
+#     },
+#     'printing_parameters': {
+#         'batch_print_frequency': int( 10 ),
+#         'epoch_print_frequency': int( 10 ),
+#         'print_flag': bool( True ),
+#     },
+#     'runtime': {
+#         'device': 'cuda:8' if torch.cuda.is_available(  ) else 'cpu',
+#         'load_flag': bool( True ),
+#         'seed': int( 0 ),
+#         'train_flag': bool( False ),
+#         'verbose_flag': bool( True ),
+#     },
+#     'saving_parameters': {
+#         'save_flag': bool( True ),
+#         'save_frequency': int( 10 ),
+#     }
+# }
 
 # Implement a function to evaluate the closed roa.
 def eval_closed_roa( config: dict = {  } ) -> int:
@@ -107,8 +217,28 @@ def eval_closed_roa( config: dict = {  } ) -> int:
     TODO Finish Documentation
     """
 
+    # Print out a message saying that we are beginning Deep ROA Trial.
+    print( '\n' )
+    print( '------------------------------------------------------------------------------------------------------------------------' )
+    print( '------------------------------------------------------------------------------------------------------------------------' )
+    print( 'DEEP ROA TRIAL...' )
+    print( '------------------------------------------------------------------------------------------------------------------------' )
+    print( '------------------------------------------------------------------------------------------------------------------------' )
+    print( '\n' )
+
+    # Retrieve the starting time.
     start_time = time.time(  )
 
+    # Print out a message saying that we are setting up.
+    print( '------------------------------------------------------------------------------------------------------------------------' )
+    print( 'SETTING UP...' )
+    print( '------------------------------------------------------------------------------------------------------------------------' )
+    print( '\n' )
+
+    # Retrieve the starting time for setting up.
+    start_time_setup = time.time(  )
+
+    # Retrieve the configuration.
     config = BASE_CONFIG
 
     # Set the random seeds.
@@ -130,6 +260,12 @@ def eval_closed_roa( config: dict = {  } ) -> int:
     # quality-of-life factors, such as where and how often to save, print, and
     # plot relevant network data before, during, and after the training process.
 
+    # Print out a message saying that we are setting up the pinn options.
+    print( 'Settig up PINN options...' )
+
+    # Retrieve the pinn options setup starting time.
+    start_time_pinn_options = time.time(  )
+
     # -------------------------
     # Define the save options.
     # -------------------------
@@ -140,7 +276,7 @@ def eval_closed_roa( config: dict = {  } ) -> int:
     #     training. e.g., 1 = Save after every training epoch, 10 = Save after
     #     every ten training epochs, 100 = Save after every hundred epochs.
     save_frequency = torch.tensor(                 
-        int( config[ 'saving_parameters ' ][ 'save_frequency' ] ),    
+        int( config[ 'saving_parameters' ][ 'save_frequency' ] ),    
         dtype = torch.int64,     
         device = device
     )   
@@ -197,11 +333,27 @@ def eval_closed_roa( config: dict = {  } ) -> int:
     # Save the pinn options.
     pinn_options.save( save_path, r'pinn_options.pkl' )
 
+    # Retrieve the pinn options setup end time.
+    end_time_pinn_options = time.time(  )
+
+    # Compute the pinn options duration.
+    pinn_options_duration = end_time_pinn_options - start_time_pinn_options
+
+    # Print out a message saying that we are done setting up pinn options.
+    print( f'Setting up PINN options... Done. Duration = {pinn_options_duration}s = {pinn_options_duration/60}min = {pinn_options_duration/3600}hr' )
+    print( '\n' )
+
 
     #%% ---------------------------------------- DEFINE PROBLEM SPECIFICATIONS ----------------------------------------
 
     # The problem specification are parameters that define the pde initial-boundary problem that the user would like to solve.
     # Such parameters include the pde residual, its initial-boundary conditions, and the domain of interest.
+
+    # Print out a message saying that we are setting up problem specifications.
+    print( f'Setting up problem specifications...' )
+
+    # Retrieve the pinn options setup starting time.
+    start_time_problem_specifications = time.time(  )
 
     # Define the number of inputs and outputs.
     num_inputs = torch.tensor( 3, dtype = torch.uint8, device = device )                                                                            # [#] Number of network inputs.  For the Yuan-Li PDE, this is the same as the number of spatiotemporal state variables associated with the underlying dynamical system.
@@ -256,16 +408,32 @@ def eval_closed_roa( config: dict = {  } ) -> int:
     # Save the problem specifications.
     problem_specifications.save( save_path, r'problem_specifications.pkl' )
 
+    # Retrieve the pinn options setup end time.
+    end_time_problem_specifications = time.time(  )
 
-    #%% ----------------- DEFINE HYPER-PARAMETERS --------------------
+    # Compute the pinn options duration.
+    problem_specifications_duration = end_time_problem_specifications - start_time_problem_specifications
 
-    # The hyper-parameters are those that do not affect the problem that is
+    # Print out a message saying that we are done setting up problem specifications.
+    print( f'Setting up problem specifications... Done. Duration = {problem_specifications_duration}s = {problem_specifications_duration/60}min = {problem_specifications_duration/3600}hr' )
+    print( '\n' )
+
+
+    #%% ----------------- DEFINE HYPERPARAMETERS --------------------
+
+    # The hyperparameters are those that do not affect the problem that is
     # being solved but impact how that problem is being solved, typically by
     # adjusting the underlying neural architecture under consideration or the
     # techniques used to train this network. Examples of several
-    # hyper-parameters include the number of network hidden layers, along with
+    # hyperparameters include the number of network hidden layers, along with
     # their widths and activation functions, as well as the optimizer learning
     # rate and training data quantity.
+
+    # Print out a message saying that we are setting up hyperparameters.
+    print( f'Setting up hyperparameters...' )
+
+    # Retrieve the hyperparameter setup start time.
+    start_time_hyperparameters = time.time(  )
 
 
     # ---------- OPTIMIZED PARAMETERS ----------
@@ -316,14 +484,30 @@ def eval_closed_roa( config: dict = {  } ) -> int:
     c_variational = torch.tensor( float( config[ 'hyperparameters' ][ 'c_variational' ] ), dtype = torch.float32, device = device )                 # [-] Variational loss weight.
     c_monotonicity = torch.tensor( float( config[ 'hyperparameters' ][ 'c_monotonicity' ] ), dtype = torch.float32, device = device )               # [-] Monotonicity loss weight.
 
-    # Create the hyper-parameters object.
+    # Create the hyperparameters object.
     hyperparameters = hyperparameters_class( activation_function, num_hidden_layers, hidden_layer_widths, num_training_data, num_testing_data, p_initial, p_boundary, p_residual, num_epochs, residual_batch_size, learning_rate, integration_order, element_volume_percent, element_type, element_computation_option, c_IC, c_BC, c_residual, c_variational, c_monotonicity, save_path, load_path )
 
     # Save the hyperparameters.
     hyperparameters.save( save_path, r'hyperparameters.pkl' )
 
+    # Retrieve the end time.
+    end_time_hyperparameters = time.time(  )
+
+    # Compute the hyperparameter setup duration.
+    hyperparameters_duration = end_time_hyperparameters - start_time_hyperparameters
+
+    # Print out a message saying that we are done setting up hyperparameters.
+    print( f'Setting up hyperparameters... Done. Duration = {hyperparameters_duration}s = {hyperparameters_duration/60}min = {hyperparameters_duration/3600}hr' )
+    print( '\n' )
+
 
     #%% ---------------------------------------- CREATE THE NEURAL NETWORK ----------------------------------------
+
+    # Print out a message saying that we are setting up the neural network.
+    print( f'Setting up neural network...' )
+
+    # Retrieve the neural network setup start time.
+    start_time_network = time.time(  )
 
     # Create the pinn object.
     pinn = pinn_class( pinn_options, hyperparameters, problem_specifications )
@@ -337,6 +521,28 @@ def eval_closed_roa( config: dict = {  } ) -> int:
     # Save the network before training.
     pinn.save( save_path, 'pinn_before_training.pkl' )
 
+    # Retrieve the end time.
+    end_time_network = time.time(  )
+
+    # Compute the duration.
+    network_duration = end_time_network - start_time_network
+
+    # Print out a message saying that we are done setting up the neural network.
+    print( f'Setting up neural network... Done. Duration = {network_duration}s = {network_duration/60}min = {network_duration/3600}hr' )
+    print( '\n' )
+
+    # Retrieve the setup end time.
+    end_time_setup = time.time(  )
+
+    # Compute the duration.
+    setup_duration = end_time_setup - start_time_setup
+
+    # Print out a message saying we are done setting up.
+    print( '------------------------------------------------------------------------------------------------------------------------' )
+    print( f'SETTING UP... DONE. Duration = {setup_duration}s = {setup_duration/60}min = {setup_duration/3600}hr' )
+    print( '------------------------------------------------------------------------------------------------------------------------' )
+    print( '\n' )
+
 
     #%% ---------------------------------------- TRAIN THE NEURAL NETWORK ----------------------------------------
 
@@ -349,20 +555,50 @@ def eval_closed_roa( config: dict = {  } ) -> int:
 
     #%% ---------------------------------------- COMPUTE CLASSIFICATION LOSS ----------------------------------------
 
+    # Print out a message saying that we are computing the classification loss.
+    print( '\n' )
+    print( '------------------------------------------------------------------------------------------------------------------------' )
+    print( 'COMPUTING CLASSIFICATION LOSS...' )
+    print( '------------------------------------------------------------------------------------------------------------------------' )
+    print( '\n' )
+
+    # Retrieve the starting classification time.
+    start_time_classification = time.time(  )
+
+    # Ensure that the number of noisy samples per level set point are correct.
     pinn.pinn_options.num_noisy_samples_per_level_set_point = num_noisy_samples_per_level_set_point
 
     # Compute the classification loss.
     classification_loss, num_classification_points = pinn.compute_classification_loss( pde = pinn.pde, network = pinn.network, classification_data = None, num_spatial_dimensions = pinn.domain.num_spatial_dimensions, domain = pinn.domain, plot_time = pinn.domain.temporal_domain[ 1, : ], level = torch.tensor( 0, dtype = torch.float32, device = pinn.pinn_options.device ), level_set_guesses = None, num_guesses = torch.tensor( int( 1e2 ), dtype = torch.int64, device = pinn.pinn_options.device ), newton_tolerance = newton_tolerance, newton_max_iterations = newton_max_iterations, exploration_radius = pinn.network.exploration_radius_spatial, num_exploration_points = num_exploration_points, unique_tolerance = pinn.network.unique_tolerance_spatial, classification_noise_magnitude = pinn.network.classification_noise_magnitude_spatial, num_noisy_samples_per_level_set_point = pinn.pinn_options.num_noisy_samples_per_level_set_point, domain_subset_type = 'spatial', tspan = torch.tensor( [ 0, classification_tfinal.item(  ) ], dtype = classification_tfinal.dtype, device = classification_tfinal.device ), dt = classification_dt )
 
     # Print the classification loss.
+    print( f'# of Classification Points: {num_classification_points}' )
+    print( f'Classification Loss: {classification_loss}' )
+
+    # Retrieve the ending classification time.
+    end_time_classification = time.time(  )
+
+    # Compute the classification duration.
+    classification_duration = end_time_classification - start_time_classification
+
+    # Print out a message saying that we are computing the classification loss.
     print( '\n' )
     print( '------------------------------------------------------------------------------------------------------------------------' )
-    print( f'# OF CLASSIFICATION POINTS: {num_classification_points}' )
-    print( f'CLASSIFICATION LOSS: {classification_loss}' )
+    print( f'COMPUTING CLASSIFICATION LOSS... DONE. Duration = {classification_duration}s = {classification_duration/60}min = {classification_duration/3600}hr' )
     print( '------------------------------------------------------------------------------------------------------------------------' )
+    print( '\n' )
 
 
     #%% ---------------------------------------- PLOT THE NEURAL NETWORK RESULTS ----------------------------------------
+
+    # Print out a message saying that we are plotting the results.
+    print( '------------------------------------------------------------------------------------------------------------------------' )
+    print( 'PLOTTING RESULTS...' )
+    print( '------------------------------------------------------------------------------------------------------------------------' )
+    print( '\n' )
+
+    # Retrieve the start time.
+    start_time_plotting = time.time(  )
 
     # Plot the network domain.
     figs_domain, axes_domain = pinn.plot_domain( pinn.pde, projection_dimensions = None, projection_values = None, level = torch.tensor( 0, dtype = torch.float32, device = pinn.pinn_options.device ), fig = None, domain_type = 'spatiotemporal', save_directory = save_path, as_surface = True, as_stream = True, as_contour = True, show_plot = False )
@@ -410,18 +646,31 @@ def eval_closed_roa( config: dict = {  } ) -> int:
     # Plot the classification data.
     fig_classification, ax_classification = pinn.plot_network_classifications( network = pinn.network, fig = fig_roa, dimension_labels = pinn.domain.dimension_labels, save_directory = save_path, show_plot = False )
 
+    # Retrieve the end time.
+    end_time_plotting = time.time(  )
+
+    # Compute the plotting duration.
+    plotting_duration = end_time_plotting - start_time_plotting
+
     # Print out a complete message.
-    print( '\n' )
     print( '------------------------------------------------------------------------------------------------------------------------' )
-    print( 'COMPLETE' )
+    print( f'PLOTTING RESULTS... DONE. Duration = {plotting_duration}s = {plotting_duration/60}min = {plotting_duration/3600}hr' )
     print( '------------------------------------------------------------------------------------------------------------------------' )
     print( '\n' )
 
     # Retrieve the end time.
     end_time = time.time(  )
 
-    # Print the run time.
-    print( f'RUN TIME: {end_time - start_time} seconds' )
+    # Compute the deep roa trial duration.
+    deep_roa_duration = end_time - start_time
+
+    # Print out a message stating that the deep roa trial is complete.
+    print( '------------------------------------------------------------------------------------------------------------------------' )
+    print( '------------------------------------------------------------------------------------------------------------------------' )
+    print( f'DEEP ROA TRIAL... DONE. Duration = {deep_roa_duration}s = {deep_roa_duration/60}min = {deep_roa_duration/3600}hr' )
+    print( '------------------------------------------------------------------------------------------------------------------------' )
+    print( '------------------------------------------------------------------------------------------------------------------------' )
+    print( '\n' )
 
     # Return the classification loss.
     return classification_loss.cpu(  ).detach(  ).numpy(  ).item(  )
@@ -433,4 +682,4 @@ if __name__ == "__main__":
     # Compute the classification loss of the closed roa example.
     loss = eval_closed_roa(  )
     
-    print( loss )
+    # print( loss )
