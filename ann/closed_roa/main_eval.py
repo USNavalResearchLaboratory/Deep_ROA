@@ -98,14 +98,12 @@ BASE_CONFIG = {
 
 }
 
-def eval_closed_roa(config: dict = {}) -> int:
+def eval_closed_roa(config: dict = BASE_CONFIG) -> int:
     """
     TODO Finish Documentation
     """
 
     start_time = time.time()
-
-    config = BASE_CONFIG
 
     # Set the random seeds.
     np.random.seed(config['runtime']['seed'])
@@ -131,6 +129,8 @@ def eval_closed_roa(config: dict = {}) -> int:
     # -------------------------
     # [-] Relative path to the directory in which to save network data, etc.
     save_path = str(config['paths']['save_path'])  
+
+    print(save_path)
 
     # [#] Number of epochs after which to save intermediate networks during
     #     training. e.g., 1 = Save after every training epoch, 10 = Save after
