@@ -2,6 +2,8 @@
 # save/
 # load/
 
+.testing/**
+
 # Ignore specific file extensions
 *.pkl
 *.png
