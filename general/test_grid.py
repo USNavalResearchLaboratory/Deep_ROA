@@ -23,7 +23,7 @@ SEARCH_SPACE = {
 
 def eval_func(config: dict) -> float:
     """
-    
+    TODO Add Documentation
     """
     return random.random() * config['hyperparameters']['bias']
 
@@ -35,7 +35,9 @@ def main() -> None:
         num_repeats=10,
         search_id="test_grid",
         save_dir="./.testing/",
-        search_space=SEARCH_SPACE)
+        search_space=SEARCH_SPACE,
+        debug=True
+    )
 
 if __name__ == "__main__":
     main()

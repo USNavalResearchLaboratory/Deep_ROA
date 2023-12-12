@@ -6,7 +6,8 @@ import pickle as pkl
 from typing import List, Callable
 
 def run_grid_search(eval_func: Callable, base_config: dict, device: str,
-            num_repeats: int, search_id:str, save_dir:str, search_space: dict
+            num_repeats: int, search_id:str, save_dir:str, search_space: dict,
+            debug: bool = False
         ) -> None:
     """
     TODO Add Documentation
@@ -53,6 +54,12 @@ def run_grid_search(eval_func: Callable, base_config: dict, device: str,
                     'individual_configs/',
                     search_id + '_config' + str(idx) + '_repeat' + str(repeat) + '/'
                 )
+
+                if len(eval_config) != len(base_config):
+                    raise ValueError("Invalid configuration\n\n" + str(eval_config) + "\n\n" + str(base_config))
+                
+                if debug:
+                    print(eval_config)
 
                 os.makedirs(eval_config['paths']['save_path'], exist_ok=True)
 
