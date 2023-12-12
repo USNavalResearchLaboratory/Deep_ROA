@@ -8,7 +8,13 @@ from grid import run_grid_search
 BASE_CONFIG = {
     "hyperparameters": {
         "bias": 0.0
-    }
+    },
+    "paths": {
+        "save_path": None,
+    },
+    "runtime": {
+        "device": None, 
+    },
 }
 
 SEARCH_SPACE = {

@@ -3,13 +3,13 @@ import itertools
 import matplotlib.pyplot as plt
 import os
 import pickle as pkl
-from typing import List
+from typing import List, Callable
 
-def run_grid_search(eval_func: function, base_config: dict, device: str,
+def run_grid_search(eval_func: Callable, base_config: dict, device: str,
             num_repeats: int, search_id:str, save_dir:str, search_space: dict
         ) -> None:
     """
-    
+    TODO Add Documentation
     """
     
     base_config = base_config.copy()
@@ -80,8 +80,9 @@ def run_grid_search(eval_func: function, base_config: dict, device: str,
 
             plt.clf()
             plt.figure()
-            plt.plot(sorted(avg_config_losses))
-            plt.xlabel('Configurations')
+            plt.plot(sorted(avg_config_losses), "bo-")
+            plt.xlabel('Configuration')
             plt.ylabel('Average Loss')
+            plt.title('Average Losses / Configuration')
             plt.savefig(os.path.join(save_dir, 'loss_plot.png'), dpi=300)
             plt.clf()
