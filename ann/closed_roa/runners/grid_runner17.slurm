@@ -1,7 +1,7 @@
 #!/bin/sh
 
 ## Give your job a name to distinguish it from other jobs you run.
-#SBATCH --job-name=ann-closed-roa-grid-runner3
+#SBATCH --job-name=ann-closed-roa-grid-runner17
 
 ## General partitions: all-HiPri, bigmem-HiPri   --   (12 hour limit)
 ##                     all-LoPri, bigmem-LoPri, gpuq  (5 days limit)
@@ -33,4 +33,4 @@
 source /home/${USER}/.bashrc
 cd /home/${USER}/dev/Deep_ROA_BO/
 conda activate deep-roa-bo-ann
-python ./ann/closed_roa/runners/grid_runner3.py
+python ./ann/closed_roa/runners/grid_runner17.py
