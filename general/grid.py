@@ -29,7 +29,7 @@ def run_grid_search(eval_func: Callable, base_config: dict, device: str,
 
     named_parameter_configs: List[dict] = [dict(zip(search_space.keys(), config)) for config in parameter_configs]
 
-    std_out_path = os.path.join(save_dir, 'std_out.txt')
+    std_out_path = os.path.join(base_config['paths']['save_path'], 'std_out.txt')
 
     configs_save_path = os.path.join(base_config['paths']['save_path'], 'configs.pkl')
     with open(configs_save_path, 'wb') as f:
