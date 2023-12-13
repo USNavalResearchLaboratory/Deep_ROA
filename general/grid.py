@@ -93,5 +93,5 @@ def run_grid_search(eval_func: Callable, base_config: dict, device: str,
             plt.xlabel('Configuration')
             plt.ylabel('Average Loss')
             plt.title('Average Losses / Configuration')
-            plt.savefig(os.path.join(save_dir, 'loss_plot.png'), dpi=300)
+            plt.savefig(os.path.join(base_config['paths']['save_path'], 'loss_plot.png'), dpi=300)
             plt.clf()
