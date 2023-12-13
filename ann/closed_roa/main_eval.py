@@ -223,11 +223,7 @@ def eval_closed_roa( config: dict = {  } ) -> int:
     # [#] Number of epochs after which to save intermediate networks during
     #     training. e.g., 1 = Save after every training epoch, 10 = Save after
     #     every ten training epochs, 100 = Save after every hundred epochs.
-    save_frequency = torch.tensor(                 
-        int( config[ 'saving_parameters' ][ 'save_frequency' ] ),    
-        dtype = torch.int64,     
-        device = device
-    )   
+    save_frequency = torch.tensor( int( config[ 'saving_parameters' ][ 'save_frequency' ] ), dtype = torch.int64, device = device )   
     
     # [T/F] Flag that determines whether to save networks during and after
     #       training, as well as training and network analysis plots.
@@ -241,16 +237,8 @@ def eval_closed_roa( config: dict = {  } ) -> int:
     train_flag = bool( config[ 'runtime' ][ 'train_flag' ] ) # [T/F] Flag that determines whether to train the network after creation or loading.
 
     # Define the printing options.
-    batch_print_frequency = torch.tensor(
-        int( config[ 'printing_parameters' ][ 'batch_print_frequency' ] ), # [%] Percent of batches after which to print training information
-        dtype = torch.float32,                             #     (during an epoch that has been selected for printing).
-        device = device,
-    )                    
-    epoch_print_frequency = torch.tensor( # [%] Percent of epochs after which to print training information.
-        config[ 'printing_parameters' ][ 'epoch_print_frequency' ],
-        dtype = torch.float32,
-        device = device
-    )                    
+    batch_print_frequency = torch.tensor( int( config[ 'printing_parameters' ][ 'batch_print_frequency' ] ), dtype = torch.float32, device = device ) # [%] Percent of batches after which to print training information (during an epoch that has been selected for printing).                   
+    epoch_print_frequency = torch.tensor( config[ 'printing_parameters' ][ 'epoch_print_frequency' ], dtype = torch.float32, device = device )  # [%] Percent of epochs after which to print training information.                  
     print_flag = bool( config[ 'printing_parameters' ][ 'print_flag' ] ) # [T/F] Flag that determines whether to print more or less information when printing.
 
     # Define the plotting options.
