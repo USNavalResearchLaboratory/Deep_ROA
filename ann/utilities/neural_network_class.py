@@ -905,8 +905,23 @@ class neural_network_class( torch.nn.Module ):
             # Determine whether to generate the classification data.
             if ( num_spatial_dimensions is not None ) and ( domain is not None ) and ( plot_time is not None ):
 
+                # Print out a message stating that we are generating classification data.
+                print( 'Generating classification data...' )
+
+                # Retrieve the starting time.
+                start_time = time.time(  )
+
                 # Generate the classification data.
                 classification_data = self.generate_classification_data( num_spatial_dimensions, domain, plot_time, level, level_set_guesses, newton_tolerance, newton_max_iterations, exploration_radius, num_exploration_points, unique_tolerance, classification_noise_magnitude, num_noisy_samples_per_level_set_point, domain_subset_type, True )
+
+                # Retrieve the ending time.
+                end_time = time.time(  )
+
+                # Compute the classification duration.
+                classification_duration = end_time - start_time
+
+                # Print out a message stating that we dare done generating classification data.
+                print( f'Generating classification data... Done. Duration = {classification_duration}s = {classification_duration/60}min = {classification_duration/3600}hr' )
 
             else:
 
@@ -2200,6 +2215,12 @@ class neural_network_class( torch.nn.Module ):
         # Compute the number of classification points.
         num_classification_points = classification_data.shape[ 0 ]
 
+        # Print out a message stating that we are starting to compute the classification loss.
+        print( 'Computing classifications...' )
+
+        # Retrieve the starting time.
+        start_time = time.time(  )
+
         # Determine how to compute the classification loss.
         if classification_data.numel(  ) != 0:                  # If their is classification data...
 
@@ -2243,6 +2264,15 @@ class neural_network_class( torch.nn.Module ):
             self.network_classifications = network_classifications
             self.actual_classifications = actual_classifications
             self.classification_loss = classification_loss
+
+        # Retrieve the end time.
+        end_time = time.time(  )
+
+        # Compute the classification loss duration.
+        classification_loss_duration = end_time - start_time
+
+        # Print out a message stating that we are done computing classification loss.
+        print( f'Computing classifications... Done. Duration = {classification_loss_duration}s = {classification_loss_duration/60}min = {classification_loss_duration/3600}hr' )
 
         # Return the classification loss.
         return classification_loss, num_classification_points

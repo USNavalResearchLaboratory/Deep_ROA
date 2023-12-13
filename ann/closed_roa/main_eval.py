@@ -125,7 +125,9 @@ BASE_CONFIG = {
         'learning_rate': float( 0.005 ),
     },
     'newton_parameters': {
-        'tolerance': float( 1e-6 ),
+        # 'tolerance': float( 1e-6 ),
+        # 'tolerance': float( 1e-5 ),
+        'tolerance': float( 1e-4 ),
         'max_iterations': int( 1e2 ),
     },
     'paths': {
@@ -133,7 +135,8 @@ BASE_CONFIG = {
         'load_path': r'./ann/closed_roa/load',
     },
     'plotting_parameters': {
-        'num_plotting_samples': int( 20 ),
+        # 'num_plotting_samples': int( 20 ),
+        'num_plotting_samples': int( 10 ),
         'plot_flag': bool( True ),
     },
     'printing_parameters': {
@@ -143,8 +146,8 @@ BASE_CONFIG = {
     },
     'runtime': {
         'device': 'cuda:8' if torch.cuda.is_available(  ) else 'cpu',
-        'load_flag': bool( False ),
         'seed': int( 0 ),
+        'load_flag': bool( False ),
         'train_flag': bool( True ),
         'verbose_flag': bool( True ),
     },
@@ -154,61 +157,6 @@ BASE_CONFIG = {
     }
 }
 
-# BASE_CONFIG = {
-#     'classification_parameters': {
-#         'num_noisy_samples_per_level_set_point': int( 5 ),
-#         'noise_percentage': float( 1e-3 ),
-#         'dt': float( 1e-3 ),
-#         'tfinal': float( 5 ),
-#     },
-#     'exploration_parameters': {
-#         'volume_percentage': float( 1e-2 ),
-#         'num_points': int( 50 ),
-#         'unique_percentage': float( 1e-4 ),
-#     },
-#     'hyperparameters': {
-#         'activation_function': 'sigmoid',
-#         'c_IC': float( 22.1 ),
-#         'c_BC': float( 31.1 ),
-#         'c_residual': float( 69.1 ),
-#         'c_variational': float( 39.1 ),
-#         'c_monotonicity': float( 80.1 ),
-#         'hidden_layer_widths': int( 175 ),
-#         'num_epochs': int( 1000 ),
-#         'num_hidden_layers': int( 5 ),
-#         'num_training_data': int( 100e3 ),
-#         'num_testing_data': int( 20e3 ),
-#         'learning_rate': float( 0.005 ),
-#     },
-#     'newton_parameters': {
-#         'tolerance': float( 1e-6 ),
-#         'max_iterations': int( 1e2 ),
-#     },
-#     'paths': {
-#         'save_path': r'./ann/closed_roa/save',
-#         'load_path': r'./ann/closed_roa/load',
-#     },
-#     'plotting_parameters': {
-#         'num_plotting_samples': int( 20 ),
-#         'plot_flag': bool( True ),
-#     },
-#     'printing_parameters': {
-#         'batch_print_frequency': int( 10 ),
-#         'epoch_print_frequency': int( 10 ),
-#         'print_flag': bool( True ),
-#     },
-#     'runtime': {
-#         'device': 'cuda:8' if torch.cuda.is_available(  ) else 'cpu',
-#         'load_flag': bool( True ),
-#         'seed': int( 0 ),
-#         'train_flag': bool( False ),
-#         'verbose_flag': bool( True ),
-#     },
-#     'saving_parameters': {
-#         'save_flag': bool( True ),
-#         'save_frequency': int( 10 ),
-#     }
-# }
 
 # Implement a function to evaluate the closed roa.
 def eval_closed_roa( config: dict = {  } ) -> int:
@@ -504,7 +452,7 @@ def eval_closed_roa( config: dict = {  } ) -> int:
     #%% ---------------------------------------- CREATE THE NEURAL NETWORK ----------------------------------------
 
     # Print out a message saying that we are setting up the neural network.
-    print( f'Setting up neural network...' )
+    print( 'Setting up neural network...' )
 
     # Retrieve the neural network setup start time.
     start_time_network = time.time(  )
@@ -541,7 +489,6 @@ def eval_closed_roa( config: dict = {  } ) -> int:
     print( '------------------------------------------------------------------------------------------------------------------------' )
     print( f'SETTING UP... DONE. Duration = {setup_duration}s = {setup_duration/60}min = {setup_duration/3600}hr' )
     print( '------------------------------------------------------------------------------------------------------------------------' )
-    print( '\n' )
 
 
     #%% ---------------------------------------- TRAIN THE NEURAL NETWORK ----------------------------------------
