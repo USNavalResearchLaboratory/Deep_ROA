@@ -18,10 +18,11 @@ SEARCH_ID = 'grid_search_12'
 SAVE_DIR = '/scratch/ssnyde9/boroa/ann/closed_roa/'
 
 SEARCH_SPACE = {
-    'num_hidden_layers': [50, 100, 150, 175],
-    'hidden_layer_widths': [1, 2, 3, 4],
+    'hidden_layer_widths': [50, 100, 150, 175],
+    'num_hidden_layers': [1, 2, 3, 4, 5],
     'learning_rate': [0.01, 0.05, 0.005, 0.001]
 }
+
 
 
 if __name__ == '__main__':
