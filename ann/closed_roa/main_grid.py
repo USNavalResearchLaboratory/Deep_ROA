@@ -17,27 +17,24 @@ from main_eval import BASE_CONFIG, eval_closed_roa
 # Define grid parameters.
 NUM_REPEATS = 3
 SEARCH_ID = 'grid_search_0_test'
-SAVE_DIR = '/scratch/ssnyde9/boroa/ann/closed_roa/'
+# SAVE_DIR = '/scratch/ssnyde9/boroa/ann/closed_roa/'
+SAVE_DIR = r'./ann/closed_roa/save'
 
 # Define the search space.
 SEARCH_SPACE = {
-    'c_IC': [float(17), float(22.1), float(27)],
-    'c_BC': [float(27), float(31.1), float(36)],
-    'c_residual':     [float(64), float(69.1), float(74)],
-    'c_variational':  [float(35), float(39.1), float(43)],
-    'c_monotonicity': [float(75), float(80.1), float(85)],
-    'hidden_layer_widths': [int(125), int(150), int(175)],
-    'num_hidden_layers':   [int(3), int(4), int(5)],
-    'learning_rate':       [float(0.01), float(0.005), float(0.001)],
+    'c_IC': [ float( 17 ), float( 22.1 ), float( 27 ) ],
+    'c_BC': [ float( 27 ), float( 31.1 ), float( 36 ) ],
+    'c_residual':     [ float( 64 ), float( 69.1 ), float( 74 ) ],
+    'c_variational':  [ float( 35 ), float( 39.1 ), float( 43 ) ],
+    'c_monotonicity': [ float( 75 ), float( 80.1 ), float( 85 ) ],
+    'hidden_layer_widths': [ int( 125 ), int( 150 ), int( 175 ) ],
+    'num_hidden_layers':   [ int( 3 ), int( 4 ), int( 5 ) ],
+    'learning_rate':       [ float( 0.01 ), float( 0.005 ), float( 0.001 ) ],
 }
 
 
 # Implement the main function.
-def main( base_config = BASE_CONFIG,
-          num_repeats = NUM_REPEATS,
-          search_id = SEARCH_ID,
-          save_dir = SAVE_DIR,
-          search_space = SEARCH_SPACE ):
+def main( base_config = BASE_CONFIG, num_repeats = NUM_REPEATS, search_id = SEARCH_ID, save_dir = SAVE_DIR, search_space = SEARCH_SPACE ):
     
     base_config = base_config.copy(  )
     base_config[ 'paths' ][ 'save_path' ] = os.path.join( save_dir, search_id + '/' )
@@ -64,7 +61,6 @@ def main( base_config = BASE_CONFIG,
     avg_config_losses: List[ float ] = [  ]
     config_losses: List[ float ] = [  ]
 
-
     best_loss = float( 'inf' )
 
     with open( std_out_path, 'w' ) as f:
@@ -78,11 +74,7 @@ def main( base_config = BASE_CONFIG,
                 eval_config = deepcopy( base_config )
                 eval_config[ 'hyperparameters' ].update( config )
                 eval_config[ 'runtime' ][ 'seed' ] = repeat
-                eval_config[ 'paths' ][ 'save_path' ] = os.path.join(
-                    base_config[ 'paths' ][ 'save_path' ],
-                    'individual_configs/',
-                    SEARCH_ID + '_config' + str( idx ) + '_repeat' + str( repeat ) + '/'
-                )
+                eval_config[ 'paths' ][ 'save_path' ] = os.path.join( base_config[ 'paths' ][ 'save_path' ], 'individual_configs/', SEARCH_ID + '_config' + str( idx ) + '_repeat' + str( repeat ) + '/' )
 
                 os.makedirs( eval_config[ 'paths' ][ 'save_path' ], exist_ok = True )
 
