@@ -1900,6 +1900,25 @@ class neural_network_class( torch.nn.Module ):
         return residual
 
 
+    # # Implement a function to compute the variation.
+    # def compute_variation( self, variational_data = None, derivative_required_for_residual = None, residual_code = None ):
+
+    #     # Preprocess the residual code.
+    #     residual_code = self.preprocess_residual_code( residual_code )
+
+    #     # Preprocess the derivative required for residual.
+    #     derivative_required_for_residual = self.preprocess_derivative_required_for_residual( derivative_required_for_residual )
+
+    #     # Preprocess the variational data.
+    #     variational_data = self.preprocess_variational_data( variational_data )
+
+    #     # Compute the variation.
+    #     variation = self.variation( variational_data.xs_integration_points_batch, variational_data.G_basis_values_batch, variational_data.W_integration_weights_batch, variational_data.sigma_jacobian_batch, derivative_required_for_residual, residual_code )
+
+    #     # Return the variation.
+    #     return variation
+
+
     # Implement a function to compute the variation.
     def compute_variation( self, variational_data = None, derivative_required_for_residual = None, residual_code = None ):
 
@@ -1913,10 +1932,10 @@ class neural_network_class( torch.nn.Module ):
         variational_data = self.preprocess_variational_data( variational_data )
 
         # Compute the variation.
-        variation = self.variation( variational_data.xs_integration_points_batch, variational_data.G_basis_values_batch, variational_data.W_integration_weights_batch, variational_data.sigma_jacobian_batch, derivative_required_for_residual, residual_code )
+        variation, residual = self.variation( variational_data.xs_integration_points_batch, variational_data.G_basis_values_batch, variational_data.W_integration_weights_batch, variational_data.sigma_jacobian_batch, derivative_required_for_residual, residual_code )
 
         # Return the variation.
-        return variation
+        return variation, residual
 
 
     # Implement a function to compute the temporal gradient.
@@ -2128,6 +2147,41 @@ class neural_network_class( torch.nn.Module ):
         return residual
 
 
+    # # Implement a function to compute the network variation.
+    # def variation( self, xs_integration_points_batch = None, G_basis_values_batch = None, W_integration_weights_batch = None, sigma_jacobian_batch = None, derivative_required_for_residual = None, residual_code = None ):
+
+    #     # xs_integration_points_batch = ( # elements, # points per element, # dimensions )
+    #     # G_basis_values_batch = ( # elements, # basis functions, # points per element )
+    #     # W_integration_weights_batch = ( # elements, # basis functions, # points per element )
+    #     # sigma_jacobian_batch = ( # elements, # basis functions )
+
+    #     # Preprocess the residual code.
+    #     residual_code = self.preprocess_residual_code( residual_code )
+
+    #     # Preprocess the derivative required for residual.
+    #     derivative_required_for_residual = self.preprocess_derivative_required_for_residual( derivative_required_for_residual )
+
+    #     # Setup for the variation calculation.
+    #     xs_integration_points_batch, G_basis_values_batch, W_integration_weights_batch, sigma_jacobian_batch = self.setup_variation( xs_integration_points_batch, G_basis_values_batch, W_integration_weights_batch, sigma_jacobian_batch )
+
+    #     # Infer the number of dimensions, number of basis functions, and the number of points per element from the given variational data.
+    #     num_dimensions = xs_integration_points_batch.shape[ 2 ]
+    #     num_basis_functions = G_basis_values_batch.shape[ 1 ]
+    #     num_points_per_element = G_basis_values_batch.shape[ 2 ]
+
+    #     # Compute the residual at the integration points ( Note that the integration points must be reshaped before being passed to the residual function. )
+    #     residual = self.residual( torch.reshape( xs_integration_points_batch, ( -1, num_dimensions ) ), derivative_required_for_residual, residual_code )
+
+    #     # Construct the residual tensor by reshaping the residual.
+    #     R_residual_batch = torch.repeat_interleave( torch.reshape( residual, ( -1, 1, num_points_per_element ) ), repeats = num_basis_functions, axis = 1 )         # [nc x nb x ne]
+
+    #     # Compute the variation for each element and each basis function.
+    #     variation = sigma_jacobian_batch*torch.sum( W_integration_weights_batch*G_basis_values_batch*R_residual_batch, axis = -1 )           # [nc x nb]
+
+    #     # Return the variation.
+    #     return variation
+
+
     # Implement a function to compute the network variation.
     def variation( self, xs_integration_points_batch = None, G_basis_values_batch = None, W_integration_weights_batch = None, sigma_jacobian_batch = None, derivative_required_for_residual = None, residual_code = None ):
 
@@ -2160,7 +2214,7 @@ class neural_network_class( torch.nn.Module ):
         variation = sigma_jacobian_batch*torch.sum( W_integration_weights_batch*G_basis_values_batch*R_residual_batch, axis = -1 )           # [nc x nb]
 
         # Return the variation.
-        return variation
+        return variation, residual
 
 
     # Implement a function to compute the network temporal derivative.
@@ -2369,6 +2423,28 @@ class neural_network_class( torch.nn.Module ):
         return residual_loss
 
 
+    # # Implement a function to compute the variational loss.
+    # def variational_loss( self, variational_data = None, derivative_required_for_residual = None, residual_code = None ):
+
+    #     # Preprocess the residual code.
+    #     residual_code = self.preprocess_residual_code( residual_code )
+
+    #     # Preprocess the derivative required for residual.
+    #     derivative_required_for_residual = self.preprocess_derivative_required_for_residual( derivative_required_for_residual )
+
+    #     # Preprocess the variational data.
+    #     variational_data = self.preprocess_variational_data( variational_data )
+
+    #     # Compute the network variation.
+    #     variation = self.compute_variation( variational_data, derivative_required_for_residual, residual_code )
+
+    #     # Compute the variational loss.
+    #     variational_loss = torch.nn.functional.mse_loss( variation, torch.zeros_like( variation ) )
+
+    #     # Return the variational loss.
+    #     return variational_loss
+
+
     # Implement a function to compute the variational loss.
     def variational_loss( self, variational_data = None, derivative_required_for_residual = None, residual_code = None ):
 
@@ -2382,13 +2458,16 @@ class neural_network_class( torch.nn.Module ):
         variational_data = self.preprocess_variational_data( variational_data )
 
         # Compute the network variation.
-        variation = self.compute_variation( variational_data, derivative_required_for_residual, residual_code )
+        variation, residual = self.compute_variation( variational_data, derivative_required_for_residual, residual_code )
+
+        # # Compute the network residual loss.
+        residual_loss = torch.nn.functional.mse_loss( residual, torch.zeros_like( residual ) )
 
         # Compute the variational loss.
         variational_loss = torch.nn.functional.mse_loss( variation, torch.zeros_like( variation ) )
 
         # Return the variational loss.
-        return variational_loss
+        return variational_loss, residual_loss
 
 
     # Implement a function to compute the monotonicity loss.
@@ -2441,13 +2520,17 @@ class neural_network_class( torch.nn.Module ):
         loss_bc = self.boundary_condition_loss( boundary_condition_data )
 
         # Compute the residual loss.
-        loss_residual = self.residual_loss( residual_data, derivative_required_for_residual, residual_code )
+        loss_residual1 = self.residual_loss( residual_data, derivative_required_for_residual, residual_code )
 
         # Compute the variational loss.
-        loss_variational = self.variational_loss( variational_data, derivative_required_for_residual, residual_code )
+        # loss_variational = self.variational_loss( variational_data, derivative_required_for_residual, residual_code )
+        loss_variational, loss_residual2 = self.variational_loss( variational_data, derivative_required_for_residual, residual_code )
 
         # Compute the monotonicity loss.
         loss_monotonicity = self.monotonicity_loss( residual_data, derivative_required_for_temporal_gradient, temporal_code )
+
+        # Compute the complete residual loss.
+        loss_residual = ( loss_residual1 + loss_residual2 )/2
 
         # Compute the complete loss.
         loss = self.c_IC*loss_ic + self.c_BC*loss_bc + self.c_residual*loss_residual + self.c_variational*loss_variational + self.c_monotonicity*loss_monotonicity
