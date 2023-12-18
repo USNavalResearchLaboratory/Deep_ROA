@@ -112,11 +112,21 @@ BASE_CONFIG = {
     },
     'hyperparameters': {
         'activation_function': 'sigmoid',
-        'c_IC': float( 22.1 ),
-        'c_BC': float( 31.1 ),
-        'c_residual': float( 69.1 ),
-        'c_variational': float( 39.1 ),
-        'c_monotonicity': float( 80.1 ),
+        # 'c_IC': float( 22.1 ),
+        # 'c_IC': float( 1.0 ),
+        'c_IC': float( 0.18562092 ),
+        # 'c_BC': float( 31.1 ),
+        # 'c_BC': float( 1.0 ),]
+        'c_BC': float( 0.26121314 ),
+        # 'c_residual': float( 69.1 ),
+        # 'c_residual': float( 0.0 ),
+        'c_residual': float( 0.58038033 ),
+        # 'c_variational': float( 39.1 ),
+        # 'c_variational': float( 0.0 ),
+        'c_variational': float( 0.32840624 ),
+        # 'c_monotonicity': float( 80.1 ),
+        # 'c_monotonicity': float( 0.0 ),
+        'c_monotonicity': float( 0.67277083 ),
         'hidden_layer_widths': int( 175 ),
         'num_epochs': int( 250 ),
         # 'num_epochs': int( 500 ),
@@ -124,7 +134,8 @@ BASE_CONFIG = {
         'num_hidden_layers': int( 5 ),
         'num_training_data': int( 100e3 ),
         'num_testing_data': int( 20e3 ),
-        'learning_rate': float( 0.005 ),
+        # 'learning_rate': float( 0.005 ),
+        'learning_rate': float( 0.0075 ),
     },
     'newton_parameters': {
         # 'tolerance': float( 1e-6 ),
@@ -137,10 +148,10 @@ BASE_CONFIG = {
         'load_path': r'./ann/closed_roa/load',
     },
     'plotting_parameters': {
-        # 'num_plotting_samples': int( 20 ),
-        'num_plotting_samples': int( 10 ),
-        'plot_flag': bool( False ),
-        # 'plot_flag': bool( True ),
+        'num_plotting_samples': int( 20 ),
+        # 'num_plotting_samples': int( 10 ),
+        # 'plot_flag': bool( False ),
+        'plot_flag': bool( True ),
     },
     'printing_parameters': {
         'batch_print_frequency': int( 10 ),
@@ -154,10 +165,10 @@ BASE_CONFIG = {
         # 'seed': int( 2 ),
         # 'seed': int( 3 ),
         # 'seed': int( 4 ),
-        # 'load_flag': bool( False ),
-        'load_flag': bool( True ),
-        'train_flag': bool( False ),
-        # 'train_flag': bool( True ),
+        'load_flag': bool( False ),
+        # 'load_flag': bool( True ),
+        # 'train_flag': bool( False ),
+        'train_flag': bool( True ),
         'verbose_flag': bool( True ),
     },
     'saving_parameters': {
@@ -226,17 +237,10 @@ def eval_closed_roa( config: dict = {  } ) -> int:
     # -------------------------
     # Define the save options.
     # -------------------------
-    # [-] Relative path to the directory in which to save network data, etc.
-    save_path = str( config[ 'paths' ][ 'save_path' ] )  
+    save_path = str( config[ 'paths' ][ 'save_path' ] )      # [-] Relative path to the directory in which to save network data, etc.
+    save_frequency = torch.tensor( int( config[ 'saving_parameters' ][ 'save_frequency' ] ), dtype = torch.int64, device = device )        # [#] Number of epochs after which to save intermediate networks during training. e.g., 1 = Save after every training epoch, 10 = Save after every ten training epochs, 100 = Save after every hundred epochs.
+    save_flag = bool( config[ 'saving_parameters' ][ 'save_flag' ] )      # [T/F] Flag that determines whether to save networks during and after training, as well as training and network analysis plots.
 
-    # [#] Number of epochs after which to save intermediate networks during
-    #     training. e.g., 1 = Save after every training epoch, 10 = Save after
-    #     every ten training epochs, 100 = Save after every hundred epochs.
-    save_frequency = torch.tensor( int( config[ 'saving_parameters' ][ 'save_frequency' ] ), dtype = torch.int64, device = device )   
-    
-    # [T/F] Flag that determines whether to save networks during and after
-    #       training, as well as training and network analysis plots.
-    save_flag = bool( config[ 'saving_parameters' ][ 'save_flag' ] ) 
 
     # Define the load options.
     load_path = str( config[ 'paths' ][ 'load_path' ] )    # [-] Relative path to the directory from which to load network data.
@@ -306,13 +310,15 @@ def eval_closed_roa( config: dict = {  } ) -> int:
 
     # Define the temporal and spatial domains.
     domain_type = 'cartesian'                                                                                                                       # [-] The type of domain (cartesian, spherical, etc.).  Only cartesian domains are currently supported.
-    temporal_domain = torch.tensor( [ 0, 30 ], dtype = torch.float32, device = device )                                                             # [-] Temporal domain of the underlying dynamical system.
+    # temporal_domain = torch.tensor( [ 0, 30 ], dtype = torch.float32, device = device )                                                             # [-] Temporal domain of the underlying dynamical system.
+    # temporal_domain = torch.tensor( [ 0, 10 ], dtype = torch.float32, device = device )                                                             # [-] Temporal domain of the underlying dynamical system.
+    temporal_domain = torch.tensor( [ 0, 60 ], dtype = torch.float32, device = device )                                                             # [-] Temporal domain of the underlying dynamical system.
     spatial_domain = torch.tensor( [ [ -1, 4 ], [ -1, 4 ] ], dtype = torch.float32, device = device ).T                                             # [-] Spatial domain of the underlying dynamical system.
 
     # Define the initial condition parameters.
-    R0 = torch.tensor( 1, dtype = torch.float32, device = device )                                                                                  # [-] Initial condition radius.
-    A0 = torch.tensor( 2, dtype = torch.float32, device = device )                                                                                  # [-] Initial condition amplitude.
-    S0 = torch.tensor( 20, dtype = torch.float32, device = device )                                                                                 # [-] Initial condition slope.
+    R0 = torch.tensor( 1.0, dtype = torch.float32, device = device )                                                                                  # [-] Initial condition radius.
+    A0 = torch.tensor( 2.0, dtype = torch.float32, device = device )                                                                                  # [-] Initial condition amplitude.
+    S0 = torch.tensor( 20.0, dtype = torch.float32, device = device )                                                                                 # [-] Initial condition slope.
     P0_shift = torch.tensor( [ math.pi/2, math.pi/2 ], dtype = torch.float32, device = device )                                                     # [-] Initial condition input offset.
     z0_shift = -A0/2                                                                                                                                # [-] Initial condition output offset.
 
@@ -385,7 +391,7 @@ def eval_closed_roa( config: dict = {  } ) -> int:
 
     # Store the network parameters.
     activation_function = str( config[ 'hyperparameters' ][ 'activation_function' ] )                                                                # [-] Activation function (e.g., tanh, sigmoid, etc.)
-    num_hidden_layers = torch.tensor( int( config[ 'hyperparameters' ][ 'num_hidden_layers' ] ), dtype = torch.int16, device = device )                 # [#] Number of hidden layers.
+    num_hidden_layers = torch.tensor( int( config[ 'hyperparameters' ][ 'num_hidden_layers' ] ), dtype = torch.uint8, device = device )                 # [#] Number of hidden layers.
     hidden_layer_widths = torch.tensor( int( config[ 'hyperparameters' ][ 'hidden_layer_widths' ] ), dtype = torch.int16, device = device )              # [#] Hidden layer widths.
 
     # This set works for variational loss integration order 1.
@@ -398,11 +404,7 @@ def eval_closed_roa( config: dict = {  } ) -> int:
     p_residual = torch.tensor( 0.5, dtype = torch.float16, device = device )                    # [%] Percentage of training and testing data associated with the residual.
 
     # Define the number of training epochs.
-    # num_epochs = torch.tensor( int( 100 ), dtype = torch.int32, device = device )               # [#] Number of training epochs to perform.
-    # num_epochs = torch.tensor( int( 250 ), dtype = torch.int32, device = device )               # [#] Number of training epochs to perform.
-    # num_epochs = torch.tensor( int( 500 ), dtype = torch.int32, device = device )               # [#] Number of training epochs to perform.
     num_epochs = torch.tensor( int( config[ 'hyperparameters' ][ 'num_epochs' ] ), dtype = torch.int32, device = device )               # [#] Number of training epochs to perform.
-    # num_epochs = torch.tensor( int( 5e3 ), dtype = torch.int32, device = device )               # [#] Number of training epochs to perform.
 
     # Define the residual batch size.
     residual_batch_size = torch.tensor( int( 10e3 ), dtype = torch.int32, device = device )     # [#] Training batch size. # This works for variational loss integration order 1.
@@ -629,4 +631,4 @@ if __name__ == "__main__":
     # Compute the classification loss of the closed roa example.
     loss = eval_closed_roa(  )
     
-    # print( loss )
+    # print( f'LOSS: {loss}' )
