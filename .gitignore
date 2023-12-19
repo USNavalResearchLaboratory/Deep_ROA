@@ -13,3 +13,4 @@
 */ann/utilities/__pycache__
 */snn/utilities/__pycache__
 **/*.pyc
+.DS_Store
