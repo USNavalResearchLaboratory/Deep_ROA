@@ -98,6 +98,63 @@ plt.rcParams.update( { 'figure.max_open_warning': 0 } )                     # Di
 #     }
 # }
 
+# BASE_CONFIG = {
+#     'classification_parameters': {
+#         'num_noisy_samples_per_level_set_point': int( 5 ),
+#         'noise_percentage': float( 1e-3 ),
+#         'dt': float( 1e-2 ),
+#         'tfinal': float( 10 ),
+#     },
+#     'exploration_parameters': {
+#         'volume_percentage': float( 1e-2 ),
+#         'num_points': int( 50 ),
+#         'unique_percentage': float( 1e-4 ),
+#     },
+#     'hyperparameters': {
+#         'activation_function': 'sigmoid',
+#         'c_IC': float( 22.1 ),
+#         'c_BC': float( 31.1 ),
+#         'c_residual': float( 69.1 ),
+#         'c_variational': float( 39.1 ),
+#         'c_monotonicity': float( 80.1 ),
+#         'hidden_layer_widths': int( 175 ),
+#         'num_epochs': int( 250 ),
+#         'num_hidden_layers': int( 5 ),
+#         'num_training_data': int( 100e3 ),
+#         'num_testing_data': int( 20e3 ),
+#         'learning_rate': float( 0.005 ),
+#     },
+#     'newton_parameters': {
+#         'tolerance': float( 1e-4 ),
+#         'max_iterations': int( 1e2 ),
+#     },
+#     'paths': {
+#         'save_path': r'./ann/closed_roa/save',
+#         'load_path': r'./ann/closed_roa/load',
+#     },
+#     'plotting_parameters': {
+#         'num_plotting_samples': int( 20 ),
+#         'plot_flag': bool( False ),
+#     },
+#     'printing_parameters': {
+#         'batch_print_frequency': int( 10 ),
+#         'epoch_print_frequency': int( 10 ),
+#         'print_flag': bool( True ),
+#     },
+#     'runtime': {
+#         'device': 'cuda:8' if torch.cuda.is_available(  ) else 'cpu',
+#         'seed': int( 0 ),
+#         'load_flag': bool( False ),
+#         'train_flag': bool( True ),
+#         'verbose_flag': bool( True ),
+#     },
+#     'saving_parameters': {
+#         'save_flag': bool( True ),
+#         'save_frequency': int( 10 ),
+#     }
+# }
+
+
 BASE_CONFIG = {
     'classification_parameters': {
         'num_noisy_samples_per_level_set_point': int( 5 ),
@@ -112,38 +169,20 @@ BASE_CONFIG = {
     },
     'hyperparameters': {
         'activation_function': 'sigmoid',
-        # 'c_IC': float( 22.1 ),
-        # 'c_IC': float( 100.0 ),
-        'c_IC': float( 1.0 ),
-        # 'c_IC': float( 0.18562092 ),
-        # 'c_BC': float( 31.1 ),
-        'c_BC': float( 1.0 ),
-        # 'c_BC': float( 0.26121314 ),
-        # 'c_residual': float( 69.1 ),
-        'c_residual': float( 0.0 ),
-        # 'c_residual': float( 1.0 ),
-        # 'c_residual': float( 0.58038033 ),
-        # 'c_variational': float( 39.1 ),
-        'c_variational': float( 0.0 ),
-        # 'c_variational': float( 1.0 ),
-        # 'c_variational': float( 0.32840624 ),
-        # 'c_monotonicity': float( 80.1 ),
-        'c_monotonicity': float( 0.0 ),
-        # 'c_monotonicity': float( 1000.0 ),
-        # 'c_monotonicity': float( 0.67277083 ),
+        'c_IC': float( 22.1 ),
+        'c_BC': float( 31.1 ),
+        'c_residual': float( 69.1 ),
+        'c_residual_gradient': float( 0 ),
+        'c_variational': float( 39.1 ),
+        'c_monotonicity': float( 80.1 ),
         'hidden_layer_widths': int( 175 ),
-        # 'num_epochs': int( 250 ),
-        # 'num_epochs': int( 500 ),
-        'num_epochs': int( 1000 ),
+        'num_epochs': int( 250 ),
         'num_hidden_layers': int( 5 ),
         'num_training_data': int( 100e3 ),
         'num_testing_data': int( 20e3 ),
         'learning_rate': float( 0.005 ),
-        # 'learning_rate': float( 0.0075 ),
     },
     'newton_parameters': {
-        # 'tolerance': float( 1e-6 ),
-        # 'tolerance': float( 1e-5 ),
         'tolerance': float( 1e-4 ),
         'max_iterations': int( 1e2 ),
     },
@@ -153,9 +192,7 @@ BASE_CONFIG = {
     },
     'plotting_parameters': {
         'num_plotting_samples': int( 20 ),
-        # 'num_plotting_samples': int( 10 ),
-        # 'plot_flag': bool( False ),
-        'plot_flag': bool( True ),
+        'plot_flag': bool( False ),
     },
     'printing_parameters': {
         'batch_print_frequency': int( 10 ),
@@ -165,13 +202,7 @@ BASE_CONFIG = {
     'runtime': {
         'device': 'cuda:8' if torch.cuda.is_available(  ) else 'cpu',
         'seed': int( 0 ),
-        # 'seed': int( 1 ),
-        # 'seed': int( 2 ),
-        # 'seed': int( 3 ),
-        # 'seed': int( 4 ),
         'load_flag': bool( False ),
-        # 'load_flag': bool( True ),
-        # 'train_flag': bool( False ),
         'train_flag': bool( True ),
         'verbose_flag': bool( True ),
     },
@@ -180,7 +211,6 @@ BASE_CONFIG = {
         'save_frequency': int( 10 ),
     }
 }
-
 
 # Implement a function to evaluate the closed roa.
 def eval_closed_roa( config: dict = {  } ) -> int:
@@ -312,27 +342,16 @@ def eval_closed_roa( config: dict = {  } ) -> int:
     num_outputs = torch.tensor( 1, dtype = torch.uint8, device = device )                                                                           # [#] Number of network outputs.  For the Yuan-Li PDE, this is always one.
 
     # Define the temporal and spatial domains.
-    domain_type = 'cartesian'    
-    # temporal_domain = torch.tensor( [ 0, 1 ], dtype = torch.float32, device = device )                                                             # [-] Temporal domain of the underlying dynamical system.                                                                                                                   # [-] The type of domain (cartesian, spherical, etc.).  Only cartesian domains are currently supported.
-    # temporal_domain = torch.tensor( [ 0, 10 ], dtype = torch.float32, device = device )                                                             # [-] Temporal domain of the underlying dynamical system.                                                                                                                   # [-] The type of domain (cartesian, spherical, etc.).  Only cartesian domains are currently supported.
-    temporal_domain = torch.tensor( [ 0, 30 ], dtype = torch.float32, device = device )                                                             # [-] Temporal domain of the underlying dynamical system.
-    # temporal_domain = torch.tensor( [ 0, 60 ], dtype = torch.float32, device = device )                                                             # [-] Temporal domain of the underlying dynamical system.
-    # temporal_domain = torch.tensor( [ 0, 120 ], dtype = torch.float32, device = device )                                                             # [-] Temporal domain of the underlying dynamical system.
-    # spatial_domain = torch.tensor( [ [ -1, 4 ], [ -1, 4 ] ], dtype = torch.float32, device = device ).T                                             # [-] Spatial domain of the underlying dynamical system.
-    spatial_domain = torch.tensor( [ [ -2*math.pi, 2*math.pi ], [ -6*math.pi, 6*math.pi ] ], dtype = torch.float32, device = device ).T                                             # [-] Spatial domain of the underlying dynamical system.
+    domain_type = 'cartesian'                                                                                                             # [-] The type of domain (cartesian, spherical, etc.).  Only cartesian domains are currently supported.
+    temporal_domain = torch.tensor( [ 0, 30 ], dtype = torch.float32, device = device )                                                             # [-] Temporal domain of the underlying dynamical system.                                                         # [-] Temporal domain of the underlying dynamical system.
+    spatial_domain = torch.tensor( [ [ -1, 4 ], [ -1, 4 ] ], dtype = torch.float32, device = device ).T                                             # [-] Spatial domain of the underlying dynamical system.
 
     # Define the initial condition parameters.
-    # R0 = torch.tensor( 1.0, dtype = torch.float32, device = device )                                                                                  # [-] Initial condition radius.
-    # A0 = torch.tensor( 2.0, dtype = torch.float32, device = device )                                                                                  # [-] Initial condition amplitude.
-    # S0 = torch.tensor( 20.0, dtype = torch.float32, device = device )                                                                                 # [-] Initial condition slope.
-    # P0_shift = torch.tensor( [ math.pi/2, math.pi/2 ], dtype = torch.float32, device = device )                                                     # [-] Initial condition input offset.
-    # z0_shift = -A0/2                                                                                                                                # [-] Initial condition output offset.
-
     R0 = torch.tensor( 1.0, dtype = torch.float32, device = device )                                                                                  # [-] Initial condition radius.
     A0 = torch.tensor( 2.0, dtype = torch.float32, device = device )                                                                                  # [-] Initial condition amplitude.
     S0 = torch.tensor( 20.0, dtype = torch.float32, device = device )                                                                                 # [-] Initial condition slope.
-    P0_shift = torch.tensor( [ 0, 0 ], dtype = torch.float32, device = device )                                                     # [-] Initial condition input offset.
-    z0_shift = -A0/2   
+    P0_shift = torch.tensor( [ math.pi/2, math.pi/2 ], dtype = torch.float32, device = device )                                                     # [-] Initial condition input offset.
+    z0_shift = -A0/2                                                                                                                                # [-] Initial condition output offset.
 
     # Define the flow functions.
     flow_function1 = lambda s: torch.unsqueeze( -torch.sin( s[ :, 1 ] )*( -0.1*torch.cos( s[ :, 1 ] ) - torch.cos( s[ :, 2 ] ) ), dim = 1 )         # [-] Flow function associated with the first state of the underlying dynamical system.
@@ -451,11 +470,12 @@ def eval_closed_roa( config: dict = {  } ) -> int:
     c_IC = torch.tensor( float( config[ 'hyperparameters' ][ 'c_IC' ] ), dtype = torch.float32, device = device )                          # [-] Initial condition loss weight.
     c_BC = torch.tensor( float( config[ 'hyperparameters' ][ 'c_BC' ] ), dtype = torch.float32, device = device )                          # [-] Boundary condition loss weight.
     c_residual = torch.tensor( float( config[ 'hyperparameters' ][ 'c_residual' ] ), dtype = torch.float32, device = device )                    # [-] Residual loss weight.
+    c_residual_gradient = torch.tensor( float( config[ 'hyperparameters' ][ 'c_residual_gradient' ] ), dtype = torch.float32, device = device )                    # [-] Residual gradient loss weight.
     c_variational = torch.tensor( float( config[ 'hyperparameters' ][ 'c_variational' ] ), dtype = torch.float32, device = device )                 # [-] Variational loss weight.
     c_monotonicity = torch.tensor( float( config[ 'hyperparameters' ][ 'c_monotonicity' ] ), dtype = torch.float32, device = device )               # [-] Monotonicity loss weight.
 
     # Create the hyperparameters object.
-    hyperparameters = hyperparameters_class( activation_function, num_hidden_layers, hidden_layer_widths, num_training_data, num_testing_data, p_initial, p_boundary, p_residual, num_epochs, residual_batch_size, learning_rate, integration_order, element_volume_percent, element_type, element_computation_option, c_IC, c_BC, c_residual, c_variational, c_monotonicity, save_path, load_path )
+    hyperparameters = hyperparameters_class( activation_function, num_hidden_layers, hidden_layer_widths, num_training_data, num_testing_data, p_initial, p_boundary, p_residual, num_epochs, residual_batch_size, learning_rate, integration_order, element_volume_percent, element_type, element_computation_option, c_IC, c_BC, c_residual, c_residual_gradient, c_variational, c_monotonicity, save_path, load_path )
 
     # Save the hyperparameters.
     hyperparameters.save( save_path, r'hyperparameters.pkl' )
@@ -654,4 +674,3 @@ if __name__ == "__main__":
     # Compute the classification loss of the closed roa example.
     loss = eval_closed_roa(  )
     
-    # print( f'LOSS: {loss}' )

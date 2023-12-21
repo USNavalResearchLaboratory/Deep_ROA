@@ -35,8 +35,144 @@ class neural_network_class( torch.nn.Module ):
 
     #%% ------------------------------------------------------------ CONSTRUCTOR ------------------------------------------------------------
 
+    # # Implement the class constructor.
+    # def __init__( self, layers, activation_string, learning_rate, residual_batch_size, num_epochs, residual_function, residual_code, temporal_code, training_data, testing_data, plotting_data, dimension_labels, element_computation_option, batch_print_frequency, epoch_print_frequency, c_IC, c_BC, c_residual, c_variational, c_monotonicity, newton_tolerance, newton_max_iterations, exploration_radius_spatial, exploration_radius_spatiotemporal, num_exploration_points, unique_tolerance_spatial, unique_tolerance_spatiotemporal, classification_noise_magnitude_spatial, classification_noise_magnitude_spatiotemporal, device = 'cpu', verbose_flag = False ):
+
+    #     # Construct the parent class.
+    #     super( neural_network_class, self ).__init__(  )
+
+    #     # Create an instance of the tensor utilities class.
+    #     self.tensor_utilities = tensor_utilities_class(  )
+
+    #     # Create an instance of the classification utilities class.
+    #     self.classification_utilities = classification_utilities_class(  )
+
+    #     # Create an instance of the plotting utilities class.
+    #     self.plotting_utilities = plotting_utilities_class(  )
+
+    #     # Store the device.
+    #     self.device = device
+
+    #     # Store the verbosity setting.
+    #     self.verbose_flag = verbose_flag
+
+    #     # Store the dimension labels.
+    #     self.dimension_labels = dimension_labels
+
+    #     # Store the element computation option.
+    #     self.element_computation_option = element_computation_option
+
+
+    #     #%% -------------------- Store Hyper-parameters --------------------
+
+    #     # Store the network structure data.
+    #     self.layers = self.validate_layers( layers )
+    #     self.num_inputs = self.layers[ 0 ]
+    #     self.num_outputs = self.layers[ -1 ]
+    #     self.num_hidden_layers = self.compute_num_hidden_layers( self.layers )
+    #     self.num_weights_biases = self.compute_num_weights_biases( self.layers )
+    #     self.activation_string = self.validate_activation_string( activation_string )
+
+    #     # Store the training parameters.
+    #     self.learning_rate = learning_rate
+    #     self.residual_batch_size = residual_batch_size
+    #     self.num_epochs = num_epochs
+
+
+    #     #%% -------------------- PDE INFORMATION --------------------
+
+    #     # Store the residual information.
+    #     self.residual_function = self.validate_residual_function( residual_function )
+    #     self.residual_code = self.validate_residual_code( residual_code )
+    #     self.temporal_code = self.validate_temporal_code( temporal_code )
+    #     self.derivative_required_for_residual = self.residual_code2derivative_requirements( self.residual_code )
+    #     self.derivative_required_for_temporal_gradient = self.temporal_code2derivative_requirements( self.temporal_code )
+    #     self.num_residual_inputs = self.compute_num_residual_required_derivatives( self.residual_code )
+
+    #     # Ensure that the residual function and residual code are compatible.
+    #     assert self.is_residual_function_code_compatible( self.residual_function, num_residual_function_inputs = self.num_residual_inputs )
+
+
+    #     #%% -------------------- Store Training, Testing, & Plotting Data --------------------
+
+    #     # Store the training data.
+    #     self.training_data = training_data
+
+    #     # Store the testing data.
+    #     self.testing_data = testing_data
+
+    #     # Store the plotting data.
+    #     self.plotting_data = plotting_data
+
+
+    #     #%% -------------------- Store Printing Options --------------------
+
+    #     # Store the batch and epoch print frequencies.
+    #     self.batch_print_frequency = batch_print_frequency
+    #     self.epoch_print_frequency = epoch_print_frequency
+
+
+    #     #%% -------------------- Store Loss Parameters --------------------
+
+    #     # Store the loss parameters.
+    #     self.c_IC = c_IC
+    #     self.c_BC = c_BC
+    #     self.c_residual = c_residual
+    #     self.c_variational = c_variational
+    #     self.c_monotonicity = c_monotonicity
+        
+
+    #     #%% -------------------- Store the Level Set Parameters --------------------
+
+    #     # Store the newton parameters.
+    #     self.newton_tolerance = newton_tolerance
+    #     self.newton_max_iterations = newton_max_iterations
+        
+    #     # Store the exploration parameters.
+    #     self.exploration_radius_spatial = exploration_radius_spatial
+    #     self.exploration_radius_spatiotemporal = exploration_radius_spatiotemporal
+    #     self.num_exploration_points = num_exploration_points
+    #     self.unique_tolerance_spatial = unique_tolerance_spatial
+    #     self.unique_tolerance_spatiotemporal = unique_tolerance_spatiotemporal
+
+    #     # Store the classification loss parameters.
+    #     self.classification_noise_magnitude_spatial = classification_noise_magnitude_spatial
+    #     self.classification_noise_magnitude_spatiotemporal = classification_noise_magnitude_spatiotemporal
+
+    #     # Store the classification data.
+    #     self.classification_data = torch.tensor( [  ], dtype = torch.float32, device = self.device )
+    #     self.classification_data_forecast = torch.tensor( [  ], dtype = torch.float32, device = self.device )
+    #     self.network_classifications = torch.tensor( [  ], dtype = torch.bool, device = self.device )
+    #     self.actual_classifications = torch.tensor( [  ], dtype = torch.bool, device = self.device )
+    #     self.classification_loss = torch.tensor( [  ], dtype = torch.float32, device = self.device )
+
+
+    #     #%% -------------------- Initialization Functions --------------------
+
+    #     # Compute the number of batches.
+    #     self.num_batches, self.initial_condition_batch_size, self.boundary_condition_batch_size = self.initialize_batch_info( self.training_data.initial_condition_data[ 0 ].num_data_points, self.training_data.boundary_condition_data[ 0 ].num_data_points, self.training_data.num_residual_points, self.residual_batch_size )
+
+    #     # Store the activation function choice.
+    #     self.activation = self.initialize_activation_function( self.activation_string )
+
+    #     # Initialize the forward stack.
+    #     self.forward_stack = self.initialize_forward_stack( self.layers, self.activation )
+
+    #     # Initialize the optimizer.
+    #     self.optimizer = torch.optim.Adam( self.parameters(  ), lr = self.learning_rate, betas = ( 0.9, 0.999 ), eps = 1e-08, weight_decay = 0 )
+
+    #     # Initialize the training losses, testing epochs, and testing losses.
+    #     self.training_losses, self.testing_epochs, self.testing_losses = self.initialize_training_testing_losses( self.num_epochs )
+
+    #     # Initialize the classification loss function.
+    #     self.classification_loss_function = torch.nn.BCELoss(  )
+
+    #     # Initialize the classification loss.
+    #     self.set_classification_loss( torch.empty( 1, dtype = torch.float32, device = self.device ) )
+
+
     # Implement the class constructor.
-    def __init__( self, layers, activation_string, learning_rate, residual_batch_size, num_epochs, residual_function, residual_code, temporal_code, training_data, testing_data, plotting_data, dimension_labels, element_computation_option, batch_print_frequency, epoch_print_frequency, c_IC, c_BC, c_residual, c_variational, c_monotonicity, newton_tolerance, newton_max_iterations, exploration_radius_spatial, exploration_radius_spatiotemporal, num_exploration_points, unique_tolerance_spatial, unique_tolerance_spatiotemporal, classification_noise_magnitude_spatial, classification_noise_magnitude_spatiotemporal, device = 'cpu', verbose_flag = False ):
+    def __init__( self, layers, activation_string, learning_rate, residual_batch_size, num_epochs, residual_function, residual_code, temporal_code, training_data, testing_data, plotting_data, dimension_labels, element_computation_option, batch_print_frequency, epoch_print_frequency, c_IC, c_BC, c_residual, c_residual_gradient, c_variational, c_monotonicity, newton_tolerance, newton_max_iterations, exploration_radius_spatial, exploration_radius_spatiotemporal, num_exploration_points, unique_tolerance_spatial, unique_tolerance_spatiotemporal, classification_noise_magnitude_spatial, classification_noise_magnitude_spatiotemporal, device = 'cpu', verbose_flag = False ):
 
         # Construct the parent class.
         super( neural_network_class, self ).__init__(  )
@@ -118,6 +254,7 @@ class neural_network_class( torch.nn.Module ):
         self.c_IC = c_IC
         self.c_BC = c_BC
         self.c_residual = c_residual
+        self.c_residual_gradient = c_residual_gradient
         self.c_variational = c_variational
         self.c_monotonicity = c_monotonicity
         
@@ -169,7 +306,6 @@ class neural_network_class( torch.nn.Module ):
 
         # Initialize the classification loss.
         self.set_classification_loss( torch.empty( 1, dtype = torch.float32, device = self.device ) )
-
 
 
     #%% ------------------------------------------------------------ PREPROCESS FUNCTIONS ------------------------------------------------------------
@@ -2648,23 +2784,16 @@ class neural_network_class( torch.nn.Module ):
         loss_residual1, residual_gradient_loss = self.residual_loss( residual_data, derivative_required_for_residual, residual_code )
 
         # Compute the variational loss.
-        # loss_variational = self.variational_loss( variational_data, derivative_required_for_residual, residual_code )
         loss_variational, loss_residual2 = self.variational_loss( variational_data, derivative_required_for_residual, residual_code )
 
         # Compute the monotonicity loss.
         loss_monotonicity = self.monotonicity_loss( residual_data, derivative_required_for_temporal_gradient, temporal_code )
 
         # Compute the complete residual loss.
-        # loss_residual = loss_residual1
         loss_residual = ( loss_residual1 + loss_residual2 )/2
 
-        c_residual_gradient = torch.tensor( 0, dtype = torch.float32, device = self.device )
-        # c_residual_gradient = torch.tensor( 3e-4, dtype = torch.float32, device = self.device )
-        # c_residual_gradient = torch.tensor( 1e-3, dtype = torch.float32, device = self.device )
-        # c_residual_gradient = torch.tensor( 1.0, dtype = torch.float32, device = self.device )
-
         # Compute the complete loss.
-        loss = self.c_IC*loss_ic + self.c_BC*loss_bc + self.c_residual*loss_residual + c_residual_gradient*residual_gradient_loss + self.c_variational*loss_variational + self.c_monotonicity*loss_monotonicity
+        loss = self.c_IC*loss_ic + self.c_BC*loss_bc + self.c_residual*loss_residual + self.c_residual_gradient*residual_gradient_loss + self.c_variational*loss_variational + self.c_monotonicity*loss_monotonicity
 
         # Return the loss.
         return loss
