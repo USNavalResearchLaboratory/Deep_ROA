@@ -757,3 +757,45 @@ SEARCH_SPACE = {
     'c_variational':       [0.2, 20, 100],
     'c_monotonicity':      [0.1, 10, 100],
 }
+
+# -------------------------------------------------
+# Name: space space 15.8 - even wider space
+# Size: 27
+# -------------------------------------------------
+
+DEVICE: str = 'cuda:0' if torch.cuda.is_available() else 'cpu'
+NUM_REPEATS = 1
+SEARCH_ID = 'grid_search_15_8'
+SAVE_DIR = '/scratch/ssnyde9/boroa/ann/closed_roa/'
+
+SEARCH_SPACE = {
+    'hidden_layer_widths': [20],
+    'num_hidden_layers':   [2],
+    'learning_rate':       [1e-2],
+    'c_IC':                [1],
+    'c_BC':                [100],
+    'c_residual':          [0.2, 20, 100],
+    'c_variational':       [0.2, 20, 100],
+    'c_monotonicity':      [0.1, 10, 100],
+}
+
+# -------------------------------------------------
+# Name: space space 15.9 - even wider space
+# Size: 27
+# -------------------------------------------------
+
+DEVICE: str = 'cuda:0' if torch.cuda.is_available() else 'cpu'
+NUM_REPEATS = 1
+SEARCH_ID = 'grid_search_15_9'
+SAVE_DIR = '/scratch/ssnyde9/boroa/ann/closed_roa/'
+
+SEARCH_SPACE = {
+    'hidden_layer_widths': [20],
+    'num_hidden_layers':   [2],
+    'learning_rate':       [1e-2],
+    'c_IC':                [100],
+    'c_BC':                [100],
+    'c_residual':          [0.2, 20, 100],
+    'c_variational':       [0.2, 20, 100],
+    'c_monotonicity':      [0.1, 10, 100],
+}
