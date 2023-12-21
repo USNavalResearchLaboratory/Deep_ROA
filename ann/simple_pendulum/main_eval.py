@@ -118,16 +118,25 @@ BASE_CONFIFG = {
     'hyperparameters': {
         'activation_function': 'sigmoid',
         'c_IC': float( 1.0 ),
+        # 'c_IC': float( 0.0990147542 ),
         'c_BC': float( 1.0 ),
-        # 'c_residual': float( 3e-4 ),
-        'c_residual': float( 0.0 ),
-        # 'c_variational': float( 3e-4 ),
-        'c_variational': float( 0.0 ),
-        # 'c_monotonicity': float( 1e1 ),
-        'c_monotonicity': float( 0.0 ),
+        # 'c_BC': float( 0.0990147542 ),
+        'c_residual': float( 3e-4 ),
+        # 'c_residual': float( 0.0000297044263 ),
+        # 'c_residual': float( 0.0 ),
+        # 'c_residual': float( 1e-2 ),            # This worked with variational loss 0.
+        # 'c_residual': float( 1e-3 ),            # This worked with variational loss 1e-3.
+        'c_variational': float( 3e-4 ),
+        # 'c_variational': float( 1e-3 ),
+        # 'c_variational': float( 0.0000297044263 ),
+        # 'c_variational': float( 0.0 ),
+        'c_monotonicity': float( 100 ),
+        # 'c_monotonicity': float( 0.990147542 ),
+        # 'c_monotonicity': float( 0.0 ),
         # 'hidden_layer_widths': int( 244 ),
         'hidden_layer_widths': int( 175 ),
-        'num_epochs': int( 250 ),
+        # 'num_epochs': int( 250 ),
+        'num_epochs': int( 400 ),
         # 'num_epochs': int( 1e3 ),
         'num_hidden_layers': int( 5 ),
         'num_training_data': int( 100e3 ),
@@ -157,8 +166,8 @@ BASE_CONFIFG = {
     },
     'runtime': {
         'device': 'cuda:8' if torch.cuda.is_available(  ) else 'cpu',
-        # 'seed': int( 0 ),
-        'seed': int( 1 ),
+        'seed': int( 0 ),
+        # 'seed': int( 1 ),
         # 'seed': int( 2 ),
         # 'seed': int( 3 ),
         # 'seed': int( 4 ),
@@ -304,11 +313,13 @@ def eval_simple_pendulum( config: dict = {  } ) -> int:
     # Define the temporal and spatial domains.
     domain_type = 'cartesian'                                                                                                                       # [-] The type of domain (cartesian, spherical, etc.).  Only cartesian domains are currently supported.
     temporal_domain = torch.tensor( [ 0, 10 ], dtype = torch.float32, device = device )                                                             # [-] Temporal domain of the underlying dynamical system.
+    # temporal_domain = torch.tensor( [ 0, 30 ], dtype = torch.float32, device = device )                                                             # [-] Temporal domain of the underlying dynamical system.
     spatial_domain = torch.tensor( [ [ -2*math.pi, 2*math.pi ], [ -6*math.pi, 6*math.pi ] ], dtype = torch.float32, device = device ).T                                             # [-] Spatial domain of the underlying dynamical system.
 
     # Define the initial condition parameters.
-    R0 = torch.tensor( 1.0, dtype = torch.float32, device = device )                                                                                  # [-] Initial condition radius.
-    # R0 = torch.tensor( 2.5, dtype = torch.float32, device = device )                                                                                  # [-] Initial condition radius.
+    # R0 = torch.tensor( 1.0, dtype = torch.float32, device = device )                                                                                  # [-] Initial condition radius.
+    # R0 = torch.tensor( 2.0, dtype = torch.float32, device = device )                                                                                  # [-] Initial condition radius.
+    R0 = torch.tensor( 2.5, dtype = torch.float32, device = device )                                                                                  # [-] Initial condition radius.
     A0 = torch.tensor( 2.0, dtype = torch.float32, device = device )                                                                                  # [-] Initial condition amplitude.
     S0 = torch.tensor( 20.0, dtype = torch.float32, device = device )                                                                                 # [-] Initial condition slope.
     P0_shift = torch.tensor( [ 0, 0 ], dtype = torch.float32, device = device )                                                     # [-] Initial condition input offset.
