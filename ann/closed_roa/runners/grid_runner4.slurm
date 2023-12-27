@@ -1,7 +1,7 @@
 #!/bin/sh
 
 ## Give your job a name to distinguish it from other jobs you run.
-#SBATCH --job-name=ann-closed-roa-grid-runner2
+#SBATCH --job-name=ann-closed-roa-grid-runner4
 
 ## General partitions: all-HiPri, bigmem-HiPri   --   (12 hour limit)
 ##                     all-LoPri, bigmem-LoPri, gpuq  (5 days limit)
@@ -27,10 +27,10 @@
 #SBATCH --mem=32G        # Total memory needed per task (units: K,M,G,T)
 
 ## Specify how much time your job needs. (default: see partition above)
-#SBATCH --time=4-23:59  # Total time needed for job: Days-Hours:Minutes
+#SBATCH --time=0-23:59  # Total time needed for job: Days-Hours:Minutes
 
 ## Run your program or script
 source /home/${USER}/.bashrc
 cd /home/${USER}/dev/Deep_ROA_BO/
 conda activate deep-roa-bo-ann
-python ./ann/closed_roa/runners/grid_runner2.py
+python ./ann/closed_roa/runners/grid_runner4.py

@@ -3,6 +3,8 @@
 # load/
 */ann/*/save/grid_search*
 
+.testing/**
+
 # Ignore specific file extensions
 *.pkl
 *.png
@@ -12,3 +14,4 @@
 */ann/utilities/__pycache__
 */snn/utilities/__pycache__
 **/*.pyc
+.DS_Store
