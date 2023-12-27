@@ -46,7 +46,7 @@ os.system( 'cls' if os.name == 'nt' else 'clear' )
 plt.rcParams.update( { 'figure.max_open_warning': 0 } )                     # Disable maximum open figure warning.
 
 # Define the base configuration.
-# BASE_CONFIFG = {
+# BASE_CONFIG = {
 #     'classification_parameters': {
 #         'num_noisy_samples_per_level_set_point': int( 5 ),
 #         'noise_percentage': float( 1e-3 ),
@@ -102,7 +102,7 @@ plt.rcParams.update( { 'figure.max_open_warning': 0 } )                     # Di
 #     }
 # }
 
-BASE_CONFIFG = {
+BASE_CONFIG = {
     'classification_parameters': {
         'num_noisy_samples_per_level_set_point': int( 5 ),
         'noise_percentage': float( 1e-3 ),
@@ -118,9 +118,11 @@ BASE_CONFIFG = {
         'activation_function': 'sigmoid',
         'c_IC': float( 1.0 ),
         'c_BC': float( 1.0 ),
-        'c_residual': float( 3e-4 ),
+        'c_residual': float( 1e-4 ),
+        # 'c_residual': float( 3e-4 ),
         'c_residual_gradient': float( 0 ),
-        'c_variational': float( 3e-4 ),
+        'c_variational': float( 1e-4 ),
+        # 'c_variational': float( 3e-4 ),
         'c_monotonicity': float( 100 ),
         'hidden_layer_widths': int( 175 ),
         'num_epochs': int( 400 ),
@@ -139,7 +141,7 @@ BASE_CONFIFG = {
     },
     'plotting_parameters': {
         'num_plotting_samples': int( 20 ),
-        'plot_flag': bool( True ),
+        'plot_flag': bool( False ),
     },
     'printing_parameters': {
         'batch_print_frequency': int( 10 ),
@@ -150,6 +152,8 @@ BASE_CONFIFG = {
         'device': 'cuda:8' if torch.cuda.is_available(  ) else 'cpu',
         'seed': int( 0 ),
         'load_flag': bool( False ),
+        # 'load_flag': bool( True ),
+        # 'train_flag': bool( False ),
         'train_flag': bool( True ),
         'verbose_flag': bool( True ),
     },
@@ -188,7 +192,7 @@ def eval_simple_pendulum( config: dict = {  } ) -> int:
     # Retrieve the starting time for setting up.
     start_time_setup = time.time(  )
 
-    new_config = deepcopy( BASE_CONFIFG )
+    new_config = deepcopy( BASE_CONFIG )
     new_config[ 'hyperparameters' ].update( config )
     config = deepcopy( new_config )
 
