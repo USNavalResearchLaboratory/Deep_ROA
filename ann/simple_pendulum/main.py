@@ -200,7 +200,7 @@ problem_specifications.save( save_path, r'problem_specifications.pkl' )
 # activation_function = 'tanh'                                                                # [-] Activation function (e.g., tanh, sigmoid, etc.)
 activation_function = 'sigmoid'                                                                # [-] Activation function (e.g., tanh, sigmoid, etc.)
 num_hidden_layers = torch.tensor( 5, dtype = torch.uint8, device = device )                 # [#] Number of hidden layers.
-hidden_layer_widths = torch.tensor( 500, dtype = torch.int16, device = device )              # [#] Hidden layer widths.
+hidden_layer_widths = torch.tensor( 244, dtype = torch.int16, device = device )              # [#] Hidden layer widths.
 
 # This set works for variational loss integration order 1.
 num_training_data = torch.tensor( int( 100e3 ), dtype = torch.int32, device = device )      # [#] Number of training data points.

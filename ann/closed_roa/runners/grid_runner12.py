@@ -7,18 +7,23 @@ sys.path.append("./general")
 from main_eval import BASE_CONFIG, eval_closed_roa
 from grid import run_grid_search
 
+# -------------------------------------------------
+# Name: space space 12 - evaluating c_monotonicity
+# Size: 64
+# -------------------------------------------------
+
 DEVICE: str = 'cuda:0' if torch.cuda.is_available() else 'cpu'
-NUM_REPEATS = 3
-SEARCH_ID = 'grid_search_2'
+NUM_REPEATS = 1
+SEARCH_ID = 'grid_search_12'
 SAVE_DIR = '/scratch/ssnyde9/boroa/ann/closed_roa/'
 
 SEARCH_SPACE = {
-    'c_IC': [float(17), float(22.1), float(27)],
-    'c_BC': [float(27), float(31.1), float(36)],
-    'hidden_layer_widths': [int(115), int(130), int(145), int(160), int(175)],
-    'num_hidden_layers':   [int(3), int(4), int(5)],
-    'learning_rate':       [float(0.01), float(0.005), float(0.001)],
+    'hidden_layer_widths': [50, 100, 150, 175],
+    'num_hidden_layers': [1, 2, 3, 4, 5],
+    'learning_rate': [0.01, 0.05, 0.005, 0.001]
 }
+
+
 
 if __name__ == '__main__':
     run_grid_search(

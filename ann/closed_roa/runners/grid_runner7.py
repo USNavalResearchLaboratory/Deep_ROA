@@ -7,17 +7,18 @@ sys.path.append("./general")
 from main_eval import BASE_CONFIG, eval_closed_roa
 from grid import run_grid_search
 
+# -------------------------------------------------
+# Name: space space 7 - evaluating c_IC
+# Size: 10
+# -------------------------------------------------
+
 DEVICE: str = 'cuda:0' if torch.cuda.is_available() else 'cpu'
-NUM_REPEATS = 3
-SEARCH_ID = 'grid_search_2'
+NUM_REPEATS = 1
+SEARCH_ID = 'grid_search_7'
 SAVE_DIR = '/scratch/ssnyde9/boroa/ann/closed_roa/'
 
 SEARCH_SPACE = {
-    'c_IC': [float(17), float(22.1), float(27)],
-    'c_BC': [float(27), float(31.1), float(36)],
-    'hidden_layer_widths': [int(115), int(130), int(145), int(160), int(175)],
-    'num_hidden_layers':   [int(3), int(4), int(5)],
-    'learning_rate':       [float(0.01), float(0.005), float(0.001)],
+    'c_IC': [1, 5, 10, 15, 20, 25, 30, 35, 40, 45]
 }
 
 if __name__ == '__main__':

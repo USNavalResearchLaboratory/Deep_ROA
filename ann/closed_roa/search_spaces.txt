@@ -1,7 +1,10 @@
+# -------------------------------------------------
 # Name: base space 0 expanded around base config
 # Size: 243
+# -------------------------------------------------
 
-NUM_REPEATS = 3
+DEVICE: str = 'cuda:0' if torch.cuda.is_available() else 'cpu'
+NUM_REPEATS = 1
 SEARCH_ID = 'grid_search_0'
 SAVE_DIR = '/scratch/ssnyde9/boroa/ann/closed_roa/'
 
@@ -13,10 +16,13 @@ SEARCH_SPACE = {
     'c_monotonicity': [float(75), float(80.1), float(85)],
 }
 
+# -------------------------------------------------
 # Name: base space 1 expanded around base config
-# Size: 405
+# Size: 45
+# -------------------------------------------------
 
-NUM_REPEATS = 3
+DEVICE: str = 'cuda:0' if torch.cuda.is_available() else 'cpu'
+NUM_REPEATS = 1
 SEARCH_ID = 'grid_search_1'
 SAVE_DIR = '/scratch/ssnyde9/boroa/ann/closed_roa/'
 
@@ -26,10 +32,12 @@ SEARCH_SPACE = {
     'learning_rate':       [float(0.01), float(0.005), float(0.001)],
 }
 
+# -------------------------------------------------
 # Name: space space 2 expanded around base config
 # Size: 405
-
-NUM_REPEATS = 3
+# -------------------------------------------------
+DEVICE: str = 'cuda:0' if torch.cuda.is_available() else 'cpu'
+NUM_REPEATS = 1
 SEARCH_ID = 'grid_search_2'
 SAVE_DIR = '/scratch/ssnyde9/boroa/ann/closed_roa/'
 
@@ -39,4 +47,755 @@ SEARCH_SPACE = {
     'hidden_layer_widths': [int(115), int(130), int(145), int(160), int(175)],
     'num_hidden_layers':   [int(3), int(4), int(5)],
     'learning_rate':       [float(0.01), float(0.005), float(0.001)],
+}
+
+# -------------------------------------------------
+# Name: space space 3 - evaluating hidden_layer_widths
+# Size: 10
+# -------------------------------------------------
+
+DEVICE: str = 'cuda:0' if torch.cuda.is_available() else 'cpu'
+NUM_REPEATS = 1
+SEARCH_ID = 'grid_search_3'
+SAVE_DIR = '/scratch/ssnyde9/boroa/ann/closed_roa/'
+
+SEARCH_SPACE = { 
+    'hidden_layer_widths': [40, 55, 70, 85, 100, 115, 130, 145, 160, 175],
+}
+
+# -------------------------------------------------
+# Name: space space 4 - evaluating number of hidden layers
+# Size: 5
+# -------------------------------------------------
+
+DEVICE: str = 'cuda:0' if torch.cuda.is_available() else 'cpu'
+NUM_REPEATS = 1
+SEARCH_ID = 'grid_search_4'
+SAVE_DIR = '/scratch/ssnyde9/boroa/ann/closed_roa/'
+
+SEARCH_SPACE = { 
+    'num_hidden_layers': [int(1), int(2), int(3), int(4), int(4)],
+}
+
+# -------------------------------------------------
+# Name: space space 5 - evaluating activation function
+# Size: 3
+# -------------------------------------------------
+
+DEVICE: str = 'cuda:0' if torch.cuda.is_available() else 'cpu'
+NUM_REPEATS = 1
+SEARCH_ID = 'grid_search_5'
+SAVE_DIR = '/scratch/ssnyde9/boroa/ann/closed_roa/'
+
+SEARCH_SPACE = { 
+    'activation_function': ["sigmoid", "tanh", "relu"],
+}
+
+# -------------------------------------------------
+# Name: space space 6 - evaluating learning_rate
+# Size: 7
+# -------------------------------------------------
+
+DEVICE: str = 'cuda:0' if torch.cuda.is_available() else 'cpu'
+NUM_REPEATS = 1
+SEARCH_ID = 'grid_search_6'
+SAVE_DIR = '/scratch/ssnyde9/boroa/ann/closed_roa/'
+
+SEARCH_SPACE = {
+    'learning_rate': [0.1, 0.05, 0.01, 0.005, 0.001, 0.0005, 0.0001]
+}
+
+# -------------------------------------------------
+# Name: space space 7 - evaluating c_IC
+# Size: 10
+# -------------------------------------------------
+
+DEVICE: str = 'cuda:0' if torch.cuda.is_available() else 'cpu'
+NUM_REPEATS = 1
+SEARCH_ID = 'grid_search_7'
+SAVE_DIR = '/scratch/ssnyde9/boroa/ann/closed_roa/'
+
+SEARCH_SPACE = {
+    'c_IC': [1, 5, 10, 15, 20, 25, 30, 35, 40, 45]
+}
+
+# -------------------------------------------------
+# Name: space space 8 - evaluating c_BC
+# Size: 10
+# -------------------------------------------------
+
+DEVICE: str = 'cuda:0' if torch.cuda.is_available() else 'cpu'
+NUM_REPEATS = 1
+SEARCH_ID = 'grid_search_8'
+SAVE_DIR = '/scratch/ssnyde9/boroa/ann/closed_roa/'
+
+SEARCH_SPACE = {
+    'c_BC': [1, 5, 10, 15, 20, 25, 30, 35, 40, 45]
+}
+
+# -------------------------------------------------
+# Name: space space 9 - evaluating c_residual
+# Size: 13
+# -------------------------------------------------
+
+DEVICE: str = 'cuda:0' if torch.cuda.is_available() else 'cpu'
+NUM_REPEATS = 1
+SEARCH_ID = 'grid_search_9'
+SAVE_DIR = '/scratch/ssnyde9/boroa/ann/closed_roa/'
+
+SEARCH_SPACE = {
+    'c_residual': [40, 45, 50, 55, 60, 65, 69, 75, 80, 85, 90, 95, 100]
+}
+
+# -------------------------------------------------
+# Name: space space 10 - evaluating c_variational
+# Size: 9
+# -------------------------------------------------
+
+DEVICE: str = 'cuda:0' if torch.cuda.is_available() else 'cpu'
+NUM_REPEATS = 1
+SEARCH_ID = 'grid_search_10'
+SAVE_DIR = '/scratch/ssnyde9/boroa/ann/closed_roa/'
+
+SEARCH_SPACE = {
+    'c_variational': [20, 25, 30, 35, 40, 45, 50, 55, 60]
+}
+
+# -------------------------------------------------
+# Name: space space 11 - evaluating c_monotonicity
+# Size: 13
+# -------------------------------------------------
+
+DEVICE: str = 'cuda:0' if torch.cuda.is_available() else 'cpu'
+NUM_REPEATS = 1
+SEARCH_ID = 'grid_search_11'
+SAVE_DIR = '/scratch/ssnyde9/boroa/ann/closed_roa/'
+
+SEARCH_SPACE = {
+    'c_monotonicity': [60, 65, 70, 75, 80, 85, 90, 95, 100]
+}
+
+# -------------------------------------------------
+# Name: space space 12 - evaluating c_monotonicity
+# Size: 64
+# -------------------------------------------------
+
+DEVICE: str = 'cuda:0' if torch.cuda.is_available() else 'cpu'
+NUM_REPEATS = 1
+SEARCH_ID = 'grid_search_12'
+SAVE_DIR = '/scratch/ssnyde9/boroa/ann/closed_roa/'
+
+SEARCH_SPACE = {
+    'hidden_layer_widths': [50, 100, 150, 175],
+    'num_hidden_layers': [1, 2, 3, 4, 5],
+    'learning_rate': [0.01, 0.05, 0.005, 0.001]
+}
+
+# -------------------------------------------------
+# Name: space space 13 - wider space
+# Size: 256
+# -------------------------------------------------
+
+DEVICE: str = 'cuda:0' if torch.cuda.is_available() else 'cpu'
+NUM_REPEATS = 1
+SEARCH_ID = 'grid_search_13'
+SAVE_DIR = '/scratch/ssnyde9/boroa/ann/closed_roa/'
+
+SEARCH_SPACE = {
+    'hidden_layer_widths': [10, 20],
+    'num_hidden_layers':   [2, 4],
+    'learning_rate':       [1e-3, 1e-2],
+    'c_IC':                [1, 100],
+    'c_BC':                [1, 100],
+    'c_residual':          [20, 100],
+    'c_variational':       [20, 100],
+    'c_monotonicity':      [10, 100],
+}
+
+# -------------------------------------------------
+# Name: space space 13.1 - wider space - sub1
+# Size: 32
+# -------------------------------------------------
+
+DEVICE: str = 'cuda:0' if torch.cuda.is_available() else 'cpu'
+NUM_REPEATS = 1
+SEARCH_ID = 'grid_search_13_1'
+SAVE_DIR = '/scratch/ssnyde9/boroa/ann/closed_roa/'
+
+SEARCH_SPACE = {
+    'hidden_layer_widths': [10],
+    'num_hidden_layers':   [2],
+    'learning_rate':       [1e-3],
+    'c_IC':                [1, 100],
+    'c_BC':                [1, 100],
+    'c_residual':          [20, 100],
+    'c_variational':       [20, 100],
+    'c_monotonicity':      [10, 100],
+}
+
+# -------------------------------------------------
+# Name: space space 13.2 - wider space - sub2
+# Size: 32
+# -------------------------------------------------
+
+DEVICE: str = 'cuda:0' if torch.cuda.is_available() else 'cpu'
+NUM_REPEATS = 1
+SEARCH_ID = 'grid_search_13_2'
+SAVE_DIR = '/scratch/ssnyde9/boroa/ann/closed_roa/'
+
+SEARCH_SPACE = {
+    'hidden_layer_widths': [10],
+    'num_hidden_layers':   [2],
+    'learning_rate':       [1e-2],
+    'c_IC':                [1, 100],
+    'c_BC':                [1, 100],
+    'c_residual':          [20, 100],
+    'c_variational':       [20, 100],
+    'c_monotonicity':      [10, 100],
+}
+
+# -------------------------------------------------
+# Name: space space 13.3 - wider space - sub3
+# Size: 32
+# -------------------------------------------------
+
+DEVICE: str = 'cuda:0' if torch.cuda.is_available() else 'cpu'
+NUM_REPEATS = 1
+SEARCH_ID = 'grid_search_13_3'
+SAVE_DIR = '/scratch/ssnyde9/boroa/ann/closed_roa/'
+
+SEARCH_SPACE = {
+    'hidden_layer_widths': [10],
+    'num_hidden_layers':   [4],
+    'learning_rate':       [1e-3],
+    'c_IC':                [1, 100],
+    'c_BC':                [1, 100],
+    'c_residual':          [20, 100],
+    'c_variational':       [20, 100],
+    'c_monotonicity':      [10, 100],
+}
+
+# -------------------------------------------------
+# Name: space space 13.4 - wider space - sub4
+# Size: 32
+# -------------------------------------------------
+
+DEVICE: str = 'cuda:0' if torch.cuda.is_available() else 'cpu'
+NUM_REPEATS = 1
+SEARCH_ID = 'grid_search_13_4'
+SAVE_DIR = '/scratch/ssnyde9/boroa/ann/closed_roa/'
+
+SEARCH_SPACE = {
+    'hidden_layer_widths': [10],
+    'num_hidden_layers':   [4],
+    'learning_rate':       [1e-2],
+    'c_IC':                [1, 100],
+    'c_BC':                [1, 100],
+    'c_residual':          [20, 100],
+    'c_variational':       [20, 100],
+    'c_monotonicity':      [10, 100],
+}
+
+# -------------------------------------------------
+# Name: space space 13.5 - wider space - sub5
+# Size: 32
+# -------------------------------------------------
+
+DEVICE: str = 'cuda:0' if torch.cuda.is_available() else 'cpu'
+NUM_REPEATS = 1
+SEARCH_ID = 'grid_search_13_5'
+SAVE_DIR = '/scratch/ssnyde9/boroa/ann/closed_roa/'
+
+SEARCH_SPACE = {
+    'hidden_layer_widths': [20],
+    'num_hidden_layers':   [2],
+    'learning_rate':       [1e-3],
+    'c_IC':                [1, 100],
+    'c_BC':                [1, 100],
+    'c_residual':          [20, 100],
+    'c_variational':       [20, 100],
+    'c_monotonicity':      [10, 100],
+}
+
+# -------------------------------------------------
+# Name: space space 13.6 - wider space - sub6
+# Size: 32
+# -------------------------------------------------
+
+DEVICE: str = 'cuda:0' if torch.cuda.is_available() else 'cpu'
+NUM_REPEATS = 1
+SEARCH_ID = 'grid_search_13_6'
+SAVE_DIR = '/scratch/ssnyde9/boroa/ann/closed_roa/'
+
+SEARCH_SPACE = {
+    'hidden_layer_widths': [20],
+    'num_hidden_layers':   [2],
+    'learning_rate':       [1e-2],
+    'c_IC':                [1, 100],
+    'c_BC':                [1, 100],
+    'c_residual':          [20, 100],
+    'c_variational':       [20, 100],
+    'c_monotonicity':      [10, 100],
+}
+
+# -------------------------------------------------
+# Name: space space 13.7 - wider space - sub7
+# Size: 32
+# -------------------------------------------------
+
+DEVICE: str = 'cuda:0' if torch.cuda.is_available() else 'cpu'
+NUM_REPEATS = 1
+SEARCH_ID = 'grid_search_13_7'
+SAVE_DIR = '/scratch/ssnyde9/boroa/ann/closed_roa/'
+
+SEARCH_SPACE = {
+    'hidden_layer_widths': [20],
+    'num_hidden_layers':   [4],
+    'learning_rate':       [1e-3],
+    'c_IC':                [1, 100],
+    'c_BC':                [1, 100],
+    'c_residual':          [20, 100],
+    'c_variational':       [20, 100],
+    'c_monotonicity':      [10, 100],
+}
+
+# -------------------------------------------------
+# Name: space space 13.8 - wider space - sub8
+# Size: 32
+# -------------------------------------------------
+
+DEVICE: str = 'cuda:0' if torch.cuda.is_available() else 'cpu'
+NUM_REPEATS = 1
+SEARCH_ID = 'grid_search_13_8'
+SAVE_DIR = '/scratch/ssnyde9/boroa/ann/closed_roa/'
+
+SEARCH_SPACE = {
+    'hidden_layer_widths': [20],
+    'num_hidden_layers':   [4],
+    'learning_rate':       [1e-2],
+    'c_IC':                [1, 100],
+    'c_BC':                [1, 100],
+    'c_residual':          [20, 100],
+    'c_variational':       [20, 100],
+    'c_monotonicity':      [10, 100],
+}
+
+# -------------------------------------------------
+# Name: space space 14 - even wider space
+# Size: 243
+# -------------------------------------------------
+
+DEVICE: str = 'cuda:0' if torch.cuda.is_available() else 'cpu'
+NUM_REPEATS = 1
+SEARCH_ID = 'grid_search_14'
+SAVE_DIR = '/scratch/ssnyde9/boroa/ann/closed_roa/'
+
+SEARCH_SPACE = {
+    'hidden_layer_widths': [20],
+    'num_hidden_layers':   [2],
+    'learning_rate':       [1e-2],
+    'c_IC':                [1, 100, 150],
+    'c_BC':                [1, 100, 150],
+    'c_residual':          [20, 100, 150],
+    'c_variational':       [20, 100, 150],
+    'c_monotonicity':      [10, 100, 150],
+}
+
+# -------------------------------------------------
+# Name: space space 14.1 - even wider space
+# Size: 27
+# -------------------------------------------------
+
+DEVICE: str = 'cuda:0' if torch.cuda.is_available() else 'cpu'
+NUM_REPEATS = 1
+SEARCH_ID = 'grid_search_14_1'
+SAVE_DIR = '/scratch/ssnyde9/boroa/ann/closed_roa/'
+
+SEARCH_SPACE = {
+    'hidden_layer_widths': [20],
+    'num_hidden_layers':   [2],
+    'learning_rate':       [1e-2],
+    'c_IC':                [1],
+    'c_BC':                [1],
+    'c_residual':          [20, 100, 150],
+    'c_variational':       [20, 100, 150],
+    'c_monotonicity':      [10, 100, 150],
+}
+
+# -------------------------------------------------
+# Name: space space 14.2 - even wider space
+# Size: 27
+# -------------------------------------------------
+
+DEVICE: str = 'cuda:0' if torch.cuda.is_available() else 'cpu'
+NUM_REPEATS = 1
+SEARCH_ID = 'grid_search_14_2'
+SAVE_DIR = '/scratch/ssnyde9/boroa/ann/closed_roa/'
+
+SEARCH_SPACE = {
+    'hidden_layer_widths': [20],
+    'num_hidden_layers':   [2],
+    'learning_rate':       [1e-2],
+    'c_IC':                [100],
+    'c_BC':                [1],
+    'c_residual':          [20, 100, 150],
+    'c_variational':       [20, 100, 150],
+    'c_monotonicity':      [10, 100, 150],
+}
+
+# -------------------------------------------------
+# Name: space space 14.3 - even wider space
+# Size: 27
+# -------------------------------------------------
+
+DEVICE: str = 'cuda:0' if torch.cuda.is_available() else 'cpu'
+NUM_REPEATS = 1
+SEARCH_ID = 'grid_search_14_3'
+SAVE_DIR = '/scratch/ssnyde9/boroa/ann/closed_roa/'
+
+SEARCH_SPACE = {
+    'hidden_layer_widths': [20],
+    'num_hidden_layers':   [2],
+    'learning_rate':       [1e-2],
+    'c_IC':                [150],
+    'c_BC':                [1],
+    'c_residual':          [20, 100, 150],
+    'c_variational':       [20, 100, 150],
+    'c_monotonicity':      [10, 100, 150],
+}
+
+# -------------------------------------------------
+# Name: space space 14.4 - even wider space
+# Size: 27
+# -------------------------------------------------
+
+DEVICE: str = 'cuda:0' if torch.cuda.is_available() else 'cpu'
+NUM_REPEATS = 1
+SEARCH_ID = 'grid_search_14_4'
+SAVE_DIR = '/scratch/ssnyde9/boroa/ann/closed_roa/'
+
+SEARCH_SPACE = {
+    'hidden_layer_widths': [20],
+    'num_hidden_layers':   [2],
+    'learning_rate':       [1e-2],
+    'c_IC':                [1],
+    'c_BC':                [100],
+    'c_residual':          [20, 100, 150],
+    'c_variational':       [20, 100, 150],
+    'c_monotonicity':      [10, 100, 150],
+}
+
+# -------------------------------------------------
+# Name: space space 14.5 - even wider space
+# Size: 27
+# -------------------------------------------------
+
+DEVICE: str = 'cuda:0' if torch.cuda.is_available() else 'cpu'
+NUM_REPEATS = 1
+SEARCH_ID = 'grid_search_14_5'
+SAVE_DIR = '/scratch/ssnyde9/boroa/ann/closed_roa/'
+
+SEARCH_SPACE = {
+    'hidden_layer_widths': [20],
+    'num_hidden_layers':   [2],
+    'learning_rate':       [1e-2],
+    'c_IC':                [100],
+    'c_BC':                [100],
+    'c_residual':          [20, 100, 150],
+    'c_variational':       [20, 100, 150],
+    'c_monotonicity':      [10, 100, 150],
+}
+
+# -------------------------------------------------
+# Name: space space 14.6 - even wider space
+# Size: 27
+# -------------------------------------------------
+
+DEVICE: str = 'cuda:0' if torch.cuda.is_available() else 'cpu'
+NUM_REPEATS = 1
+SEARCH_ID = 'grid_search_14_6'
+SAVE_DIR = '/scratch/ssnyde9/boroa/ann/closed_roa/'
+
+SEARCH_SPACE = {
+    'hidden_layer_widths': [20],
+    'num_hidden_layers':   [2],
+    'learning_rate':       [1e-2],
+    'c_IC':                [150],
+    'c_BC':                [100],
+    'c_residual':          [20, 100, 150],
+    'c_variational':       [20, 100, 150],
+    'c_monotonicity':      [10, 100, 150],
+}
+
+# -------------------------------------------------
+# Name: space space 14.7 - even wider space
+# Size: 27
+# -------------------------------------------------
+
+DEVICE: str = 'cuda:0' if torch.cuda.is_available() else 'cpu'
+NUM_REPEATS = 1
+SEARCH_ID = 'grid_search_14_7'
+SAVE_DIR = '/scratch/ssnyde9/boroa/ann/closed_roa/'
+
+SEARCH_SPACE = {
+    'hidden_layer_widths': [20],
+    'num_hidden_layers':   [2],
+    'learning_rate':       [1e-2],
+    'c_IC':                [1],
+    'c_BC':                [150],
+    'c_residual':          [20, 100, 150],
+    'c_variational':       [20, 100, 150],
+    'c_monotonicity':      [10, 100, 150],
+}
+
+# -------------------------------------------------
+# Name: space space 14.8 - even wider space
+# Size: 27
+# -------------------------------------------------
+
+DEVICE: str = 'cuda:0' if torch.cuda.is_available() else 'cpu'
+NUM_REPEATS = 1
+SEARCH_ID = 'grid_search_14_8'
+SAVE_DIR = '/scratch/ssnyde9/boroa/ann/closed_roa/'
+
+SEARCH_SPACE = {
+    'hidden_layer_widths': [20],
+    'num_hidden_layers':   [2],
+    'learning_rate':       [1e-2],
+    'c_IC':                [100],
+    'c_BC':                [150],
+    'c_residual':          [20, 100, 150],
+    'c_variational':       [20, 100, 150],
+    'c_monotonicity':      [10, 100, 150],
+}
+
+# -------------------------------------------------
+# Name: space space 14.9 - even wider space
+# Size: 27
+# -------------------------------------------------
+
+DEVICE: str = 'cuda:0' if torch.cuda.is_available() else 'cpu'
+NUM_REPEATS = 1
+SEARCH_ID = 'grid_search_14_9'
+SAVE_DIR = '/scratch/ssnyde9/boroa/ann/closed_roa/'
+
+SEARCH_SPACE = {
+    'hidden_layer_widths': [20],
+    'num_hidden_layers':   [2],
+    'learning_rate':       [1e-2],
+    'c_IC':                [150],
+    'c_BC':                [150],
+    'c_residual':          [20, 100, 150],
+    'c_variational':       [20, 100, 150],
+    'c_monotonicity':      [10, 100, 150],
+}
+
+# -------------------------------------------------
+# Name: space space 15 - even wider space
+# Size: 243
+# -------------------------------------------------
+
+DEVICE: str = 'cuda:0' if torch.cuda.is_available() else 'cpu'
+NUM_REPEATS = 1
+SEARCH_ID = 'grid_search_15'
+SAVE_DIR = '/scratch/ssnyde9/boroa/ann/closed_roa/'
+
+SEARCH_SPACE = {
+    'hidden_layer_widths': [20],
+    'num_hidden_layers':   [2],
+    'learning_rate':       [1e-2],
+    'c_IC':                [0.01, 1, 100],
+    'c_BC':                [0.01, 1, 100],
+    'c_residual':          [0.2, 20, 100],
+    'c_variational':       [0.2, 20, 100],
+    'c_monotonicity':      [0.1, 10, 100],
+}
+
+# -------------------------------------------------
+# Name: space space 15.1 - even wider space
+# Size: 27
+# -------------------------------------------------
+
+DEVICE: str = 'cuda:0' if torch.cuda.is_available() else 'cpu'
+NUM_REPEATS = 1
+SEARCH_ID = 'grid_search_15_1'
+SAVE_DIR = '/scratch/ssnyde9/boroa/ann/closed_roa/'
+
+SEARCH_SPACE = {
+    'hidden_layer_widths': [20],
+    'num_hidden_layers':   [2],
+    'learning_rate':       [1e-2],
+    'c_IC':                [0.01],
+    'c_BC':                [0.01],
+    'c_residual':          [0.2, 20, 100],
+    'c_variational':       [0.2, 20, 100],
+    'c_monotonicity':      [0.1, 10, 100],
+}
+
+# -------------------------------------------------
+# Name: space space 15.2 - even wider space
+# Size: 27
+# -------------------------------------------------
+
+DEVICE: str = 'cuda:0' if torch.cuda.is_available() else 'cpu'
+NUM_REPEATS = 1
+SEARCH_ID = 'grid_search_15_2'
+SAVE_DIR = '/scratch/ssnyde9/boroa/ann/closed_roa/'
+
+SEARCH_SPACE = {
+    'hidden_layer_widths': [20],
+    'num_hidden_layers':   [2],
+    'learning_rate':       [1e-2],
+    'c_IC':                [1],
+    'c_BC':                [0.01],
+    'c_residual':          [0.2, 20, 100],
+    'c_variational':       [0.2, 20, 100],
+    'c_monotonicity':      [0.1, 10, 100],
+}
+
+# -------------------------------------------------
+# Name: space space 15.3 - even wider space
+# Size: 27
+# -------------------------------------------------
+
+DEVICE: str = 'cuda:0' if torch.cuda.is_available() else 'cpu'
+NUM_REPEATS = 1
+SEARCH_ID = 'grid_search_15_3'
+SAVE_DIR = '/scratch/ssnyde9/boroa/ann/closed_roa/'
+
+SEARCH_SPACE = {
+    'hidden_layer_widths': [20],
+    'num_hidden_layers':   [2],
+    'learning_rate':       [1e-2],
+    'c_IC':                [100],
+    'c_BC':                [0.01],
+    'c_residual':          [0.2, 20, 100],
+    'c_variational':       [0.2, 20, 100],
+    'c_monotonicity':      [0.1, 10, 100],
+}
+
+# -------------------------------------------------
+# Name: space space 15.4 - even wider space
+# Size: 27
+# -------------------------------------------------
+
+DEVICE: str = 'cuda:0' if torch.cuda.is_available() else 'cpu'
+NUM_REPEATS = 1
+SEARCH_ID = 'grid_search_15_4'
+SAVE_DIR = '/scratch/ssnyde9/boroa/ann/closed_roa/'
+
+SEARCH_SPACE = {
+    'hidden_layer_widths': [20],
+    'num_hidden_layers':   [2],
+    'learning_rate':       [1e-2],
+    'c_IC':                [0.01],
+    'c_BC':                [1],
+    'c_residual':          [0.2, 20, 100],
+    'c_variational':       [0.2, 20, 100],
+    'c_monotonicity':      [0.1, 10, 100],
+}
+
+# -------------------------------------------------
+# Name: space space 15.5 - even wider space
+# Size: 27
+# -------------------------------------------------
+
+DEVICE: str = 'cuda:0' if torch.cuda.is_available() else 'cpu'
+NUM_REPEATS = 1
+SEARCH_ID = 'grid_search_15_5'
+SAVE_DIR = '/scratch/ssnyde9/boroa/ann/closed_roa/'
+
+SEARCH_SPACE = {
+    'hidden_layer_widths': [20],
+    'num_hidden_layers':   [2],
+    'learning_rate':       [1e-2],
+    'c_IC':                [1],
+    'c_BC':                [1],
+    'c_residual':          [0.2, 20, 100],
+    'c_variational':       [0.2, 20, 100],
+    'c_monotonicity':      [0.1, 10, 100],
+}
+
+# -------------------------------------------------
+# Name: space space 15.6 - even wider space
+# Size: 27
+# -------------------------------------------------
+
+DEVICE: str = 'cuda:0' if torch.cuda.is_available() else 'cpu'
+NUM_REPEATS = 1
+SEARCH_ID = 'grid_search_15_6'
+SAVE_DIR = '/scratch/ssnyde9/boroa/ann/closed_roa/'
+
+SEARCH_SPACE = {
+    'hidden_layer_widths': [20],
+    'num_hidden_layers':   [2],
+    'learning_rate':       [1e-2],
+    'c_IC':                [100],
+    'c_BC':                [1],
+    'c_residual':          [0.2, 20, 100],
+    'c_variational':       [0.2, 20, 100],
+    'c_monotonicity':      [0.1, 10, 100],
+}
+
+# -------------------------------------------------
+# Name: space space 15.7 - even wider space
+# Size: 27
+# -------------------------------------------------
+
+DEVICE: str = 'cuda:0' if torch.cuda.is_available() else 'cpu'
+NUM_REPEATS = 1
+SEARCH_ID = 'grid_search_15_7'
+SAVE_DIR = '/scratch/ssnyde9/boroa/ann/closed_roa/'
+
+SEARCH_SPACE = {
+    'hidden_layer_widths': [20],
+    'num_hidden_layers':   [2],
+    'learning_rate':       [1e-2],
+    'c_IC':                [0.01],
+    'c_BC':                [100],
+    'c_residual':          [0.2, 20, 100],
+    'c_variational':       [0.2, 20, 100],
+    'c_monotonicity':      [0.1, 10, 100],
+}
+
+# -------------------------------------------------
+# Name: space space 15.8 - even wider space
+# Size: 27
+# -------------------------------------------------
+
+DEVICE: str = 'cuda:0' if torch.cuda.is_available() else 'cpu'
+NUM_REPEATS = 1
+SEARCH_ID = 'grid_search_15_8'
+SAVE_DIR = '/scratch/ssnyde9/boroa/ann/closed_roa/'
+
+SEARCH_SPACE = {
+    'hidden_layer_widths': [20],
+    'num_hidden_layers':   [2],
+    'learning_rate':       [1e-2],
+    'c_IC':                [1],
+    'c_BC':                [100],
+    'c_residual':          [0.2, 20, 100],
+    'c_variational':       [0.2, 20, 100],
+    'c_monotonicity':      [0.1, 10, 100],
+}
+
+# -------------------------------------------------
+# Name: space space 15.9 - even wider space
+# Size: 27
+# -------------------------------------------------
+
+DEVICE: str = 'cuda:0' if torch.cuda.is_available() else 'cpu'
+NUM_REPEATS = 1
+SEARCH_ID = 'grid_search_15_9'
+SAVE_DIR = '/scratch/ssnyde9/boroa/ann/closed_roa/'
+
+SEARCH_SPACE = {
+    'hidden_layer_widths': [20],
+    'num_hidden_layers':   [2],
+    'learning_rate':       [1e-2],
+    'c_IC':                [100],
+    'c_BC':                [100],
+    'c_residual':          [0.2, 20, 100],
+    'c_variational':       [0.2, 20, 100],
+    'c_monotonicity':      [0.1, 10, 100],
 }

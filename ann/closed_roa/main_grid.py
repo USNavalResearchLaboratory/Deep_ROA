@@ -81,19 +81,27 @@ def main( base_config = BASE_CONFIG, num_repeats = NUM_REPEATS, search_id = SEAR
             
             losses = [  ]
 
-            for repeat in range( num_repeats ):
-                
-                eval_config = deepcopy( base_config )
-                eval_config[ 'hyperparameters' ].update( config )
-                eval_config[ 'runtime' ][ 'seed' ] = repeat
-                eval_config[ 'paths' ][ 'save_path' ] = os.path.join( base_config[ 'paths' ][ 'save_path' ], 'individual_configs/', SEARCH_ID + '_config' + str( idx ) + '_repeat' + str( repeat ) + '/' )
+            for repeat in range(num_repeats):
 
-                os.makedirs( eval_config[ 'paths' ][ 'save_path' ], exist_ok = True )
+                eval_config = deepcopy(base_config)
+                eval_config['hyperparameters'].update(config)
+                eval_config['runtime']['seed'] = repeat
+                eval_config['paths']['save_path'] = os.path.join(
+                    base_config['paths']['save_path'],
+                    'individual_configs/',
+                    SEARCH_ID + '_config' + str(idx) + '_repeat' + str(repeat) + '/'
+                )
 
-                loss = eval_closed_roa( eval_config )
+                if len(eval_config) != len(base_config):
+                    raise ValueError("Invalid configuration\n\n" + str(eval_config) + "\n\n" + str(base_config))
+
+
+                os.makedirs(eval_config['paths']['save_path'], exist_ok=True)
+
+                loss = eval_closed_roa(eval_config)
 
                 # import random
-                # loss = random.random(  )
+                # loss = random.random()
 
                 losses.append( loss )
 
@@ -118,10 +126,11 @@ def main( base_config = BASE_CONFIG, num_repeats = NUM_REPEATS, search_id = SEAR
 
                 pkl.dump( config_losses, avg_losses_writer )
 
-            plt.plot( sorted( avg_config_losses ) )
-            plt.savefig( os.path.join( save_dir, 'loss_plot.png' ) )
-            plt.close(  )
-
+            plt.clf()
+            plt.figure()
+            plt.plot(sorted(avg_config_losses))
+            plt.savefig(os.path.join(save_dir, 'loss_plot.png'))
+            plt.clf()
 
 # Define behavior when running as main.
 if __name__ == '__main__':

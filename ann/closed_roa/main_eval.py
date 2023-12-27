@@ -39,121 +39,7 @@ from pinn_class import pinn_class as pinn_class
 os.system( 'cls' if os.name == 'nt' else 'clear' )
 
 # Set matplotlib options.
-plt.rcParams.update( { 'figure.max_open_warning': 0 } )                     # Disable maximum open figure warning.
-
-# Define the base configuration.
-# BASE_CONFIG = {
-#     'classification_parameters': {
-#         'num_noisy_samples_per_level_set_point': int( 5 ),
-#         'noise_percentage': float( 1e-3 ),
-#         'dt': float( 1e-3 ),
-#         'tfinal': float( 10 ),
-#     },
-#     'exploration_parameters': {
-#         'volume_percentage': float( 1e-2 ),
-#         'num_points': int( 50 ),
-#         'unique_percentage': float( 1e-4 ),
-#     },
-#     'hyperparameters': {
-#         'activation_function': 'sigmoid',
-#         'c_IC': float( 22.1 ),
-#         'c_BC': float( 31.1 ),
-#         'c_residual': float( 69.1 ),
-#         'c_variational': float( 39.1 ),
-#         'c_monotonicity': float( 80.1 ),
-#         'hidden_layer_widths': int( 175 ),
-#         'num_epochs': int( 1000 ),
-#         'num_hidden_layers': int( 5 ),
-#         'num_training_data': int( 100e3 ),
-#         'num_testing_data': int( 20e3 ),
-#         'learning_rate': float( 0.005 ),
-#     },
-#     'newton_parameters': {
-#         'tolerance': float( 1e-6 ),
-#         'max_iterations': int( 1e2 ),
-#     },
-#     'paths': {
-#         'save_path': r'./ann/closed_roa/save',
-#         'load_path': r'./ann/closed_roa/load',
-#     },
-#     'plotting_parameters': {
-#         'num_plotting_samples': int( 20 ),
-#         'plot_flag': bool( True ),
-#     },
-#     'printing_parameters': {
-#         'batch_print_frequency': int( 10 ),
-#         'epoch_print_frequency': int( 10 ),
-#         'print_flag': bool( True ),
-#     },
-#     'runtime': {
-#         'device': 'cuda:8' if torch.cuda.is_available(  ) else 'cpu',
-#         'load_flag': bool( False ),
-#         'seed': int( 0 ),
-#         'train_flag': bool( True ),
-#         'verbose_flag': bool( True ),
-#     },
-#     'saving_parameters': {
-#         'save_flag': bool( True ),
-#         'save_frequency': int( 10 ),
-#     }
-# }
-
-# BASE_CONFIG = {
-#     'classification_parameters': {
-#         'num_noisy_samples_per_level_set_point': int( 5 ),
-#         'noise_percentage': float( 1e-3 ),
-#         'dt': float( 1e-2 ),
-#         'tfinal': float( 10 ),
-#     },
-#     'exploration_parameters': {
-#         'volume_percentage': float( 1e-2 ),
-#         'num_points': int( 50 ),
-#         'unique_percentage': float( 1e-4 ),
-#     },
-#     'hyperparameters': {
-#         'activation_function': 'sigmoid',
-#         'c_IC': float( 22.1 ),
-#         'c_BC': float( 31.1 ),
-#         'c_residual': float( 69.1 ),
-#         'c_variational': float( 39.1 ),
-#         'c_monotonicity': float( 80.1 ),
-#         'hidden_layer_widths': int( 175 ),
-#         'num_epochs': int( 250 ),
-#         'num_hidden_layers': int( 5 ),
-#         'num_training_data': int( 100e3 ),
-#         'num_testing_data': int( 20e3 ),
-#         'learning_rate': float( 0.005 ),
-#     },
-#     'newton_parameters': {
-#         'tolerance': float( 1e-4 ),
-#         'max_iterations': int( 1e2 ),
-#     },
-#     'paths': {
-#         'save_path': r'./ann/closed_roa/save',
-#         'load_path': r'./ann/closed_roa/load',
-#     },
-#     'plotting_parameters': {
-#         'num_plotting_samples': int( 20 ),
-#         'plot_flag': bool( False ),
-#     },
-#     'printing_parameters': {
-#         'batch_print_frequency': int( 10 ),
-#         'epoch_print_frequency': int( 10 ),
-#         'print_flag': bool( True ),
-#     },
-#     'runtime': {
-#         'device': 'cuda:8' if torch.cuda.is_available(  ) else 'cpu',
-#         'seed': int( 0 ),
-#         'load_flag': bool( False ),
-#         'train_flag': bool( True ),
-#         'verbose_flag': bool( True ),
-#     },
-#     'saving_parameters': {
-#         'save_flag': bool( True ),
-#         'save_frequency': int( 10 ),
-#     }
-# }
-
+plt.rcParams.update( { 'figure.max_open_warning': 0 } )
 
 BASE_CONFIG = {
     'classification_parameters': {
@@ -217,38 +103,14 @@ BASE_CONFIG = {
     }
 }
 
-# Implement a function to evaluate the closed roa.
-def eval_closed_roa( config: dict = {  } ) -> int:
-    
+def eval_closed_roa(config: dict = BASE_CONFIG) -> int:
     """
     TODO Finish Documentation
     """
-
-    # Print out a message saying that we are beginning Deep ROA Trial.
-    print( '\n' )
-    print( '------------------------------------------------------------------------------------------------------------------------' )
-    print( '------------------------------------------------------------------------------------------------------------------------' )
-    print( 'DEEP ROA TRIAL...' )
-    print( '------------------------------------------------------------------------------------------------------------------------' )
-    print( '------------------------------------------------------------------------------------------------------------------------' )
-    print( '\n' )
-
-    # Retrieve the starting time.
+    
     start_time = time.time(  )
-
-    # Print out a message saying that we are setting up.
-    print( '------------------------------------------------------------------------------------------------------------------------' )
-    print( 'SETTING UP...' )
-    print( '------------------------------------------------------------------------------------------------------------------------' )
-    print( '\n' )
-
-    # Retrieve the starting time for setting up.
     start_time_setup = time.time(  )
-
-    # Retrieve the configuration.
-    config = BASE_CONFIG
-
-    # Set the random seeds.
+    
     np.random.seed( config[ 'runtime' ][ 'seed' ] )
     random.seed( config[ 'runtime' ][ 'seed' ] )
     torch.manual_seed( config[ 'runtime' ][ 'seed' ] )
@@ -276,9 +138,23 @@ def eval_closed_roa( config: dict = {  } ) -> int:
     # -------------------------
     # Define the save options.
     # -------------------------
-    save_path = str( config[ 'paths' ][ 'save_path' ] )      # [-] Relative path to the directory in which to save network data, etc.
-    save_frequency = torch.tensor( int( config[ 'saving_parameters' ][ 'save_frequency' ] ), dtype = torch.int64, device = device )        # [#] Number of epochs after which to save intermediate networks during training. e.g., 1 = Save after every training epoch, 10 = Save after every ten training epochs, 100 = Save after every hundred epochs.
-    save_flag = bool( config[ 'saving_parameters' ][ 'save_flag' ] )      # [T/F] Flag that determines whether to save networks during and after training, as well as training and network analysis plots.
+    # [-] Relative path to the directory in which to save network data, etc.
+    save_path = str(config['paths']['save_path'])  
+
+    print(save_path)
+
+    # [#] Number of epochs after which to save intermediate networks during
+    #     training. e.g., 1 = Save after every training epoch, 10 = Save after
+    #     every ten training epochs, 100 = Save after every hundred epochs.
+    save_frequency = torch.tensor(                 
+        int(config['saving_parameters']['save_frequency']),    
+        dtype=torch.int64,     
+        device=device
+    )   
+    
+    # [T/F] Flag that determines whether to save networks during and after
+    #       training, as well as training and network analysis plots.
+    save_flag = bool(config['saving_parameters']['save_flag']) 
 
     # Define the load options.
     load_path = str( config[ 'paths' ][ 'load_path' ] )    # [-] Relative path to the directory from which to load network data.
