@@ -9,16 +9,16 @@ import sys
 from typing import List
 
 # Edit the system path to include the working directory.
-sys.path.append(r'./ann/closed_roa')
+sys.path.append(r'./ann/simple_pendulum')
 
 # Import custom libraries.
-from main_eval import BASE_CONFIG, eval_closed_roa
+from main_eval import BASE_CONFIG, eval_simple_pendulum
 
 # Define grid parameters.
 NUM_REPEATS = 3
 SEARCH_ID = 'grid_search_0_test'
 # SAVE_DIR = '/scratch/ssnyde9/boroa/ann/closed_roa/'
-SAVE_DIR = r'./ann/closed_roa/save'
+SAVE_DIR = r'./ann/simple_pendulum/save'
 
 # # Define the search space.
 # SEARCH_SPACE = {
@@ -32,13 +32,25 @@ SAVE_DIR = r'./ann/closed_roa/save'
 #     'learning_rate':       [ float( 0.01 ), float( 0.005 ), float( 0.001 ) ],
 # }
 
+# # Define the search space.
+# SEARCH_SPACE = {
+#     'c_IC': [ float( 1.0 ) ],
+#     'c_BC': [ float( 1.0 ) ],
+#     'c_residual':     [ float( 1e-6 ), float( 1e-5 ), float( 1e-4 ), float( 1e-3 ), float( 1e-2 ) ],
+#     'c_variational':  [ float( 1e-6 ), float( 1e-5 ), float( 1e-4 ), float( 1e-3 ), float( 1e-2 ) ],
+#     'c_monotonicity': [ float( 1e2 ) ],
+#     'hidden_layer_widths': [ int( 175 ) ],
+#     'num_hidden_layers':   [ int( 5 ) ],
+#     'learning_rate':       [ float( 0.005 ) ],
+# }
+
 # Define the search space.
 SEARCH_SPACE = {
     'c_IC': [ float( 1.0 ) ],
     'c_BC': [ float( 1.0 ) ],
-    'c_residual':     [ float( 1e-2 ), float( 1e-1 ), float( 1 ), float( 1e1 ), float( 1e2 ) ],
-    'c_variational':  [ float( 1e-2 ), float( 1e-1 ), float( 1 ), float( 1e1 ), float( 1e2 ) ],
-    'c_monotonicity': [ float( 1e3 ) ],
+    'c_residual':     [ float( 1e-4 ) ],
+    'c_variational':  [ float( 1e-4 ) ],
+    'c_monotonicity': [ float( 1e2 ) ],
     'hidden_layer_widths': [ int( 175 ) ],
     'num_hidden_layers':   [ int( 5 ) ],
     'learning_rate':       [ float( 0.005 ) ],
@@ -81,27 +93,19 @@ def main( base_config = BASE_CONFIG, num_repeats = NUM_REPEATS, search_id = SEAR
             
             losses = [  ]
 
-            for repeat in range(num_repeats):
+            for repeat in range( num_repeats ):
+                
+                eval_config = deepcopy( base_config )
+                eval_config[ 'hyperparameters' ].update( config )
+                eval_config[ 'runtime' ][ 'seed' ] = repeat
+                eval_config[ 'paths' ][ 'save_path' ] = os.path.join( base_config[ 'paths' ][ 'save_path' ], 'individual_configs/', SEARCH_ID + '_config' + str( idx ) + '_repeat' + str( repeat ) + '/' )
 
-                eval_config = deepcopy(base_config)
-                eval_config['hyperparameters'].update(config)
-                eval_config['runtime']['seed'] = repeat
-                eval_config['paths']['save_path'] = os.path.join(
-                    base_config['paths']['save_path'],
-                    'individual_configs/',
-                    SEARCH_ID + '_config' + str(idx) + '_repeat' + str(repeat) + '/'
-                )
+                os.makedirs( eval_config[ 'paths' ][ 'save_path' ], exist_ok = True )
 
-                if len(eval_config) != len(base_config):
-                    raise ValueError("Invalid configuration\n\n" + str(eval_config) + "\n\n" + str(base_config))
-
-
-                os.makedirs(eval_config['paths']['save_path'], exist_ok=True)
-
-                loss = eval_closed_roa(eval_config)
+                loss = eval_simple_pendulum( eval_config )
 
                 # import random
-                # loss = random.random()
+                # loss = random.random(  )
 
                 losses.append( loss )
 
@@ -126,11 +130,10 @@ def main( base_config = BASE_CONFIG, num_repeats = NUM_REPEATS, search_id = SEAR
 
                 pkl.dump( config_losses, avg_losses_writer )
 
-            plt.clf()
-            plt.figure()
-            plt.plot(sorted(avg_config_losses))
-            plt.savefig(os.path.join(save_dir, 'loss_plot.png'))
-            plt.clf()
+            plt.plot( sorted( avg_config_losses ) )
+            plt.savefig( os.path.join( save_dir, 'loss_plot.png' ) )
+            plt.close(  )
+
 
 # Define behavior when running as main.
 if __name__ == '__main__':

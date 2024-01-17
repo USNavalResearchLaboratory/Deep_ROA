@@ -35,8 +35,144 @@ class neural_network_class( torch.nn.Module ):
 
     #%% ------------------------------------------------------------ CONSTRUCTOR ------------------------------------------------------------
 
+    # # Implement the class constructor.
+    # def __init__( self, layers, activation_string, learning_rate, residual_batch_size, num_epochs, residual_function, residual_code, temporal_code, training_data, testing_data, plotting_data, dimension_labels, element_computation_option, batch_print_frequency, epoch_print_frequency, c_IC, c_BC, c_residual, c_variational, c_monotonicity, newton_tolerance, newton_max_iterations, exploration_radius_spatial, exploration_radius_spatiotemporal, num_exploration_points, unique_tolerance_spatial, unique_tolerance_spatiotemporal, classification_noise_magnitude_spatial, classification_noise_magnitude_spatiotemporal, device = 'cpu', verbose_flag = False ):
+
+    #     # Construct the parent class.
+    #     super( neural_network_class, self ).__init__(  )
+
+    #     # Create an instance of the tensor utilities class.
+    #     self.tensor_utilities = tensor_utilities_class(  )
+
+    #     # Create an instance of the classification utilities class.
+    #     self.classification_utilities = classification_utilities_class(  )
+
+    #     # Create an instance of the plotting utilities class.
+    #     self.plotting_utilities = plotting_utilities_class(  )
+
+    #     # Store the device.
+    #     self.device = device
+
+    #     # Store the verbosity setting.
+    #     self.verbose_flag = verbose_flag
+
+    #     # Store the dimension labels.
+    #     self.dimension_labels = dimension_labels
+
+    #     # Store the element computation option.
+    #     self.element_computation_option = element_computation_option
+
+
+    #     #%% -------------------- Store Hyper-parameters --------------------
+
+    #     # Store the network structure data.
+    #     self.layers = self.validate_layers( layers )
+    #     self.num_inputs = self.layers[ 0 ]
+    #     self.num_outputs = self.layers[ -1 ]
+    #     self.num_hidden_layers = self.compute_num_hidden_layers( self.layers )
+    #     self.num_weights_biases = self.compute_num_weights_biases( self.layers )
+    #     self.activation_string = self.validate_activation_string( activation_string )
+
+    #     # Store the training parameters.
+    #     self.learning_rate = learning_rate
+    #     self.residual_batch_size = residual_batch_size
+    #     self.num_epochs = num_epochs
+
+
+    #     #%% -------------------- PDE INFORMATION --------------------
+
+    #     # Store the residual information.
+    #     self.residual_function = self.validate_residual_function( residual_function )
+    #     self.residual_code = self.validate_residual_code( residual_code )
+    #     self.temporal_code = self.validate_temporal_code( temporal_code )
+    #     self.derivative_required_for_residual = self.residual_code2derivative_requirements( self.residual_code )
+    #     self.derivative_required_for_temporal_gradient = self.temporal_code2derivative_requirements( self.temporal_code )
+    #     self.num_residual_inputs = self.compute_num_residual_required_derivatives( self.residual_code )
+
+    #     # Ensure that the residual function and residual code are compatible.
+    #     assert self.is_residual_function_code_compatible( self.residual_function, num_residual_function_inputs = self.num_residual_inputs )
+
+
+    #     #%% -------------------- Store Training, Testing, & Plotting Data --------------------
+
+    #     # Store the training data.
+    #     self.training_data = training_data
+
+    #     # Store the testing data.
+    #     self.testing_data = testing_data
+
+    #     # Store the plotting data.
+    #     self.plotting_data = plotting_data
+
+
+    #     #%% -------------------- Store Printing Options --------------------
+
+    #     # Store the batch and epoch print frequencies.
+    #     self.batch_print_frequency = batch_print_frequency
+    #     self.epoch_print_frequency = epoch_print_frequency
+
+
+    #     #%% -------------------- Store Loss Parameters --------------------
+
+    #     # Store the loss parameters.
+    #     self.c_IC = c_IC
+    #     self.c_BC = c_BC
+    #     self.c_residual = c_residual
+    #     self.c_variational = c_variational
+    #     self.c_monotonicity = c_monotonicity
+        
+
+    #     #%% -------------------- Store the Level Set Parameters --------------------
+
+    #     # Store the newton parameters.
+    #     self.newton_tolerance = newton_tolerance
+    #     self.newton_max_iterations = newton_max_iterations
+        
+    #     # Store the exploration parameters.
+    #     self.exploration_radius_spatial = exploration_radius_spatial
+    #     self.exploration_radius_spatiotemporal = exploration_radius_spatiotemporal
+    #     self.num_exploration_points = num_exploration_points
+    #     self.unique_tolerance_spatial = unique_tolerance_spatial
+    #     self.unique_tolerance_spatiotemporal = unique_tolerance_spatiotemporal
+
+    #     # Store the classification loss parameters.
+    #     self.classification_noise_magnitude_spatial = classification_noise_magnitude_spatial
+    #     self.classification_noise_magnitude_spatiotemporal = classification_noise_magnitude_spatiotemporal
+
+    #     # Store the classification data.
+    #     self.classification_data = torch.tensor( [  ], dtype = torch.float32, device = self.device )
+    #     self.classification_data_forecast = torch.tensor( [  ], dtype = torch.float32, device = self.device )
+    #     self.network_classifications = torch.tensor( [  ], dtype = torch.bool, device = self.device )
+    #     self.actual_classifications = torch.tensor( [  ], dtype = torch.bool, device = self.device )
+    #     self.classification_loss = torch.tensor( [  ], dtype = torch.float32, device = self.device )
+
+
+    #     #%% -------------------- Initialization Functions --------------------
+
+    #     # Compute the number of batches.
+    #     self.num_batches, self.initial_condition_batch_size, self.boundary_condition_batch_size = self.initialize_batch_info( self.training_data.initial_condition_data[ 0 ].num_data_points, self.training_data.boundary_condition_data[ 0 ].num_data_points, self.training_data.num_residual_points, self.residual_batch_size )
+
+    #     # Store the activation function choice.
+    #     self.activation = self.initialize_activation_function( self.activation_string )
+
+    #     # Initialize the forward stack.
+    #     self.forward_stack = self.initialize_forward_stack( self.layers, self.activation )
+
+    #     # Initialize the optimizer.
+    #     self.optimizer = torch.optim.Adam( self.parameters(  ), lr = self.learning_rate, betas = ( 0.9, 0.999 ), eps = 1e-08, weight_decay = 0 )
+
+    #     # Initialize the training losses, testing epochs, and testing losses.
+    #     self.training_losses, self.testing_epochs, self.testing_losses = self.initialize_training_testing_losses( self.num_epochs )
+
+    #     # Initialize the classification loss function.
+    #     self.classification_loss_function = torch.nn.BCELoss(  )
+
+    #     # Initialize the classification loss.
+    #     self.set_classification_loss( torch.empty( 1, dtype = torch.float32, device = self.device ) )
+
+
     # Implement the class constructor.
-    def __init__( self, layers, activation_string, learning_rate, residual_batch_size, num_epochs, residual_function, residual_code, temporal_code, training_data, testing_data, plotting_data, dimension_labels, element_computation_option, batch_print_frequency, epoch_print_frequency, c_IC, c_BC, c_residual, c_variational, c_monotonicity, newton_tolerance, newton_max_iterations, exploration_radius_spatial, exploration_radius_spatiotemporal, num_exploration_points, unique_tolerance_spatial, unique_tolerance_spatiotemporal, classification_noise_magnitude_spatial, classification_noise_magnitude_spatiotemporal, device = 'cpu', verbose_flag = False ):
+    def __init__( self, layers, activation_string, learning_rate, residual_batch_size, num_epochs, residual_function, residual_code, temporal_code, training_data, testing_data, plotting_data, dimension_labels, element_computation_option, batch_print_frequency, epoch_print_frequency, c_IC, c_BC, c_residual, c_residual_gradient, c_variational, c_monotonicity, newton_tolerance, newton_max_iterations, exploration_radius_spatial, exploration_radius_spatiotemporal, num_exploration_points, unique_tolerance_spatial, unique_tolerance_spatiotemporal, classification_noise_magnitude_spatial, classification_noise_magnitude_spatiotemporal, device = 'cpu', verbose_flag = False ):
 
         # Construct the parent class.
         super( neural_network_class, self ).__init__(  )
@@ -118,6 +254,7 @@ class neural_network_class( torch.nn.Module ):
         self.c_IC = c_IC
         self.c_BC = c_BC
         self.c_residual = c_residual
+        self.c_residual_gradient = c_residual_gradient
         self.c_variational = c_variational
         self.c_monotonicity = c_monotonicity
         
@@ -169,7 +306,6 @@ class neural_network_class( torch.nn.Module ):
 
         # Initialize the classification loss.
         self.set_classification_loss( torch.empty( 1, dtype = torch.float32, device = self.device ) )
-
 
 
     #%% ------------------------------------------------------------ PREPROCESS FUNCTIONS ------------------------------------------------------------
@@ -905,8 +1041,23 @@ class neural_network_class( torch.nn.Module ):
             # Determine whether to generate the classification data.
             if ( num_spatial_dimensions is not None ) and ( domain is not None ) and ( plot_time is not None ):
 
+                # Print out a message stating that we are generating classification data.
+                print( 'Generating classification data...' )
+
+                # Retrieve the starting time.
+                start_time = time.time(  )
+
                 # Generate the classification data.
                 classification_data = self.generate_classification_data( num_spatial_dimensions, domain, plot_time, level, level_set_guesses, newton_tolerance, newton_max_iterations, exploration_radius, num_exploration_points, unique_tolerance, classification_noise_magnitude, num_noisy_samples_per_level_set_point, domain_subset_type, True )
+
+                # Retrieve the ending time.
+                end_time = time.time(  )
+
+                # Compute the classification duration.
+                classification_duration = end_time - start_time
+
+                # Print out a message stating that we dare done generating classification data.
+                print( f'Generating classification data... Done. Duration = {classification_duration}s = {classification_duration/60}min = {classification_duration/3600}hr' )
 
             else:
 
@@ -1820,7 +1971,8 @@ class neural_network_class( torch.nn.Module ):
             # Set the number of residual inputs to be one.
             num_required_derivatives = torch.tensor( 1, dtype = torch.uint8, device = self.device )
 
-        elif isinstance( derivative_code, list ):                     # If the  residual code is a list...
+        # elif isinstance( derivative_code, list ):                     # If the residual code is a list...
+        elif isinstance( derivative_code, list ) or isinstance( derivative_code, tuple ):                     # If the residual code is a list or tuple...
 
             # Set the number of residual inputs.
             num_required_derivatives = torch.tensor( len( derivative_code ), dtype = torch.uint8, device = self.device )
@@ -1866,6 +2018,25 @@ class neural_network_class( torch.nn.Module ):
         return num_temporal_derivatives
 
 
+    # # Implement a function to compute the residual.
+    # def compute_residual( self, residual_data = None, derivative_required_for_residual = None, residual_code = None ):
+
+    #     # Preprocess the residual code.
+    #     residual_code = self.preprocess_residual_code( residual_code )
+
+    #     # Preprocess the derivative required fo residual.
+    #     derivative_required_for_residual = self.preprocess_derivative_required_for_residual( derivative_required_for_residual )
+
+    #     # Preprocess the residual data.
+    #     residual_data = self.preprocess_residual_data( residual_data )
+
+    #     # Compute the residual.
+    #     residual = self.residual( residual_data.input_data_batch, derivative_required_for_residual, residual_code )
+
+    #     # Return the residual.
+    #     return residual
+
+
     # Implement a function to compute the residual.
     def compute_residual( self, residual_data = None, derivative_required_for_residual = None, residual_code = None ):
 
@@ -1879,10 +2050,29 @@ class neural_network_class( torch.nn.Module ):
         residual_data = self.preprocess_residual_data( residual_data )
 
         # Compute the residual.
-        residual = self.residual( residual_data.input_data_batch, derivative_required_for_residual, residual_code )
+        residual, residual_input_data_batch_tuple = self.residual( residual_data.input_data_batch, derivative_required_for_residual, residual_code )
 
         # Return the residual.
-        return residual
+        return residual, residual_input_data_batch_tuple
+
+
+    # # Implement a function to compute the variation.
+    # def compute_variation( self, variational_data = None, derivative_required_for_residual = None, residual_code = None ):
+
+    #     # Preprocess the residual code.
+    #     residual_code = self.preprocess_residual_code( residual_code )
+
+    #     # Preprocess the derivative required for residual.
+    #     derivative_required_for_residual = self.preprocess_derivative_required_for_residual( derivative_required_for_residual )
+
+    #     # Preprocess the variational data.
+    #     variational_data = self.preprocess_variational_data( variational_data )
+
+    #     # Compute the variation.
+    #     variation = self.variation( variational_data.xs_integration_points_batch, variational_data.G_basis_values_batch, variational_data.W_integration_weights_batch, variational_data.sigma_jacobian_batch, derivative_required_for_residual, residual_code )
+
+    #     # Return the variation.
+    #     return variation
 
 
     # Implement a function to compute the variation.
@@ -1898,10 +2088,10 @@ class neural_network_class( torch.nn.Module ):
         variational_data = self.preprocess_variational_data( variational_data )
 
         # Compute the variation.
-        variation = self.variation( variational_data.xs_integration_points_batch, variational_data.G_basis_values_batch, variational_data.W_integration_weights_batch, variational_data.sigma_jacobian_batch, derivative_required_for_residual, residual_code )
+        variation, residual = self.variation( variational_data.xs_integration_points_batch, variational_data.G_basis_values_batch, variational_data.W_integration_weights_batch, variational_data.sigma_jacobian_batch, derivative_required_for_residual, residual_code )
 
         # Return the variation.
-        return variation
+        return variation, residual
 
 
     # Implement a function to compute the temporal gradient.
@@ -2082,6 +2272,37 @@ class neural_network_class( torch.nn.Module ):
         return network_output_grid
 
 
+    # # Implement a function to compute the network residual.
+    # def residual( self, residual_input_data_batch = None, derivative_required_for_residual = None, residual_code = None ):
+
+    #     # Preprocess the residual code.
+    #     residual_code = self.preprocess_residual_code( residual_code )
+
+    #     # Preprocess the derivative required for residual.
+    #     derivative_required_for_residual = self.preprocess_derivative_required_for_residual( derivative_required_for_residual )
+
+    #     # Preprocess the residual input data batch.
+    #     residual_input_data_batch = self.preprocess_residual_input_data_batch( residual_input_data_batch )
+
+    #     # Split the network input into its constituent dimensions.
+    #     residual_input_data_batch_tuple = residual_input_data_batch.split( 1, dim = 1 )
+
+    #     # Enable gradients with respect to the inputs as required for residual calculation.
+    #     residual_input_data_batch_tuple = self.enable_residual_gradients( residual_input_data_batch_tuple, derivative_required_for_residual )
+
+    #     # Compute the network prediction.
+    #     network_output = self.predict( residual_input_data_batch_tuple )
+
+    #     # Compute the residual function inputs.
+    #     residual_function_inputs = self.compute_residual_function_inputs( residual_input_data_batch_tuple, network_output, residual_code )
+
+    #     # Compute the residual output.
+    #     residual = self.residual_function( *residual_function_inputs )
+
+    #     # Return the residual.
+    #     return residual
+
+
     # Implement a function to compute the network residual.
     def residual( self, residual_input_data_batch = None, derivative_required_for_residual = None, residual_code = None ):
 
@@ -2110,7 +2331,42 @@ class neural_network_class( torch.nn.Module ):
         residual = self.residual_function( *residual_function_inputs )
 
         # Return the residual.
-        return residual
+        return residual, residual_input_data_batch_tuple
+
+
+    # # Implement a function to compute the network variation.
+    # def variation( self, xs_integration_points_batch = None, G_basis_values_batch = None, W_integration_weights_batch = None, sigma_jacobian_batch = None, derivative_required_for_residual = None, residual_code = None ):
+
+    #     # xs_integration_points_batch = ( # elements, # points per element, # dimensions )
+    #     # G_basis_values_batch = ( # elements, # basis functions, # points per element )
+    #     # W_integration_weights_batch = ( # elements, # basis functions, # points per element )
+    #     # sigma_jacobian_batch = ( # elements, # basis functions )
+
+    #     # Preprocess the residual code.
+    #     residual_code = self.preprocess_residual_code( residual_code )
+
+    #     # Preprocess the derivative required for residual.
+    #     derivative_required_for_residual = self.preprocess_derivative_required_for_residual( derivative_required_for_residual )
+
+    #     # Setup for the variation calculation.
+    #     xs_integration_points_batch, G_basis_values_batch, W_integration_weights_batch, sigma_jacobian_batch = self.setup_variation( xs_integration_points_batch, G_basis_values_batch, W_integration_weights_batch, sigma_jacobian_batch )
+
+    #     # Infer the number of dimensions, number of basis functions, and the number of points per element from the given variational data.
+    #     num_dimensions = xs_integration_points_batch.shape[ 2 ]
+    #     num_basis_functions = G_basis_values_batch.shape[ 1 ]
+    #     num_points_per_element = G_basis_values_batch.shape[ 2 ]
+
+    #     # Compute the residual at the integration points ( Note that the integration points must be reshaped before being passed to the residual function. )
+    #     residual = self.residual( torch.reshape( xs_integration_points_batch, ( -1, num_dimensions ) ), derivative_required_for_residual, residual_code )
+
+    #     # Construct the residual tensor by reshaping the residual.
+    #     R_residual_batch = torch.repeat_interleave( torch.reshape( residual, ( -1, 1, num_points_per_element ) ), repeats = num_basis_functions, axis = 1 )         # [nc x nb x ne]
+
+    #     # Compute the variation for each element and each basis function.
+    #     variation = sigma_jacobian_batch*torch.sum( W_integration_weights_batch*G_basis_values_batch*R_residual_batch, axis = -1 )           # [nc x nb]
+
+    #     # Return the variation.
+    #     return variation
 
 
     # Implement a function to compute the network variation.
@@ -2136,7 +2392,7 @@ class neural_network_class( torch.nn.Module ):
         num_points_per_element = G_basis_values_batch.shape[ 2 ]
 
         # Compute the residual at the integration points ( Note that the integration points must be reshaped before being passed to the residual function. )
-        residual = self.residual( torch.reshape( xs_integration_points_batch, ( -1, num_dimensions ) ), derivative_required_for_residual, residual_code )
+        residual, _ = self.residual( torch.reshape( xs_integration_points_batch, ( -1, num_dimensions ) ), derivative_required_for_residual, residual_code )
 
         # Construct the residual tensor by reshaping the residual.
         R_residual_batch = torch.repeat_interleave( torch.reshape( residual, ( -1, 1, num_points_per_element ) ), repeats = num_basis_functions, axis = 1 )         # [nc x nb x ne]
@@ -2145,7 +2401,7 @@ class neural_network_class( torch.nn.Module ):
         variation = sigma_jacobian_batch*torch.sum( W_integration_weights_batch*G_basis_values_batch*R_residual_batch, axis = -1 )           # [nc x nb]
 
         # Return the variation.
-        return variation
+        return variation, residual
 
 
     # Implement a function to compute the network temporal derivative.
@@ -2200,6 +2456,12 @@ class neural_network_class( torch.nn.Module ):
         # Compute the number of classification points.
         num_classification_points = classification_data.shape[ 0 ]
 
+        # Print out a message stating that we are starting to compute the classification loss.
+        print( 'Computing classifications...' )
+
+        # Retrieve the starting time.
+        start_time = time.time(  )
+
         # Determine how to compute the classification loss.
         if classification_data.numel(  ) != 0:                  # If their is classification data...
 
@@ -2243,6 +2505,15 @@ class neural_network_class( torch.nn.Module ):
             self.network_classifications = network_classifications
             self.actual_classifications = actual_classifications
             self.classification_loss = classification_loss
+
+        # Retrieve the end time.
+        end_time = time.time(  )
+
+        # Compute the classification loss duration.
+        classification_loss_duration = end_time - start_time
+
+        # Print out a message stating that we are done computing classification loss.
+        print( f'Computing classifications... Done. Duration = {classification_loss_duration}s = {classification_loss_duration/60}min = {classification_loss_duration/3600}hr' )
 
         # Return the classification loss.
         return classification_loss, num_classification_points
@@ -2317,6 +2588,28 @@ class neural_network_class( torch.nn.Module ):
         return boundary_condition_loss
 
 
+    # # Implement a function to compute the residual loss.
+    # def residual_loss( self, residual_data = None, derivative_required_for_residual = None, residual_code = None ):
+
+    #     # Preprocess the residual code.
+    #     residual_code = self.preprocess_residual_code( residual_code )
+
+    #     # Preprocess the derivative required for residual.
+    #     derivative_required_for_residual = self.preprocess_derivative_required_for_residual( derivative_required_for_residual )
+
+    #     # Preprocess the residual data.
+    #     residual_data = self.preprocess_residual_data( residual_data )
+
+    #     # Compute the network residual.
+    #     residual = self.compute_residual( residual_data, derivative_required_for_residual, residual_code )
+
+    #     # Compute the residual loss.
+    #     residual_loss = torch.nn.functional.mse_loss( residual, torch.zeros_like( residual ) )
+
+    #     # Return the residual loss.
+    #     return residual_loss
+        
+
     # Implement a function to compute the residual loss.
     def residual_loss( self, residual_data = None, derivative_required_for_residual = None, residual_code = None ):
 
@@ -2330,13 +2623,47 @@ class neural_network_class( torch.nn.Module ):
         residual_data = self.preprocess_residual_data( residual_data )
 
         # Compute the network residual.
-        residual = self.compute_residual( residual_data, derivative_required_for_residual, residual_code )
+        residual, residual_input_data_batch_tuple = self.compute_residual( residual_data, derivative_required_for_residual, residual_code )
 
         # Compute the residual loss.
         residual_loss = torch.nn.functional.mse_loss( residual, torch.zeros_like( residual ) )
 
+        # Compute the derivative code.
+        derivative_code = torch.split( torch.tensor( range( len( residual_input_data_batch_tuple ) ), dtype = torch.uint8, device = self.device ), 1, dim = 0 )
+
+        # Compute the residual function inputs.
+        residual_gradient = torch.cat( self.compute_network_derivatives( residual_input_data_batch_tuple, residual, derivative_code ), dim = 1 )
+
+        # Compute the residual gradient magnitude.
+        residual_gradient_magnitude = torch.norm( residual_gradient, 2, dim = 1 )
+
+        # Compute the residual gradient loss.
+        residual_gradient_loss = torch.nn.functional.mse_loss( residual_gradient_magnitude, torch.zeros_like( residual_gradient_magnitude ) )
+
         # Return the residual loss.
-        return residual_loss
+        return residual_loss, residual_gradient_loss
+
+
+    # # Implement a function to compute the variational loss.
+    # def variational_loss( self, variational_data = None, derivative_required_for_residual = None, residual_code = None ):
+
+    #     # Preprocess the residual code.
+    #     residual_code = self.preprocess_residual_code( residual_code )
+
+    #     # Preprocess the derivative required for residual.
+    #     derivative_required_for_residual = self.preprocess_derivative_required_for_residual( derivative_required_for_residual )
+
+    #     # Preprocess the variational data.
+    #     variational_data = self.preprocess_variational_data( variational_data )
+
+    #     # Compute the network variation.
+    #     variation = self.compute_variation( variational_data, derivative_required_for_residual, residual_code )
+
+    #     # Compute the variational loss.
+    #     variational_loss = torch.nn.functional.mse_loss( variation, torch.zeros_like( variation ) )
+
+    #     # Return the variational loss.
+    #     return variational_loss
 
 
     # Implement a function to compute the variational loss.
@@ -2352,13 +2679,16 @@ class neural_network_class( torch.nn.Module ):
         variational_data = self.preprocess_variational_data( variational_data )
 
         # Compute the network variation.
-        variation = self.compute_variation( variational_data, derivative_required_for_residual, residual_code )
+        variation, residual = self.compute_variation( variational_data, derivative_required_for_residual, residual_code )
+
+        # # Compute the network residual loss.
+        residual_loss = torch.nn.functional.mse_loss( residual, torch.zeros_like( residual ) )
 
         # Compute the variational loss.
         variational_loss = torch.nn.functional.mse_loss( variation, torch.zeros_like( variation ) )
 
         # Return the variational loss.
-        return variational_loss
+        return variational_loss, residual_loss
 
 
     # Implement a function to compute the monotonicity loss.
@@ -2386,6 +2716,46 @@ class neural_network_class( torch.nn.Module ):
         return monotonicity_loss
 
 
+    # # Implement the loss function.
+    # def loss( self, initial_condition_data = None, boundary_condition_data = None, residual_data = None, variational_data = None, derivative_required_for_residual = None, residual_code = None, derivative_required_for_temporal_gradient = None, temporal_code = None ):
+
+    #     # Preprocess the temporal code.
+    #     temporal_code = self.preprocess_temporal_code( temporal_code )
+
+    #     # Preprocess the derivative required for temporal gradients.
+    #     derivative_required_for_temporal_gradient = self.preprocess_derivative_required_for_temporal_gradient( derivative_required_for_temporal_gradient )
+
+    #     # Preprocess the residual code.
+    #     residual_code = self.preprocess_residual_code( residual_code )
+
+    #     # Preprocess the derivative required for residual.
+    #     derivative_required_for_residual = self.preprocess_derivative_required_for_residual( derivative_required_for_residual )
+
+    #     # Setup for the loss computation.
+    #     initial_condition_data, boundary_condition_data, residual_data, variational_data = self.setup_loss_computation( initial_condition_data, boundary_condition_data, residual_data, variational_data )
+
+    #     # Compute the initial condition loss.
+    #     loss_ic = self.initial_condition_loss( initial_condition_data )
+
+    #     # Compute the boundary condition loss.
+    #     loss_bc = self.boundary_condition_loss( boundary_condition_data )
+
+    #     # Compute the residual loss.
+    #     loss_residual = self.residual_loss( residual_data, derivative_required_for_residual, residual_code )
+
+    #     # Compute the variational loss.
+    #     loss_variational = self.variational_loss( variational_data, derivative_required_for_residual, residual_code )
+
+    #     # Compute the monotonicity loss.
+    #     loss_monotonicity = self.monotonicity_loss( residual_data, derivative_required_for_temporal_gradient, temporal_code )
+
+    #     # Compute the complete loss.
+    #     loss = self.c_IC*loss_ic + self.c_BC*loss_bc + self.c_residual*loss_residual + self.c_variational*loss_variational + self.c_monotonicity*loss_monotonicity
+
+    #     # Return the loss.
+    #     return loss
+
+
     # Implement the loss function.
     def loss( self, initial_condition_data = None, boundary_condition_data = None, residual_data = None, variational_data = None, derivative_required_for_residual = None, residual_code = None, derivative_required_for_temporal_gradient = None, temporal_code = None ):
 
@@ -2411,16 +2781,19 @@ class neural_network_class( torch.nn.Module ):
         loss_bc = self.boundary_condition_loss( boundary_condition_data )
 
         # Compute the residual loss.
-        loss_residual = self.residual_loss( residual_data, derivative_required_for_residual, residual_code )
+        loss_residual1, residual_gradient_loss = self.residual_loss( residual_data, derivative_required_for_residual, residual_code )
 
         # Compute the variational loss.
-        loss_variational = self.variational_loss( variational_data, derivative_required_for_residual, residual_code )
+        loss_variational, loss_residual2 = self.variational_loss( variational_data, derivative_required_for_residual, residual_code )
 
         # Compute the monotonicity loss.
         loss_monotonicity = self.monotonicity_loss( residual_data, derivative_required_for_temporal_gradient, temporal_code )
 
+        # Compute the complete residual loss.
+        loss_residual = ( loss_residual1 + loss_residual2 )/2
+
         # Compute the complete loss.
-        loss = self.c_IC*loss_ic + self.c_BC*loss_bc + self.c_residual*loss_residual + self.c_variational*loss_variational + self.c_monotonicity*loss_monotonicity
+        loss = self.c_IC*loss_ic + self.c_BC*loss_bc + self.c_residual*loss_residual + self.c_residual_gradient*residual_gradient_loss + self.c_variational*loss_variational + self.c_monotonicity*loss_monotonicity
 
         # Return the loss.
         return loss

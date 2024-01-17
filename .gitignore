@@ -1,6 +1,7 @@
 # ignore specific folders
 # save/
 # load/
+*/ann/*/save/grid_search*
 
 .testing/**
 
