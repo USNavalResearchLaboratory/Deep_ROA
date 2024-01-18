@@ -15,8 +15,15 @@ sys.path.append(r'./ann/simple_pendulum')
 from main_eval import BASE_CONFIG, eval_simple_pendulum
 
 # Define grid parameters.
-NUM_REPEATS = 3
-SEARCH_ID = 'grid_search_0_test'
+NUM_REPEATS = 1
+# SEARCH_ID = 'grid_search_0_test'
+# SEARCH_ID = 'run1_coarse_grid_repeat1'
+# SEARCH_ID = 'run1_coarse_grid_repeat2'
+# SEARCH_ID = 'run1_coarse_grid_repeat3'
+# SEARCH_ID = 'run2_coarse_grid_repeat1'
+# SEARCH_ID = 'run2_coarse_grid_repeat2'
+SEARCH_ID = 'run2_coarse_grid_repeat3'
+# SEARCH_ID = 'run3_test_repeat1'
 # SAVE_DIR = '/scratch/ssnyde9/boroa/ann/closed_roa/'
 SAVE_DIR = r'./ann/simple_pendulum/save'
 
@@ -44,18 +51,54 @@ SAVE_DIR = r'./ann/simple_pendulum/save'
 #     'learning_rate':       [ float( 0.005 ) ],
 # }
 
-# Define the search space.
+# # Define the search space.
+# SEARCH_SPACE = {
+#     'c_IC': [ float( 1.0 ) ],
+#     'c_BC': [ float( 1.0 ) ],
+#     'c_residual':     [ float( 1e-4 ) ],
+#     'c_variational':  [ float( 1e-4 ) ],
+#     'c_monotonicity': [ float( 1e2 ) ],
+#     'hidden_layer_widths': [ int( 175 ) ],
+#     'num_hidden_layers':   [ int( 5 ) ],
+#     'learning_rate':       [ float( 0.005 ) ],
+# }
+
+# # Define the search space. Run 1 - Coarse grid.
+# SEARCH_SPACE = {
+#     'c_IC': [ float( 1.0 ) ],
+#     'c_BC': [ float( 1.0 ) ],
+#     'c_residual':     [ float( 1e-5 ), float( 1e-4 ), float( 1e-3 ) ],
+#     'c_variational':  [ float( 1e-5 ), float( 1e-4 ), float( 1e-3 ) ],
+#     'c_monotonicity': [ float( 1e2 ) ],
+#     'hidden_layer_widths': [ int( 50 ), int( 175 ), int( 500 ) ],
+#     'num_hidden_layers':   [ int( 3 ), int( 5 ), int( 7 ) ],
+#     'learning_rate':       [ float( 5e-4 ), float( 5e-3 ), float( 5e-2 ) ],
+# }
+
+# Define the search space. Run 2 - Residual & Variable Fine.
 SEARCH_SPACE = {
     'c_IC': [ float( 1.0 ) ],
     'c_BC': [ float( 1.0 ) ],
-    'c_residual':     [ float( 1e-4 ) ],
-    'c_variational':  [ float( 1e-4 ) ],
+    'c_residual':     [ float( 1e-7 ), float( 5e-7 ), float( 1e-6 ), float( 5e-6 ), float( 1e-5 ), float( 5e-5 ), float( 1e-4 ), float( 5e-4 ), float( 1e-3 ), float( 5e-3 ), float( 1e-2 ), float( 5e-2 ), float( 1e-1 ) ],
+    'c_variational':  [ float( 1e-7 ), float( 5e-7 ), float( 1e-6 ), float( 5e-6 ), float( 1e-5 ), float( 5e-5 ), float( 1e-4 ), float( 5e-4 ), float( 1e-3 ), float( 5e-3 ), float( 1e-2 ), float( 5e-2 ), float( 1e-1 ) ],
     'c_monotonicity': [ float( 1e2 ) ],
     'hidden_layer_widths': [ int( 175 ) ],
     'num_hidden_layers':   [ int( 5 ) ],
     'learning_rate':       [ float( 0.005 ) ],
 }
 
+
+# # Define the search space. Run 3 - Test.
+# SEARCH_SPACE = {
+#     'c_IC': [ float( 1.0 ) ],
+#     'c_BC': [ float( 1.0 ) ],
+#     'c_residual':     [ float( 1e-7 ) ],
+#     'c_variational':  [ float( 1e-4 ) ],
+#     'c_monotonicity': [ float( 1e2 ) ],
+#     'hidden_layer_widths': [ int( 175 ) ],
+#     'num_hidden_layers':   [ int( 5 ) ],
+#     'learning_rate':       [ float( 5e-4 ) ],
+# }
 
 # Implement the main function.
 def main( base_config = BASE_CONFIG, num_repeats = NUM_REPEATS, search_id = SEARCH_ID, save_dir = SAVE_DIR, search_space = SEARCH_SPACE ):
@@ -99,6 +142,10 @@ def main( base_config = BASE_CONFIG, num_repeats = NUM_REPEATS, search_id = SEAR
                 eval_config[ 'hyperparameters' ].update( config )
                 eval_config[ 'runtime' ][ 'seed' ] = repeat
                 eval_config[ 'paths' ][ 'save_path' ] = os.path.join( base_config[ 'paths' ][ 'save_path' ], 'individual_configs/', SEARCH_ID + '_config' + str( idx ) + '_repeat' + str( repeat ) + '/' )
+
+                if len( eval_config ) != len( base_config ):
+
+                    raise ValueError( "Invalid configuration\n\n" + str( eval_config ) + "\n\n" + str( base_config ) )
 
                 os.makedirs( eval_config[ 'paths' ][ 'save_path' ], exist_ok = True )
 

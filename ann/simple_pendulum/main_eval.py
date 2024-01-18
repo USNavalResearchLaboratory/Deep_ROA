@@ -119,17 +119,30 @@ BASE_CONFIG = {
         'c_IC': float( 1.0 ),
         'c_BC': float( 1.0 ),
         'c_residual': float( 1e-4 ),
+        # 'c_residual': float( 1e-5 ),
+        # 'c_residual': float( 1e-7 ), # This seems to work as implied by the fine search.
+        # 'c_residual': float( 1e-1 ), # This did not converge, even though grid search seemed to think it did.
         # 'c_residual': float( 3e-4 ),
         'c_residual_gradient': float( 0 ),
         'c_variational': float( 1e-4 ),
+        # 'c_variational': float( 1e-5 ),
+        # 'c_variational': float( 1e-6 ),
+        # 'c_variational': float( 1e-7 ), # This seems to work as implied by the fine search.
+        # 'c_variational': float( 1e-1 ), # This did not converge, even though grid search seemed to think it did.
         # 'c_variational': float( 3e-4 ),
         'c_monotonicity': float( 100 ),
         'hidden_layer_widths': int( 175 ),
+        # 'hidden_layer_widths': int( 500 ),
+        # 'hidden_layer_widths': int( 50 ),
         'num_epochs': int( 400 ),
+        # 'num_hidden_layers': int( 3 ),
         'num_hidden_layers': int( 5 ),
+        # 'num_hidden_layers': int( 7 ),
         'num_training_data': int( 100e3 ),
         'num_testing_data': int( 20e3 ),
-        'learning_rate': float( 0.005 ),
+        # 'learning_rate': float( 0.005 ),
+        'learning_rate': float( 5e-3 ),
+        # 'learning_rate': float( 5e-4 ),
     },
     'newton_parameters': {
         'tolerance': float( 1e-4 ),
@@ -142,6 +155,7 @@ BASE_CONFIG = {
     'plotting_parameters': {
         'num_plotting_samples': int( 20 ),
         'plot_flag': bool( False ),
+        # 'plot_flag': bool( True ),
     },
     'printing_parameters': {
         'batch_print_frequency': int( 10 ),
@@ -149,8 +163,15 @@ BASE_CONFIG = {
         'print_flag': bool( True ),
     },
     'runtime': {
-        'device': 'cuda:8' if torch.cuda.is_available(  ) else 'cpu',
-        'seed': int( 0 ),
+        # 'device': 'cuda:9' if torch.cuda.is_available(  ) else 'cpu',
+        # 'device': 'cuda:8' if torch.cuda.is_available(  ) else 'cpu',
+        # 'device': 'cuda:7' if torch.cuda.is_available(  ) else 'cpu',
+        # 'device': 'cuda:6' if torch.cuda.is_available(  ) else 'cpu',
+        # 'device': 'cuda:5' if torch.cuda.is_available(  ) else 'cpu',
+        'device': 'cuda:4' if torch.cuda.is_available(  ) else 'cpu',
+        # 'seed': int( 0 ),
+        # 'seed': int( 1 ),
+        'seed': int( 2 ),
         'load_flag': bool( False ),
         # 'load_flag': bool( True ),
         # 'train_flag': bool( False ),
@@ -193,7 +214,8 @@ def eval_simple_pendulum( config: dict = {  } ) -> int:
     start_time_setup = time.time(  )
 
     new_config = deepcopy( BASE_CONFIG )
-    new_config[ 'hyperparameters' ].update( config )
+    # new_config[ 'hyperparameters' ].update( config )
+    new_config[ 'hyperparameters' ].update( config[ 'hyperparameters' ] )
     config = deepcopy( new_config )
 
     # Set the random seeds.

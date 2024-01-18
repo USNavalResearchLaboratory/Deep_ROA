@@ -15,8 +15,10 @@ sys.path.append(r'./ann/closed_roa')
 from main_eval import BASE_CONFIG, eval_closed_roa
 
 # Define grid parameters.
-NUM_REPEATS = 3
-SEARCH_ID = 'grid_search_0_test'
+NUM_REPEATS = 1
+# SEARCH_ID = 'grid_search_0_test'
+# SEARCH_ID = 'run2_coarse_grid_repeat3'
+SEARCH_ID = 'run3_fine_residual_variational_repeat3'
 # SAVE_DIR = '/scratch/ssnyde9/boroa/ann/closed_roa/'
 SAVE_DIR = r'./ann/closed_roa/save'
 
@@ -32,17 +34,53 @@ SAVE_DIR = r'./ann/closed_roa/save'
 #     'learning_rate':       [ float( 0.01 ), float( 0.005 ), float( 0.001 ) ],
 # }
 
-# Define the search space.
+# # Define the search space. Run 1 - Partial
+# SEARCH_SPACE = {
+#     'c_IC': [ float( 1.0 ) ],
+#     'c_BC': [ float( 1.0 ) ],
+#     'c_residual':     [ float( 1e-3 ), float( 1e-2 ), float( 1e-1 ), float( 1 ), float( 1e1 ), float( 1e2 ), float( 1e3 ) ],
+#     'c_variational':  [ float( 1e-3 ), float( 1e-2 ), float( 1e-1 ), float( 1 ), float( 1e1 ), float( 1e2 ), float( 1e3 ) ],
+#     'c_monotonicity': [ float( 1e3 ) ],
+#     'hidden_layer_widths': [ int( 175 ) ],
+#     'num_hidden_layers':   [ int( 5 ) ],
+#     'learning_rate':       [ float( 0.005 ) ],
+# }
+
+# # Define the search space. Run 2 - Coarse grid.
+# SEARCH_SPACE = {
+#     'c_IC': [ float( 1.0 ) ],
+#     'c_BC': [ float( 1.0 ) ],
+#     'c_residual':     [ float( 1e-2 ), float( 1 ), float( 1e2 ) ],
+#     'c_variational':  [ float( 1e-2 ), float( 1 ), float( 1e2 ) ],
+#     'c_monotonicity': [ float( 1e3 ) ],
+#     'hidden_layer_widths': [ int( 50 ), int( 175 ), int( 500 ) ],
+#     'num_hidden_layers':   [ int( 3 ), int( 5 ), int( 7 ) ],
+#     'learning_rate':       [ float( 5e-4 ), float( 5e-3 ), float( 5e-2 ) ],
+# }
+
+# Define the search space. Run 3 - Residual & Variable Fine
 SEARCH_SPACE = {
     'c_IC': [ float( 1.0 ) ],
     'c_BC': [ float( 1.0 ) ],
-    'c_residual':     [ float( 1e-2 ), float( 1e-1 ), float( 1 ), float( 1e1 ), float( 1e2 ) ],
-    'c_variational':  [ float( 1e-2 ), float( 1e-1 ), float( 1 ), float( 1e1 ), float( 1e2 ) ],
+    'c_residual':     [ float( 1e-3 ), float( 5e-3 ), float( 1e-2 ), float( 5e-2 ), float( 1e-1 ), float( 5e-1 ), float( 1 ), float( 5 ), float( 1e1 ), float( 5e1 ), float( 1e2 ), float( 5e2 ), float( 1e3 ) ],
+    'c_variational':  [ float( 1e-3 ), float( 5e-3 ), float( 1e-2 ), float( 5e-2 ), float( 1e-1 ), float( 5e-1 ), float( 1 ), float( 5 ), float( 1e1 ), float( 5e1 ), float( 1e2 ), float( 5e2 ), float( 1e3 ) ],
     'c_monotonicity': [ float( 1e3 ) ],
     'hidden_layer_widths': [ int( 175 ) ],
     'num_hidden_layers':   [ int( 5 ) ],
     'learning_rate':       [ float( 0.005 ) ],
 }
+
+# # Define the search space.
+# SEARCH_SPACE = {
+#     'c_IC': [ float( 1.0 ) ],
+#     'c_BC': [ float( 1.0 ) ],
+#     'c_residual':     [ float( 1 ) ],
+#     'c_variational':  [ float( 1 ) ],
+#     'c_monotonicity': [ float( 1e3 ) ],
+#     'hidden_layer_widths': [ int( 175 ) ],
+#     'num_hidden_layers':   [ int( 5 ) ],
+#     'learning_rate':       [ float( 0.005 ) ],
+# }
 
 
 # Implement the main function.
@@ -81,24 +119,20 @@ def main( base_config = BASE_CONFIG, num_repeats = NUM_REPEATS, search_id = SEAR
             
             losses = [  ]
 
-            for repeat in range(num_repeats):
+            for repeat in range( num_repeats ):
 
-                eval_config = deepcopy(base_config)
-                eval_config['hyperparameters'].update(config)
-                eval_config['runtime']['seed'] = repeat
-                eval_config['paths']['save_path'] = os.path.join(
-                    base_config['paths']['save_path'],
-                    'individual_configs/',
-                    SEARCH_ID + '_config' + str(idx) + '_repeat' + str(repeat) + '/'
-                )
+                eval_config = deepcopy( base_config )
+                eval_config[ 'hyperparameters' ].update( config )
+                eval_config[ 'runtime' ][ 'seed' ] = repeat
+                eval_config[ 'paths' ][ 'save_path' ] = os.path.join( base_config[ 'paths' ][ 'save_path' ], 'individual_configs/', SEARCH_ID + '_config' + str( idx ) + '_repeat' + str( repeat ) + '/' )
 
-                if len(eval_config) != len(base_config):
-                    raise ValueError("Invalid configuration\n\n" + str(eval_config) + "\n\n" + str(base_config))
+                if len( eval_config ) != len( base_config ):
 
+                    raise ValueError( "Invalid configuration\n\n" + str( eval_config ) + "\n\n" + str( base_config ) )
 
-                os.makedirs(eval_config['paths']['save_path'], exist_ok=True)
+                os.makedirs( eval_config[ 'paths' ][ 'save_path' ], exist_ok = True )
 
-                loss = eval_closed_roa(eval_config)
+                loss = eval_closed_roa( eval_config )
 
                 # import random
                 # loss = random.random()
@@ -126,11 +160,12 @@ def main( base_config = BASE_CONFIG, num_repeats = NUM_REPEATS, search_id = SEAR
 
                 pkl.dump( config_losses, avg_losses_writer )
 
-            plt.clf()
-            plt.figure()
-            plt.plot(sorted(avg_config_losses))
-            plt.savefig(os.path.join(save_dir, 'loss_plot.png'))
-            plt.clf()
+            plt.clf(  )
+            plt.figure(  )
+            plt.plot( sorted( avg_config_losses ) )
+            plt.savefig( os.path.join( save_dir, 'loss_plot.png' ) )
+            plt.clf(  )
+
 
 # Define behavior when running as main.
 if __name__ == '__main__':
