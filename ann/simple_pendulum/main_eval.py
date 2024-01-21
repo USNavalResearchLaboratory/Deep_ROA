@@ -46,67 +46,11 @@ os.system( 'cls' if os.name == 'nt' else 'clear' )
 plt.rcParams.update( { 'figure.max_open_warning': 0 } )                     # Disable maximum open figure warning.
 
 # Define the base configuration.
-# BASE_CONFIG = {
-#     'classification_parameters': {
-#         'num_noisy_samples_per_level_set_point': int( 5 ),
-#         'noise_percentage': float( 1e-3 ),
-#         'dt': float( 1e-3 ),
-#         'tfinal': float( 10 ),
-#     },
-#     'exploration_parameters': {
-#         'volume_percentage': float( 1e-2 ),
-#         'num_points': int( 50 ),
-#         'unique_percentage': float( 1e-4 ),
-#     },
-#     'hyperparameters': {
-#         'activation_function': 'sigmoid',
-#         'c_IC': float( 22.1 ),
-#         'c_BC': float( 31.1 ),
-#         'c_residual': float( 69.1 ),
-#         'c_variational': float( 39.1 ),
-#         'c_monotonicity': float( 80.1 ),
-#         'hidden_layer_widths': int( 500 ),
-#         'num_epochs': int( 10 ),
-#         'num_hidden_layers': int( 5 ),
-#         'num_training_data': int( 100e3 ),
-#         'num_testing_data': int( 20e3 ),
-#         'learning_rate': float( 0.005 ),
-#     },
-#     'newton_parameters': {
-#         'tolerance': float( 1e-6 ),
-#         'max_iterations': int( 1e2 ),
-#     },
-#     'paths': {
-#         'save_path': r'./ann/simple_pendulum/save',
-#         'load_path': r'./ann/simple_pendulum/load',
-#     },
-#     'plotting_parameters': {
-#         'num_plotting_samples': int( 1e2 ),
-#         'plot_flag': bool( True ),
-#     },
-#     'printing_parameters': {
-#         'batch_print_frequency': int( 10 ),
-#         'epoch_print_frequency': int( 10 ),
-#         'print_flag': bool( True ),
-#     },
-#     'runtime': {
-#         'device': 'cuda' if torch.cuda.is_available(  ) else 'cpu',
-#         'load_flag': bool( False ),
-#         'seed': int( 0 ),
-#         'train_flag': bool( True ),
-#         'verbose_flag': bool( True ),
-#     },
-#     'saving_parameters': {
-#         'save_flag': bool( True ),
-#         'save_frequency': int( 10 ),
-#     }
-# }
-
 BASE_CONFIG = {
     'classification_parameters': {
         'num_noisy_samples_per_level_set_point': int( 5 ),
         'noise_percentage': float( 1e-3 ),
-        'dt': float( 1e-2),
+        'dt': float( 1e-2 ),
         'tfinal': float( 10 ),
     },
     'exploration_parameters': {
@@ -119,30 +63,15 @@ BASE_CONFIG = {
         'c_IC': float( 1.0 ),
         'c_BC': float( 1.0 ),
         'c_residual': float( 1e-4 ),
-        # 'c_residual': float( 1e-5 ),
-        # 'c_residual': float( 1e-7 ), # This seems to work as implied by the fine search.
-        # 'c_residual': float( 1e-1 ), # This did not converge, even though grid search seemed to think it did.
-        # 'c_residual': float( 3e-4 ),
         'c_residual_gradient': float( 0 ),
-        'c_variational': float( 1e-4 ),
-        # 'c_variational': float( 1e-5 ),
-        # 'c_variational': float( 1e-6 ),
-        # 'c_variational': float( 1e-7 ), # This seems to work as implied by the fine search.
-        # 'c_variational': float( 1e-1 ), # This did not converge, even though grid search seemed to think it did.
-        # 'c_variational': float( 3e-4 ),
+        'c_variational': float( 1e-5 ),
         'c_monotonicity': float( 100 ),
-        'hidden_layer_widths': int( 175 ),
-        # 'hidden_layer_widths': int( 500 ),
-        # 'hidden_layer_widths': int( 50 ),
-        'num_epochs': int( 400 ),
-        # 'num_hidden_layers': int( 3 ),
+        'hidden_layer_widths': int( 500 ),
+        'num_epochs': int( 10 ),
         'num_hidden_layers': int( 5 ),
-        # 'num_hidden_layers': int( 7 ),
         'num_training_data': int( 100e3 ),
         'num_testing_data': int( 20e3 ),
-        # 'learning_rate': float( 0.005 ),
-        'learning_rate': float( 5e-3 ),
-        # 'learning_rate': float( 5e-4 ),
+        'learning_rate': float( 0.005 ),
     },
     'newton_parameters': {
         'tolerance': float( 1e-4 ),
@@ -155,7 +84,6 @@ BASE_CONFIG = {
     'plotting_parameters': {
         'num_plotting_samples': int( 20 ),
         'plot_flag': bool( False ),
-        # 'plot_flag': bool( True ),
     },
     'printing_parameters': {
         'batch_print_frequency': int( 10 ),
@@ -163,18 +91,9 @@ BASE_CONFIG = {
         'print_flag': bool( True ),
     },
     'runtime': {
-        # 'device': 'cuda:9' if torch.cuda.is_available(  ) else 'cpu',
-        # 'device': 'cuda:8' if torch.cuda.is_available(  ) else 'cpu',
-        # 'device': 'cuda:7' if torch.cuda.is_available(  ) else 'cpu',
-        # 'device': 'cuda:6' if torch.cuda.is_available(  ) else 'cpu',
-        # 'device': 'cuda:5' if torch.cuda.is_available(  ) else 'cpu',
-        'device': 'cuda:4' if torch.cuda.is_available(  ) else 'cpu',
-        # 'seed': int( 0 ),
-        # 'seed': int( 1 ),
-        'seed': int( 2 ),
+        'device': 'cuda:9' if torch.cuda.is_available(  ) else 'cpu',
         'load_flag': bool( False ),
-        # 'load_flag': bool( True ),
-        # 'train_flag': bool( False ),
+        'seed': int( 0 ),
         'train_flag': bool( True ),
         'verbose_flag': bool( True ),
     },
@@ -183,6 +102,125 @@ BASE_CONFIG = {
         'save_frequency': int( 10 ),
     }
 }
+
+
+# # Grid Search Best.
+# BASE_CONFIG = {
+#     'classification_parameters': {
+#         'num_noisy_samples_per_level_set_point': int( 5 ),
+#         'noise_percentage': float( 1e-3 ),
+#         'dt': float( 1e-2),
+#         'tfinal': float( 10 ),
+#     },
+#     'exploration_parameters': {
+#         'volume_percentage': float( 1e-2 ),
+#         'num_points': int( 50 ),
+#         'unique_percentage': float( 1e-4 ),
+#     },
+#     'hyperparameters': {
+#         'activation_function': 'sigmoid',
+#         'c_IC': float( 1.0 ),
+#         'c_BC': float( 1.0 ),
+#         'c_residual': float( 1e-4 ),
+#         'c_residual_gradient': float( 0 ),
+#         'c_variational': float( 1e-5 ),
+#         'c_monotonicity': float( 100 ),
+#         'hidden_layer_widths': int( 175 ),
+#         'num_epochs': int( 400 ),
+#         'num_hidden_layers': int( 7 ),
+#         'num_training_data': int( 100e3 ),
+#         'num_testing_data': int( 20e3 ),
+#         'learning_rate': float( 5e-4 ),
+#     },
+#     'newton_parameters': {
+#         'tolerance': float( 1e-4 ),
+#         'max_iterations': int( 1e2 ),
+#     },
+#     'paths': {
+#         'save_path': r'./ann/simple_pendulum/save',
+#         'load_path': r'./ann/simple_pendulum/load',
+#     },
+#     'plotting_parameters': {
+#         'num_plotting_samples': int( 20 ),
+#         'plot_flag': bool( True ),
+#     },
+#     'printing_parameters': {
+#         'batch_print_frequency': int( 10 ),
+#         'epoch_print_frequency': int( 10 ),
+#         'print_flag': bool( True ),
+#     },
+#     'runtime': {
+#         'device': 'cuda:9' if torch.cuda.is_available(  ) else 'cpu',
+#         'seed': int( 0 ),
+#         'load_flag': bool( False ),
+#         'train_flag': bool( True ),
+#         'verbose_flag': bool( True ),
+#     },
+#     'saving_parameters': {
+#         'save_flag': bool( True ),
+#         'save_frequency': int( 10 ),
+#     }
+# }
+
+
+# # Grid search worst.
+# BASE_CONFIG = {
+#     'classification_parameters': {
+#         'num_noisy_samples_per_level_set_point': int( 5 ),
+#         'noise_percentage': float( 1e-3 ),
+#         'dt': float( 1e-2),
+#         'tfinal': float( 10 ),
+#     },
+#     'exploration_parameters': {
+#         'volume_percentage': float( 1e-2 ),
+#         'num_points': int( 50 ),
+#         'unique_percentage': float( 1e-4 ),
+#     },
+#     'hyperparameters': {
+#         'activation_function': 'sigmoid',
+#         'c_IC': float( 1.0 ),
+#         'c_BC': float( 1.0 ),
+#         'c_residual': float( 1e-5 ),
+#         'c_residual_gradient': float( 0 ),
+#         'c_variational': float( 1e-5 ),
+#         'c_monotonicity': float( 100 ),
+#         'hidden_layer_widths': int( 50 ),
+#         'num_epochs': int( 400 ),
+#         'num_hidden_layers': int( 3 ),
+#         'num_training_data': int( 100e3 ),
+#         'num_testing_data': int( 20e3 ),
+#         'learning_rate': float( 5e-4 ),
+#     },
+#     'newton_parameters': {
+#         'tolerance': float( 1e-4 ),
+#         'max_iterations': int( 1e2 ),
+#     },
+#     'paths': {
+#         'save_path': r'./ann/simple_pendulum/save',
+#         'load_path': r'./ann/simple_pendulum/load',
+#     },
+#     'plotting_parameters': {
+#         'num_plotting_samples': int( 20 ),
+#         'plot_flag': bool( True ),
+#     },
+#     'printing_parameters': {
+#         'batch_print_frequency': int( 10 ),
+#         'epoch_print_frequency': int( 10 ),
+#         'print_flag': bool( True ),
+#     },
+#     'runtime': {
+#         'device': 'cuda:9' if torch.cuda.is_available(  ) else 'cpu',
+#         'seed': int( 0 ),
+#         'load_flag': bool( False ),
+#         'train_flag': bool( True ),
+#         'verbose_flag': bool( True ),
+#     },
+#     'saving_parameters': {
+#         'save_flag': bool( True ),
+#         'save_frequency': int( 10 ),
+#     }
+# }
+
 
 
 # Implement a function to evaluate the closed roa.

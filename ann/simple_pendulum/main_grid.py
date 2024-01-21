@@ -17,12 +17,12 @@ from main_eval import BASE_CONFIG, eval_simple_pendulum
 # Define grid parameters.
 NUM_REPEATS = 1
 # SEARCH_ID = 'grid_search_0_test'
-# SEARCH_ID = 'run1_coarse_grid_repeat1'
+SEARCH_ID = 'run1_coarse_grid_repeat1'
 # SEARCH_ID = 'run1_coarse_grid_repeat2'
 # SEARCH_ID = 'run1_coarse_grid_repeat3'
 # SEARCH_ID = 'run2_coarse_grid_repeat1'
 # SEARCH_ID = 'run2_coarse_grid_repeat2'
-SEARCH_ID = 'run2_coarse_grid_repeat3'
+# SEARCH_ID = 'run2_coarse_grid_repeat3'
 # SEARCH_ID = 'run3_test_repeat1'
 # SAVE_DIR = '/scratch/ssnyde9/boroa/ann/closed_roa/'
 SAVE_DIR = r'./ann/simple_pendulum/save'
