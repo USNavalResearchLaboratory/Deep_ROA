@@ -50,6 +50,13 @@ BASE_CONFIG = {
         'num_training_data': int( 100e3 ),
         'num_testing_data': int( 20e3 ),
         'learning_rate': float( 0.005 ),
+        "neuron_threshold": float( 0.5 ),
+        "neuron_current_decay": float( 1.0 ),
+        "neuron_voltage_decay": float( 1.0 ),
+        "neuron_persistent_state": bool( False ),
+        "neuron_requires_grad": bool( False ),
+        "synapse_gain": float( 3.0 ),
+        'num_timesteps': int( 10 ),
     },
     'newton_parameters': {
         'tolerance': float( 1e-6 ),
@@ -339,7 +346,6 @@ def eval_closed_roa(config: dict = BASE_CONFIG) -> int:
     c_IC = torch.tensor( float( config[ 'hyperparameters' ][ 'c_IC' ] ), dtype = torch.float32, device = device )                          # [-] Initial condition loss weight.
     c_BC = torch.tensor( float( config[ 'hyperparameters' ][ 'c_BC' ] ), dtype = torch.float32, device = device )                          # [-] Boundary condition loss weight.
     c_residual = torch.tensor( float( config[ 'hyperparameters' ][ 'c_residual' ] ), dtype = torch.float32, device = device )                    # [-] Residual loss weight.
-    c_residual_gradient = torch.tensor( float( config[ 'hyperparameters' ][ 'c_residual_gradient' ] ), dtype = torch.float32, device = device )                    # [-] Residual gradient loss weight.
     c_variational = torch.tensor( float( config[ 'hyperparameters' ][ 'c_variational' ] ), dtype = torch.float32, device = device )                 # [-] Variational loss weight.
     c_monotonicity = torch.tensor( float( config[ 'hyperparameters' ][ 'c_monotonicity' ] ), dtype = torch.float32, device = device )               # [-] Monotonicity loss weight.
 

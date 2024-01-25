@@ -59,6 +59,13 @@ BASE_CONFIG = {
         'num_training_data': int( 100e3 ),
         'num_testing_data': int( 20e3 ),
         'learning_rate': float( 0.005 ),
+        'neuron_threshold': float( 0.5 ),
+        'neuron_current_decay': float( 1.0 ),
+        'neuron_voltage_decay': float( 1.0 ),
+        'neuron_persistent_state': False,
+        'neuron_requires_grad': False,
+        'synapse_gain': float( 1.0 ),
+        'num_timesteps': int( 10 ),
     },
     'newton_parameters': {
         'tolerance': float( 1e-6 ),
@@ -109,57 +116,63 @@ def eval_simple_pendulum(config: dict = BASE_CONFIG) -> int:
     # Set the computational device.
     device = torch.device(config["runtime"]["device"])
 
-    #%% ---------------------------------------- DEFINE PINN OPTIONS ----------------------------------------
+    # ----------------------------------------
+    # DEFINE PINN OPTIONS
+    # ----------------------------------------
 
-    # The pinn options are parameters that have no impact on the pde initial-boundary value problem being solved or the neural network that is being trained to solve it.
-    # Instead, the pinn option parameters are those that define the tasks the user would like performed and adjust quality-of-life factors, such as where and how often to save, print, and plot relevant network data before, during, and after the training process.
+    # The pinn options are parameters that have no impact on the pde
+    # initial-boundary value problem being solved or the neural network that is
+    # being trained to solve it. Instead, the pinn option parameters are those
+    # that define the tasks the user would like performed and adjust
+    # quality-of-life factors, such as where and how often to save, print, and
+    # plot relevant network data before, during, and after the training process.
 
     # Define the save options.
-    save_path = r'./snn/simple_pendulum/save'                                 # [-] Relative path to the directory in which to save network data, figures, etc.
-    save_frequency = torch.tensor( int( 1e1 ), dtype = torch.int16, device = device )               # [#] Number of epochs after which to save intermediate networks during training. e.g., 1 = Save after every training epoch, 10 = Save after every ten training epochs, 100 = Save after every hundred training epochs.
-    save_flag = True                                                                        # [T/F] Flag that determines whether to save networks during and after training, as well as training and network analysis plots.
+    save_path = str(config["paths"]["save_path"])                                # [-] Relative path to the directory in which to save network data, figures, etc.
+    save_frequency = torch.tensor(int(config['saving_parameters']['save_frequency']), dtype = torch.int16, device = device )               # [#] Number of epochs after which to save intermediate networks during training. e.g., 1 = Save after every training epoch, 10 = Save after every ten training epochs, 100 = Save after every hundred training epochs.
+    save_flag = bool(config['saving_parameters']['save_flag'])                                                                                # [T/F] Flag that determines whether to save networks during and after training, as well as training and network analysis plots.
 
     # Define the load options.
-    load_path = r'./snn/simple_pendulum/load'                                 # [-] Relative path to the directory from which to load network data.
-    # load_flag = True                                                                        # [T/F] Flag that determines whether to load network data from the given load directory before training.
-    load_flag = False                                                                     # [T/F] Flag that determines whether to load network data from the given load directory before training.
+    load_path = str( config[ 'paths' ][ 'load_path' ] )                       # [-] Relative path to the directory from which to load network data.
+    # load_flag = True                                                                              # [T/F] Flag that determines whether to load network data from the given load directory before training.
+    load_flag = bool( config[ 'runtime' ][ 'load_flag' ] )                                                                               # [T/F] Flag that determines whether to load network data from the given load directory before training.
 
     # Define the training options.
-    train_flag = True                                                                     # [T/F] Flag that determines whether to train the network after creation or loading.
-    # train_flag = False                                                                      # [T/F] Flag that determines whether to train the network after creation or loading.
+    train_flag = train_flag = bool( config[ 'runtime' ][ 'train_flag' ] )                                                                              # [T/F] Flag that determines whether to train the network after creation or loading.
+    # train_flag = False                                                                            # [T/F] Flag that determines whether to train the network after creation or loading.
 
     # Define the printing options.
-    batch_print_frequency = torch.tensor( int( 1e1 ), dtype = torch.int16, device = device )        # [#] Number of batches after which to print training information (during an epoch that has been selected for printing).
-    epoch_print_frequency = torch.tensor( int( 1e1 ), dtype = torch.int16, device = device )        # [#] Number of epochs after which to print training information
-    print_flag = True
+    batch_print_frequency = torch.tensor( int( config[ 'printing_parameters' ][ 'batch_print_frequency' ] ), dtype = torch.int16, device = device )        # [#] Number of batches after which to print training information (during an epoch that has been selected for printing).
+    epoch_print_frequency = torch.tensor( config[ 'printing_parameters' ][ 'epoch_print_frequency' ], dtype = torch.int16, device = device )        # [#] Number of epochs after which to print training information
+    print_flag = bool( config[ 'printing_parameters' ][ 'print_flag' ] )
 
     # Define the plotting options.
-    num_plotting_samples = torch.tensor( int( 1e2 ), dtype = torch.int16, device = device )         # [#] Number of sample points to use per dimension when plotting network results.
-    plot_flag = True                                                                        # [T/F] Flag that determines whether training and network analysis plots are created.
+    num_plotting_samples = torch.tensor( int( config[ 'plotting_parameters' ][ 'num_plotting_samples' ] ), dtype = torch.int16, device = device )         # [#] Number of sample points to use per dimension when plotting network results.
+    plot_flag = bool( config[ 'plotting_parameters' ][ 'plot_flag' ] )                                                                                # [T/F] Flag that determines whether training and network analysis plots are created.
 
     # Define the verbosity setting.
-    verbose_flag = True                                                                     # [T/F] Flag that determines whether to print more or less information when printing.
+    verbose_flag = bool( config[ 'runtime' ][ 'verbose_flag' ] )                                                                              # [T/F] Flag that determines whether to print more or less information when printing.
 
     # Define the newton parameters (used for level set generation).
-    newton_tolerance = torch.tensor( 1e-6, dtype = torch.float32, device = device )                     # [-] Convergence tolerance for the Newton's root finding method.
-    newton_max_iterations = torch.tensor( int( 1e2 ), dtype = torch.int32, device = device )                   # [#] Maximum number of Newton's method steps to perform.
+    newton_tolerance = torch.tensor(float( config[ 'newton_parameters' ][ 'tolerance' ] ), dtype = torch.float32, device = device )                     # [-] Convergence tolerance for the Newton's root finding method.
+    newton_max_iterations = torch.tensor( int( config[ 'newton_parameters' ][ 'max_iterations' ] ), dtype = torch.int32, device = device )                   # [#] Maximum number of Newton's method steps to perform.
 
     # Define the exploration parameters (used for level set generation).
-    exploration_volume_percentage = torch.tensor( 1e-2, dtype = torch.float32, device = device )        # [%] The level set method step size represented as a percentage of the domain volume.  This parameter conveniently scales the step size of the level set method as the dimension of the problem is adjusted. # This works for both initial and final times.
-    num_exploration_points = torch.tensor( 50, dtype = torch.int16, device = device )                   # [#] Number of exploration points to generate at each level set method step.
-    unique_volume_percentage = torch.tensor( 1e-4, dtype = torch.float32, device = device )             # [%] The tolerance used to determine whether level set points are unique as a percentage of the domain volume.  This parameter conveniently scales the unique tolerance of the level set points as the dimension of the problem is adjusted.
+    exploration_volume_percentage = torch.tensor( float( config[ 'exploration_parameters' ][ 'volume_percentage' ] ), dtype = torch.float32, device = device )        # [%] The level set method step size represented as a percentage of the domain volume.  This parameter conveniently scales the step size of the level set method as the dimension of the problem is adjusted. # This works for both initial and final times.
+    num_exploration_points = torch.tensor( int( config[ 'exploration_parameters' ][ 'num_points' ] ), dtype = torch.int16, device = device )                   # [#] Number of exploration points to generate at each level set method step.
+    unique_volume_percentage = torch.tensor( float( config[ 'exploration_parameters' ][ 'unique_percentage' ] ), dtype = torch.float32, device = device )             # [%] The tolerance used to determine whether level set points are unique as a percentage of the domain volume.  This parameter conveniently scales the unique tolerance of the level set points as the dimension of the problem is adjusted.
 
     # Define the classification parameters.
-    num_noisy_samples_per_level_set_point = torch.tensor( 5, dtype = torch.int16, device = device )   # [#] Number of noisy samples per level set point.
-    classification_noise_percentage = torch.tensor( 1e-3, dtype = torch.float32, device = device )      # [%] The classification point noise magnitude represented as a percentage of the domain volume.  This parameter conveniently scales the noise magnitude of the classification points as the dimension of the problem is adjusted.
-    classification_dt = torch.tensor( 1e-3, dtype = torch.float32, device = device )                    # [s] The classification simulation timestep used to forecast classification points.
-    classification_tfinal = torch.tensor( 10, dtype = torch.float32, device = device )                  # [s] The classification simulation duration used to forecast classification points.
+    num_noisy_samples_per_level_set_point = torch.tensor( int( config[ 'classification_parameters' ][ 'num_noisy_samples_per_level_set_point' ] ), dtype = torch.int16, device = device )   # [#] Number of noisy samples per level set point.
+    classification_noise_percentage = torch.tensor( float( config[ 'classification_parameters' ][ 'noise_percentage' ] ), dtype = torch.float32, device = device )      # [%] The classification point noise magnitude represented as a percentage of the domain volume.  This parameter conveniently scales the noise magnitude of the classification points as the dimension of the problem is adjusted.
+    classification_dt = torch.tensor( float( config[ 'classification_parameters' ][ 'dt' ] ), dtype = torch.float32, device = device )                    # [s] The classification simulation timestep used to forecast classification points.
+    classification_tfinal = torch.tensor( float( config[ 'classification_parameters' ][ 'tfinal' ] ), dtype = torch.float32, device = device )                  # [s] The classification simulation duration used to forecast classification points.
 
     # Create the pinn options object.
     pinn_options = pinn_options_class( save_path, save_frequency, save_flag, load_path, load_flag, train_flag, batch_print_frequency, epoch_print_frequency, print_flag, num_plotting_samples, newton_tolerance, newton_max_iterations, exploration_volume_percentage, num_exploration_points, unique_volume_percentage, classification_noise_percentage, num_noisy_samples_per_level_set_point, classification_dt, classification_tfinal, plot_flag, device, verbose_flag )
 
     # Save the pinn options.
-    pinn_options.save( save_path, r'pinn_options.pkl' )
+    # pinn_options.save( save_path, r'pinn_options.pkl' )
 
 
     #%% ---------------------------------------- DEFINE PROBLEM SPECIFICATIONS ----------------------------------------
@@ -225,24 +238,50 @@ def eval_simple_pendulum(config: dict = BASE_CONFIG) -> int:
 
     # The hyper-parameters are those that do not affect the problem that is being solved but impact how that problem is being solved, typically by adjusting the underlying neural architecture under consideration or the techniques used to train this network.
     # Examples of several hyper-parameters include the number of network hidden layers, along with their widths and activation functions, as well as the optimizer learning rate and training data quantity.
+
     # Set the neuron & synapse parameters.
-    neuron_parameters = { 'threshold' : torch.tensor( 0.5, dtype = torch.float32, device = device ), 'current_decay' : torch.tensor( 1.0, dtype = torch.float32, device = device ), 'voltage_decay' : torch.tensor( 1.0, dtype = torch.float32, device = device ), 'persistent_state': False, 'requires_grad' : False }
-    synapse_parameters = { 'gain' : torch.tensor( 3.0, dtype = torch.float32, device = device ) }
+    # neuron_parameters = { 'threshold' : torch.tensor( 1.0, dtype = torch.float32, device = device ), 'current_decay' : torch.tensor( 1.0, dtype = torch.float32, device = device ), 'voltage_decay' : torch.tensor( 1.0, dtype = torch.float32, device = device ), 'persistent_state': False, 'requires_grad' : False }
+    # synapse_parameters = { 'gain' : torch.tensor( 1.0, dtype = torch.float32, device = device ) }
+
+    # neuron_parameters = { 'threshold' : torch.tensor( 0.5, dtype = torch.float32, device = device ), 'current_decay' : torch.tensor( 1.0, dtype = torch.float32, device = device ), 'voltage_decay' : torch.tensor( 1.0, dtype = torch.float32, device = device ), 'persistent_state': False, 'requires_grad' : False }
+    # synapse_parameters = { 'gain' : torch.tensor( 3.0, dtype = torch.float32, device = device ) }
+
+    neuron_parameters = {
+        'threshold': torch.tensor( float(config['hyperparameters']['neuron_threshold']), dtype = torch.float32, device = device ),
+        'current_decay': torch.tensor( float(config['hyperparameters']['neuron_current_decay']), dtype = torch.float32, device = device ),
+        'voltage_decay': torch.tensor( float(config['hyperparameters']['neuron_voltage_decay']), dtype = torch.float32, device = device ),
+        'persistent_state': bool(config['hyperparameters']['neuron_persistent_state']),
+        'requires_grad': bool(config['hyperparameters']['neuron_requires_grad'])
+    }
+    synapse_parameters = {
+        'gain': torch.tensor( float(config['hyperparameters']['synapse_gain']), dtype = torch.float32, device = device )
+    }
 
     # Define the number of timesteps for which each input is presented to the network.
-    num_timesteps = torch.tensor( 1, dtype = torch.int16, device = device )
+    num_timesteps = torch.tensor( int(config['hyperparameters']['num_timesteps']), dtype = torch.int16, device = device )                                 # [#] Number of timesteps for which each input is presented to the network.
+    # num_timesteps = torch.tensor( 10, dtype = torch.int16, device = device )                                 # [#] Number of timesteps for which each input is presented to the network.
 
     # Store the network parameters.
-    activation_function = 'tanh'                                                                # [-] Activation function (e.g., tanh, sigmoid, etc.)
-    # num_hidden_layers = torch.tensor( 3, dtype = torch.uint8, device = device )                 # [#] Number of hidden layers.
-    num_hidden_layers = torch.tensor( 4, dtype = torch.uint8, device = device )                 # [#] Number of hidden layers.
+    activation_function = str( config[ 'hyperparameters' ][ 'activation_function' ] )                                                                             # [-] Activation function (e.g., tanh, sigmoid, etc.)
 
-    # hidden_layer_widths = torch.tensor( int( 5e1 ), dtype = torch.int16, device = device )              # [#] Hidden layer widths.
-    hidden_layer_widths = torch.tensor( int( 5e2 ), dtype = torch.int16, device = device )              # [#] Hidden layer widths.
+    # num_hidden_layers = torch.tensor( 3, dtype = torch.uint8, device = device )                             # [#] Number of hidden layers.
+    num_hidden_layers = torch.tensor( int( config[ 'hyperparameters' ][ 'num_hidden_layers' ] ), dtype = torch.uint8, device = device )                             # [#] Number of hidden layers.
+    # num_hidden_layers = torch.tensor( 5, dtype = torch.uint8, device = device )                             # [#] Number of hidden layers.
+
+    # hidden_layer_widths = torch.tensor( int( 5e1 ), dtype = torch.int16, device = device )                # [#] Hidden layer widths.
+    # hidden_layer_widths = torch.tensor( int( 1e2 ), dtype = torch.int16, device = device )                # [#] Hidden layer widths.
+
+    # # This captured the initial & boundary condition fairly well.
+    hidden_layer_widths = torch.tensor( int( config[ 'hyperparameters' ][ 'hidden_layer_widths' ] ), dtype = torch.int16, device = device )                  # [#] Hidden layer widths.
+
+    # hidden_layer_widths = torch.tensor( int( 1e3 ), dtype = torch.int16, device = device )                  # [#] Hidden layer widths.
+    # hidden_layer_widths = torch.tensor( int( 2e3 ), dtype = torch.int16, device = device )                  # [#] Hidden layer widths.
+    # hidden_layer_widths = torch.tensor( int( 5e3 ), dtype = torch.int16, device = device )                  # [#] Hidden layer widths.
+    # hidden_layer_widths = torch.tensor( int( 1e4 ), dtype = torch.int16, device = device )                  # [#] Hidden layer widths.
 
     # Set the quantity of training and testing data.
-    num_training_data = torch.tensor( int( 100e3 ), dtype = torch.int32, device = device )      # [#] Number of training data points.
-    num_testing_data = torch.tensor( int( 20e3 ), dtype = torch.int32, device = device )        # [#] Number of testing data points.
+    num_training_data = torch.tensor( int( config[ 'hyperparameters' ][ 'num_training_data' ] ), dtype = torch.int32, device = device )                  # [#] Number of training data points.
+    num_testing_data = torch.tensor( int( config[ 'hyperparameters' ][ 'num_testing_data' ] ), dtype = torch.int32, device = device )                    # [#] Number of testing data points.
 
     # Define the percent of training and testing data that should be sampled from the initial condition, the boundary condition, and the interior of the domain.
     p_initial = torch.tensor( 0.25, dtype = torch.float16, device = device )                        # [%] Percentage of training and testing data associated with the initial condition.
@@ -251,7 +290,7 @@ def eval_simple_pendulum(config: dict = BASE_CONFIG) -> int:
 
     # Define the number of training epochs.
     # num_epochs = torch.tensor( int( 1e2 ), dtype = torch.int32, device = device )                   # [#] Number of training epochs to perform.
-    num_epochs = torch.tensor( int( 1e3 ), dtype = torch.int32, device = device )
+    num_epochs = torch.tensor( int( config[ 'hyperparameters' ][ 'num_epochs' ] ), dtype = torch.int32, device = device )  
     # num_epochs = torch.tensor( int( 5e3 ), dtype = torch.int32, device = device )                   # [#] Number of training epochs to perform.
     # num_epochs = torch.tensor( int( 10e3 ), dtype = torch.int32, device = device )
 
@@ -259,7 +298,7 @@ def eval_simple_pendulum(config: dict = BASE_CONFIG) -> int:
     residual_batch_size = torch.tensor( int( 10e3 ), dtype = torch.int32, device = device )                 # [#] Training batch size. # This works for variational loss integration order 1.
 
     # Store the optimizer parameters.
-    learning_rate = torch.tensor( 5e-3, dtype = torch.float32, device = device )                            # [-] Learning rate.
+    learning_rate = torch.tensor( float( config[ 'hyperparameters' ][ 'learning_rate' ] ), dtype = torch.float32, device = device )                            # [-] Learning rate.                          # [-] Learning rate.
 
     # Define the element computation option.
     element_computation_option = 'precompute'                                                               # [string] Determines whether to precompute the finite elements associated with the variational loss (costs more memory) or to dynamically generate these elements during training (costs more time per epoch) (e.g., 'precompute, 'dynamic', etc.).
@@ -279,11 +318,11 @@ def eval_simple_pendulum(config: dict = BASE_CONFIG) -> int:
     # integration_order = torch.tensor( 2, dtype = torch.uint8, device = device )
 
     # Store the loss coefficients.
-    c_IC = torch.tensor( 1.0, dtype = torch.float32, device = device )
-    c_BC = torch.tensor( 1.0, dtype = torch.float32, device = device )
-    c_residual = torch.tensor( 1.0, dtype = torch.float32, device = device )
-    c_variational = torch.tensor( 1.0, dtype = torch.float32, device = device )
-    c_monotonicity = torch.tensor( 1.0, dtype = torch.float32, device = device )
+    c_IC = torch.tensor( float( config[ 'hyperparameters' ][ 'c_IC' ] ), dtype = torch.float32, device = device )                          # [-] Initial condition loss weight.
+    c_BC = torch.tensor( float( config[ 'hyperparameters' ][ 'c_BC' ] ), dtype = torch.float32, device = device )                          # [-] Boundary condition loss weight.
+    c_residual = torch.tensor( float( config[ 'hyperparameters' ][ 'c_residual' ] ), dtype = torch.float32, device = device )                    # [-] Residual loss weight.
+    c_variational = torch.tensor( float( config[ 'hyperparameters' ][ 'c_variational' ] ), dtype = torch.float32, device = device )                 # [-] Variational loss weight.
+    c_monotonicity = torch.tensor( float( config[ 'hyperparameters' ][ 'c_monotonicity' ] ), dtype = torch.float32, device = device )   
 
     # c_IC = torch.tensor( 5.0, dtype = torch.float32, device = device )
     # c_BC = torch.tensor( 1.0, dtype = torch.float32, device = device )
@@ -406,3 +445,8 @@ def eval_simple_pendulum(config: dict = BASE_CONFIG) -> int:
     print( '------------------------------------------------------------------------------------------------------------------------' )
     print( '\n' )
 
+    return classification_loss.cpu(  ).detach(  ).numpy(  ).item(  )
+
+if __name__ == "__main__":
+    loss = eval_simple_pendulum()
+    print(f"Loss: {loss}")
