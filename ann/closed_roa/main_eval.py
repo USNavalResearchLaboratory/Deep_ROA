@@ -91,8 +91,8 @@ BASE_CONFIG = {
         'print_flag': bool( True ),
     },
     'runtime': {
-        'device': 'cuda:8' if torch.cuda.is_available(  ) else 'cpu',
-        'seed': int( 0 ),
+        'device': 'cuda:4' if torch.cuda.is_available(  ) else 'cpu',
+        'seed': int( 2 ),
         'load_flag': bool( False ),
         'train_flag': bool( True ),
         'verbose_flag': bool( True ),
@@ -193,8 +193,8 @@ def eval_closed_roa(config: dict = BASE_CONFIG) -> int:
     # Create the pinn options object.
     pinn_options = pinn_options_class( save_path, save_frequency, save_flag, load_path, load_flag, train_flag, batch_print_frequency, epoch_print_frequency, print_flag, num_plotting_samples, newton_tolerance, newton_max_iterations, exploration_volume_percentage, num_exploration_points, unique_volume_percentage, classification_noise_percentage, num_noisy_samples_per_level_set_point, classification_dt, classification_tfinal, plot_flag, device, verbose_flag )
 
-    # Save the pinn options.
-    pinn_options.save( save_path, r'pinn_options.pkl' )
+    # # Save the pinn options.
+    # pinn_options.save( save_path, r'pinn_options.pkl' )
 
     # Retrieve the pinn options setup end time.
     end_time_pinn_options = time.time(  )
@@ -279,8 +279,8 @@ def eval_closed_roa(config: dict = BASE_CONFIG) -> int:
     # Create the problem specifications object.
     problem_specifications = problem_specifications_class( num_inputs, num_outputs, temporal_domain, spatial_domain, domain_type, residual_function, residual_code, temporal_code, flow_functions, ibc_types, ibc_dimensions, ibc_condition_functions, ibc_placements, pde_name, pde_type, save_path, load_path )
 
-    # Save the problem specifications.
-    problem_specifications.save( save_path, r'problem_specifications.pkl' )
+    # # Save the problem specifications.
+    # problem_specifications.save( save_path, r'problem_specifications.pkl' )
 
     # Retrieve the pinn options setup end time.
     end_time_problem_specifications = time.time(  )
@@ -358,8 +358,8 @@ def eval_closed_roa(config: dict = BASE_CONFIG) -> int:
     # Create the hyperparameters object.
     hyperparameters = hyperparameters_class( activation_function, num_hidden_layers, hidden_layer_widths, num_training_data, num_testing_data, p_initial, p_boundary, p_residual, num_epochs, residual_batch_size, learning_rate, integration_order, element_volume_percent, element_type, element_computation_option, c_IC, c_BC, c_residual, c_residual_gradient, c_variational, c_monotonicity, save_path, load_path )
 
-    # Save the hyperparameters.
-    hyperparameters.save( save_path, r'hyperparameters.pkl' )
+    # # Save the hyperparameters.
+    # hyperparameters.save( save_path, r'hyperparameters.pkl' )
 
     # Retrieve the end time.
     end_time_hyperparameters = time.time(  )
@@ -389,8 +389,8 @@ def eval_closed_roa(config: dict = BASE_CONFIG) -> int:
     # Set the training flag object.
     pinn.pinn_options.train_flag = train_flag
 
-    # Save the network before training.
-    pinn.save( save_path, 'pinn_before_training.pkl' )
+    # # Save the network before training.
+    # pinn.save( save_path, 'pinn_before_training.pkl' )
 
     # Retrieve the end time.
     end_time_network = time.time(  )
@@ -419,8 +419,8 @@ def eval_closed_roa(config: dict = BASE_CONFIG) -> int:
     # Train the neural network.
     pinn.network = pinn.train( pinn.network, pinn_options.train_flag )
 
-    # Save the network after training.
-    pinn.save( save_path, 'pinn_after_training.pkl' )
+    # # Save the network after training.
+    # pinn.save( save_path, 'pinn_after_training.pkl' )
 
 
     #%% ---------------------------------------- COMPUTE CLASSIFICATION LOSS ----------------------------------------
