@@ -1,11 +1,19 @@
+#%%---------------------------------------- CLOSED ROA HYPERPARAMETER GRID SEARCH ----------------------------------------
+
+# This file performs a grid search over the hyperparameter space of the deep roa network for the closed roa problem.
+
+
+#%% ---------------------------------------- IMPORT LIBRARIES ----------------------------------------
 
 # Import standard libraries.
-from copy import deepcopy
-import itertools
-import matplotlib.pyplot as plt
-import pickle as pkl
 import os
 import sys
+import time
+import datetime
+import itertools
+import pickle as pkl
+from copy import deepcopy
+import matplotlib.pyplot as plt
 from typing import List
 
 # Edit the system path to include the working directory.
@@ -14,13 +22,21 @@ sys.path.append(r'./ann/closed_roa')
 # Import custom libraries.
 from main_eval import BASE_CONFIG, eval_closed_roa
 
-# Define grid parameters.
-NUM_REPEATS = 1
-# SEARCH_ID = 'grid_search_0_test'
-# SEARCH_ID = 'run2_coarse_grid_repeat3'
-SEARCH_ID = 'run3_fine_residual_variational_repeat3'
-# SAVE_DIR = '/scratch/ssnyde9/boroa/ann/closed_roa/'
-SAVE_DIR = r'./ann/closed_roa/save'
+
+#%% ---------------------------------------- GRID SEARCH SETUP ----------------------------------------
+
+# Define the number of times to repeat each configuration in the grid.
+NUM_REPEATS = 1                 # [#] Number of times each configuration in the grid search is run.
+
+# Define the save directory for all grid search runs.
+SAVE_DIR = r'./ann/simple_pendulum/save'
+
+# Define the folder in which to save results for this particular grid search.
+SEARCH_ID = 'run1_coarse_grid'
+# SEARCH_ID = 'run2_fine_grid'
+
+
+#%% ---------------------------------------- DEFINE GRID SEARCH SPACE ----------------------------------------
 
 # # Define the search space.
 # SEARCH_SPACE = {
@@ -32,18 +48,6 @@ SAVE_DIR = r'./ann/closed_roa/save'
 #     'hidden_layer_widths': [ int( 125 ), int( 150 ), int( 175 ) ],
 #     'num_hidden_layers':   [ int( 3 ), int( 4 ), int( 5 ) ],
 #     'learning_rate':       [ float( 0.01 ), float( 0.005 ), float( 0.001 ) ],
-# }
-
-# # Define the search space. Run 1 - Partial
-# SEARCH_SPACE = {
-#     'c_IC': [ float( 1.0 ) ],
-#     'c_BC': [ float( 1.0 ) ],
-#     'c_residual':     [ float( 1e-3 ), float( 1e-2 ), float( 1e-1 ), float( 1 ), float( 1e1 ), float( 1e2 ), float( 1e3 ) ],
-#     'c_variational':  [ float( 1e-3 ), float( 1e-2 ), float( 1e-1 ), float( 1 ), float( 1e1 ), float( 1e2 ), float( 1e3 ) ],
-#     'c_monotonicity': [ float( 1e3 ) ],
-#     'hidden_layer_widths': [ int( 175 ) ],
-#     'num_hidden_layers':   [ int( 5 ) ],
-#     'learning_rate':       [ float( 0.005 ) ],
 # }
 
 # # Define the search space. Run 2 - Coarse grid.
@@ -58,7 +62,7 @@ SAVE_DIR = r'./ann/closed_roa/save'
 #     'learning_rate':       [ float( 5e-4 ), float( 5e-3 ), float( 5e-2 ) ],
 # }
 
-# Define the search space. Run 3 - Residual & Variable Fine
+# Define the search space. Run 3 - Refined grid.
 SEARCH_SPACE = {
     'c_IC': [ float( 1.0 ) ],
     'c_BC': [ float( 1.0 ) ],
@@ -70,7 +74,7 @@ SEARCH_SPACE = {
     'learning_rate':       [ float( 0.005 ) ],
 }
 
-# # Define the search space.
+# # Define the search space. Test.
 # SEARCH_SPACE = {
 #     'c_IC': [ float( 1.0 ) ],
 #     'c_BC': [ float( 1.0 ) ],
