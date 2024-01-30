@@ -17,15 +17,15 @@
 #%% ---------------------------------------- IMPORT LIBRARIES ----------------------------------------
 
 # Import standard libraries.
-import numpy as np
 import os
-import random
 import sys
-import torch
-import matplotlib.pyplot as plt
 import math
 import time
+import torch
+import random
+import numpy as np
 from copy import deepcopy
+import matplotlib.pyplot as plt
 
 # Ensure that the utilities folder for this project is on the system path.
 sys.path.append( r'./ann/utilities' )
@@ -104,7 +104,7 @@ plt.rcParams.update( { 'figure.max_open_warning': 0 } )                     # Di
 # }
 
 
-# # Coarse Grid Search Best.
+# # Coarse Grid Search Best. (Closed Boundary Conditions)
 # BASE_CONFIG = {
 #     'classification_parameters': {
 #         'num_noisy_samples_per_level_set_point': int( 5 ),
@@ -163,7 +163,7 @@ plt.rcParams.update( { 'figure.max_open_warning': 0 } )                     # Di
 # }
 
 
-# # Coarse grid search worst.
+# # Coarse grid search worst. (Closed Boundary Conditions)
 # BASE_CONFIG = {
 #     'classification_parameters': {
 #         'num_noisy_samples_per_level_set_point': int( 5 ),
@@ -222,66 +222,66 @@ plt.rcParams.update( { 'figure.max_open_warning': 0 } )                     # Di
 # }
 
 
-# Refined grid search best.
-BASE_CONFIG = {
-    'classification_parameters': {
-        'num_noisy_samples_per_level_set_point': int( 5 ),
-        'noise_percentage': float( 1e-3 ),
-        'dt': float( 1e-2),
-        'tfinal': float( 10 ),
-    },
-    'exploration_parameters': {
-        'volume_percentage': float( 1e-2 ),
-        'num_points': int( 50 ),
-        'unique_percentage': float( 1e-4 ),
-    },
-    'hyperparameters': {
-        'activation_function': 'sigmoid',
-        'c_IC': float( 1.0 ),
-        'c_BC': float( 1.0 ),
-        'c_residual': float( 5e-7 ),
-        'c_residual_gradient': float( 0 ),
-        'c_variational': float( 5e-7 ),
-        'c_monotonicity': float( 100 ),
-        'hidden_layer_widths': int( 175 ),
-        'num_epochs': int( 400 ),
-        'num_hidden_layers': int( 5 ),
-        'num_training_data': int( 100e3 ),
-        'num_testing_data': int( 20e3 ),
-        'learning_rate': float( 5e-3 ),
-    },
-    'newton_parameters': {
-        'tolerance': float( 1e-4 ),
-        'max_iterations': int( 1e2 ),
-    },
-    'paths': {
-        'save_path': r'./ann/simple_pendulum/save',
-        'load_path': r'./ann/simple_pendulum/load',
-    },
-    'plotting_parameters': {
-        'num_plotting_samples': int( 20 ),
-        'plot_flag': bool( False ),
-    },
-    'printing_parameters': {
-        'batch_print_frequency': int( 10 ),
-        'epoch_print_frequency': int( 10 ),
-        'print_flag': bool( True ),
-    },
-    'runtime': {
-        'device': 'cuda:6' if torch.cuda.is_available(  ) else 'cpu',
-        'seed': int( 0 ),
-        'load_flag': bool( False ),
-        'train_flag': bool( True ),
-        'verbose_flag': bool( True ),
-    },
-    'saving_parameters': {
-        'save_flag': bool( True ),
-        'save_frequency': int( 10 ),
-    }
-}
+# # Refined grid search best. (Closed Boundary Conditions)
+# BASE_CONFIG = {
+#     'classification_parameters': {
+#         'num_noisy_samples_per_level_set_point': int( 5 ),
+#         'noise_percentage': float( 1e-3 ),
+#         'dt': float( 1e-2),
+#         'tfinal': float( 10 ),
+#     },
+#     'exploration_parameters': {
+#         'volume_percentage': float( 1e-2 ),
+#         'num_points': int( 50 ),
+#         'unique_percentage': float( 1e-4 ),
+#     },
+#     'hyperparameters': {
+#         'activation_function': 'sigmoid',
+#         'c_IC': float( 1.0 ),
+#         'c_BC': float( 1.0 ),
+#         'c_residual': float( 5e-7 ),
+#         'c_residual_gradient': float( 0 ),
+#         'c_variational': float( 5e-7 ),
+#         'c_monotonicity': float( 100 ),
+#         'hidden_layer_widths': int( 175 ),
+#         'num_epochs': int( 400 ),
+#         'num_hidden_layers': int( 5 ),
+#         'num_training_data': int( 100e3 ),
+#         'num_testing_data': int( 20e3 ),
+#         'learning_rate': float( 5e-3 ),
+#     },
+#     'newton_parameters': {
+#         'tolerance': float( 1e-4 ),
+#         'max_iterations': int( 1e2 ),
+#     },
+#     'paths': {
+#         'save_path': r'./ann/simple_pendulum/save',
+#         'load_path': r'./ann/simple_pendulum/load',
+#     },
+#     'plotting_parameters': {
+#         'num_plotting_samples': int( 20 ),
+#         'plot_flag': bool( False ),
+#     },
+#     'printing_parameters': {
+#         'batch_print_frequency': int( 10 ),
+#         'epoch_print_frequency': int( 10 ),
+#         'print_flag': bool( True ),
+#     },
+#     'runtime': {
+#         'device': 'cuda:6' if torch.cuda.is_available(  ) else 'cpu',
+#         'seed': int( 0 ),
+#         'load_flag': bool( False ),
+#         'train_flag': bool( True ),
+#         'verbose_flag': bool( True ),
+#     },
+#     'saving_parameters': {
+#         'save_flag': bool( True ),
+#         'save_frequency': int( 10 ),
+#     }
+# }
 
 
-# # Refined grid search worst.
+# # Refined grid search worst. (Closed Boundary Conditions)
 # BASE_CONFIG = {
 #     'classification_parameters': {
 #         'num_noisy_samples_per_level_set_point': int( 5 ),
@@ -340,6 +340,67 @@ BASE_CONFIG = {
 # }
 
 
+# Coarse grid search best. (Open Boundary Conditions)
+BASE_CONFIG = {
+    'classification_parameters': {
+        'num_noisy_samples_per_level_set_point': int( 5 ),
+        'noise_percentage': float( 1e-3 ),
+        'dt': float( 1e-2),
+        'tfinal': float( 10 ),
+    },
+    'exploration_parameters': {
+        'volume_percentage': float( 1e-2 ),
+        'num_points': int( 50 ),
+        'unique_percentage': float( 1e-4 ),
+    },
+    'hyperparameters': {
+        'activation_function': 'sigmoid',
+        'c_IC': float( 1.0 ),
+        'c_BC': float( 1.0 ),
+        'c_residual': float( 1e-3 ),
+        'c_residual_gradient': float( 0 ),
+        'c_variational': float( 1e-5 ),
+        'c_monotonicity': float( 100 ),
+        'hidden_layer_widths': int( 500 ),
+        'num_epochs': int( 400 ),
+        'num_hidden_layers': int( 7 ),
+        'num_training_data': int( 100e3 ),
+        'num_testing_data': int( 20e3 ),
+        'learning_rate': float( 5e-4 ),
+    },
+    'newton_parameters': {
+        'tolerance': float( 1e-4 ),
+        'max_iterations': int( 1e2 ),
+    },
+    'paths': {
+        'save_path': r'./ann/simple_pendulum/save',
+        'load_path': r'./ann/simple_pendulum/load',
+    },
+    'plotting_parameters': {
+        'num_plotting_samples': int( 20 ),
+        # 'plot_flag': bool( False ),
+        'plot_flag': bool( True ),
+    },
+    'printing_parameters': {
+        'batch_print_frequency': int( 10 ),
+        'epoch_print_frequency': int( 10 ),
+        'print_flag': bool( True ),
+    },
+    'runtime': {
+        'device': 'cuda:9' if torch.cuda.is_available(  ) else 'cpu',
+        'seed': int( 0 ),
+        'load_flag': bool( False ),
+        'train_flag': bool( True ),
+        'verbose_flag': bool( True ),
+    },
+    'saving_parameters': {
+        'save_flag': bool( True ),
+        'save_frequency': int( 10 ),
+    }
+}
+
+
+
 # Implement a function to evaluate the closed roa.
 def eval_simple_pendulum( config: dict = {  } ) -> int:
     
@@ -368,10 +429,18 @@ def eval_simple_pendulum( config: dict = {  } ) -> int:
     # Retrieve the starting time for setting up.
     start_time_setup = time.time(  )
 
-    new_config = deepcopy( BASE_CONFIG )
-    # new_config[ 'hyperparameters' ].update( config )
-    new_config[ 'hyperparameters' ].update( config[ 'hyperparameters' ] )
-    config = deepcopy( new_config )
+    # Determine whether to update the configuration.
+    if config:                  # If there is a configuration to use...
+
+        # Create a copy of the default configuration.
+        new_config = deepcopy( BASE_CONFIG )
+
+        # Update the hyperparmaeters of the default configuration to match the user provided configuration.
+            # # new_config[ 'hyperparameters' ].update( config )
+        new_config[ 'hyperparameters' ].update( config[ 'hyperparameters' ] )
+
+        # Make a copy of the new configuration.
+        config = deepcopy( new_config )
 
     # Set the random seeds.
     np.random.seed( config[ 'runtime' ]['seed' ] )

@@ -25,16 +25,17 @@ import numpy as np
 # losses_path = r'ann/simple_pendulum/save/run2_coarse_grid_repeat2/config_losses.pkl'
 # avg_losses_path = r'ann/simple_pendulum/save/run2_coarse_grid_repeat2/avg_config_losses.pkl'
 
-
-
 # configs_path = r'ann/simple_pendulum/save/run1_coarse_grid_repeat1/configs.pkl'
 # losses_path = r'ann/simple_pendulum/save/run1_coarse_grid_repeat1/config_losses.pkl'
 # avg_losses_path = r'ann/simple_pendulum/save/run1_coarse_grid_repeat1/avg_config_losses.pkl'
 
-configs_path = r'ann/simple_pendulum/save/run2_fine_grid_repeat1/configs.pkl'
-losses_path = r'ann/simple_pendulum/save/run2_fine_grid_repeat1/config_losses.pkl'
-avg_losses_path = r'ann/simple_pendulum/save/run2_fine_grid_repeat1/avg_config_losses.pkl'
+# configs_path = r'ann/simple_pendulum/save/run2_fine_grid_repeat1/configs.pkl'
+# losses_path = r'ann/simple_pendulum/save/run2_fine_grid_repeat1/config_losses.pkl'
+# avg_losses_path = r'ann/simple_pendulum/save/run2_fine_grid_repeat1/avg_config_losses.pkl'
 
+configs_path = r'ann/simple_pendulum/save/run3_coarse_grid_different_BCs/configs.pkl'
+losses_path = r'ann/simple_pendulum/save/run3_coarse_grid_different_BCs/config_losses.pkl'
+avg_losses_path = r'ann/simple_pendulum/save/run3_coarse_grid_different_BCs/avg_config_losses.pkl'
 
 
 # Open the config file.
