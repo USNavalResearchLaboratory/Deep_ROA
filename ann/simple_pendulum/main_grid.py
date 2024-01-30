@@ -65,7 +65,7 @@ SEARCH_ID = 'run5_coarse_grid_different_BCs'
 #     'learning_rate':       [ float( 5e-4 ), float( 5e-3 ), float( 5e-2 ) ],
 # }
 
-# # Define the search space. Run 2 - Residual & Variable Fine.
+# # Define the search space. Run 2 - Refined Grid.
 # SEARCH_SPACE = {
 #     'c_IC': [ float( 1.0 ) ],
 #     'c_BC': [ float( 1.0 ) ],
@@ -128,7 +128,7 @@ def main( base_config = BASE_CONFIG, num_repeats = NUM_REPEATS, search_id = SEAR
     # Write the configurations to the configuration file.
     with open( configs_save_path, 'wb' ) as file:                               # With the configurations file open...
 
-        # Wrtie the configurations to the configurations file.
+        # Write the configurations to the configurations file.
         pkl.dump( named_parameter_configs, file )
 
     # Create paths to files to store the configuration losses.
@@ -216,7 +216,6 @@ def main( base_config = BASE_CONFIG, num_repeats = NUM_REPEATS, search_id = SEAR
             problem_specifications_duration = end_time_problem_specifications - start_time_problem_specifications
 
             # Print a status update.
-            # message: str = f"Config {idx} / {len( named_parameter_configs )} -  Mean Loss: {mean_loss} - Best Loss: {best_loss} (Time Stamp: {datetime.datetime.now(  )})"
             message = f'Config {idx + 1} / {len( named_parameter_configs )} ({100*( idx + 1 )/len( named_parameter_configs )} %) -  Mean Loss: {mean_loss} (Best Loss: {best_loss}) - Duration = {problem_specifications_duration}s = {problem_specifications_duration/60}min = {problem_specifications_duration/3600}hr - Time Stamp: {datetime.datetime.now(  )}'
             print( message )
             std_out.write( message + '\n' )

@@ -429,18 +429,18 @@ def eval_simple_pendulum( config: dict = {  } ) -> int:
     # Retrieve the starting time for setting up.
     start_time_setup = time.time(  )
 
+    # Create a copy of the default configuration.
+    new_config = deepcopy( BASE_CONFIG )
+
     # Determine whether to update the configuration.
     if config:                  # If there is a configuration to use...
-
-        # Create a copy of the default configuration.
-        new_config = deepcopy( BASE_CONFIG )
 
         # Update the hyperparmaeters of the default configuration to match the user provided configuration.
             # # new_config[ 'hyperparameters' ].update( config )
         new_config[ 'hyperparameters' ].update( config[ 'hyperparameters' ] )
 
-        # Make a copy of the new configuration.
-        config = deepcopy( new_config )
+    # Make a copy of the new configuration.
+    config = deepcopy( new_config )
 
     # Set the random seeds.
     np.random.seed( config[ 'runtime' ]['seed' ] )
