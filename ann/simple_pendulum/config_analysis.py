@@ -44,9 +44,9 @@ import numpy as np
 # losses_path = r'ann/simple_pendulum/save/run2_fine_grid_repeat1/config_losses.pkl'
 # avg_losses_path = r'ann/simple_pendulum/save/run2_fine_grid_repeat1/avg_config_losses.pkl'
 
-configs_path = r'ann/simple_pendulum/save/run6_larger_coarse_grid_open_BCs/configs.pkl'
-losses_path = r'ann/simple_pendulum/save/run6_larger_coarse_grid_open_BCs/config_losses.pkl'
-avg_losses_path = r'ann/simple_pendulum/save/run6_larger_coarse_grid_open_BCs/avg_config_losses.pkl'
+configs_path = r'ann/simple_pendulum/save/run7_testing/configs.pkl'
+losses_path = r'ann/simple_pendulum/save/run7_testing/config_losses.pkl'
+avg_losses_path = r'ann/simple_pendulum/save/run7_testing/avg_config_losses.pkl'
 
 # Open the config file.
 with open( configs_path, 'rb' ) as file:                   # With the config file open...

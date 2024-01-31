@@ -150,7 +150,7 @@ BASE_CONFIG = {
         'print_flag': bool( True ),
     },
     'runtime': {
-        'device': 'cuda:8' if torch.cuda.is_available(  ) else 'cpu',
+        'device': 'cuda:9' if torch.cuda.is_available(  ) else 'cpu',
         'seed': int( 0 ),
         'load_flag': bool( False ),
         'train_flag': bool( True ),
