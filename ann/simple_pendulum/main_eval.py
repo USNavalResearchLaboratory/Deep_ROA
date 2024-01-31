@@ -45,6 +45,9 @@ os.system( 'cls' if os.name == 'nt' else 'clear' )
 # Set matplotlib options.
 plt.rcParams.update( { 'figure.max_open_warning': 0 } )                     # Disable maximum open figure warning.
 
+
+#%% ---------------------------------------- DEFINE CONFIGURATION ----------------------------------------
+
 # # Define the base configuration.
 # BASE_CONFIG = {
 #     'classification_parameters': {
@@ -400,13 +403,10 @@ BASE_CONFIG = {
 # }
 
 
+#%% ---------------------------------------- CONFIGURATION EVALUATION ----------------------------------------
 
 # Implement a function to evaluate the simple pendulum roa.
 def eval_simple_pendulum( config: dict = BASE_CONFIG ) -> int:
-    
-    """
-    TODO Finish Documentation
-    """
 
     # Print out a message saying that we are beginning Deep ROA Trial.
     print( '\n' )
@@ -450,6 +450,7 @@ def eval_simple_pendulum( config: dict = BASE_CONFIG ) -> int:
     # Set the computational device.
     device = torch.device( config[ 'runtime' ][ 'device' ] )
 
+    # Retrieve the start time.
     start_time = time.time(  )
 
 

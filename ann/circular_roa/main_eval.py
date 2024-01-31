@@ -45,6 +45,9 @@ os.system( 'cls' if os.name == 'nt' else 'clear' )
 # Set matplotlib options.
 plt.rcParams.update( { 'figure.max_open_warning': 0 } )                     # Disable maximum open figure warning.
 
+
+#%% ---------------------------------------- DEFINE CONFIGURATION ----------------------------------------
+
 BASE_CONFIG = {
     'classification_parameters': {
         'num_noisy_samples_per_level_set_point': int( 5 ),
