@@ -45,7 +45,7 @@ torch.manual_seed( 0 )
 
 # Set the computational device.
 # device = 'cuda' if torch.cuda.is_available(  ) else 'cpu'
-device = 'cuda:9' if torch.cuda.is_available(  ) else 'cpu'
+device = 'cuda:0' if torch.cuda.is_available(  ) else 'cpu'
 # device = 'cpu'
 
 #%% ---------------------------------------- DEFINE PINN OPTIONS ----------------------------------------
@@ -73,7 +73,7 @@ epoch_print_frequency = torch.tensor( int( 1e1 ), dtype = torch.int16, device = 
 print_flag = True
 
 # Define the plotting options.
-num_plotting_samples = torch.tensor( int( 1e2 ), dtype = torch.int16, device = device )         # [#] Number of sample points to use per dimension when plotting network results.
+num_plotting_samples = torch.tensor( int( 10 ), dtype = torch.int16, device = device )         # [#] Number of sample points to use per dimension when plotting network results.
 plot_flag = True                                                                        # [T/F] Flag that determines whether training and network analysis plots are created.
 
 # Define the verbosity setting.
@@ -190,7 +190,7 @@ p_residual = torch.tensor( 0.5, dtype = torch.float16, device = device )        
 
 # Define the number of training epochs.
 # num_epochs = torch.tensor( int( 1e2 ), dtype = torch.int32, device = device )                   # [#] Number of training epochs to perform.
-num_epochs = torch.tensor( int( 1e3 ), dtype = torch.int32, device = device )
+num_epochs = torch.tensor( int( 11 ), dtype = torch.int32, device = device )
 # num_epochs = torch.tensor( int( 5e3 ), dtype = torch.int32, device = device )                   # [#] Number of training epochs to perform.
 # num_epochs = torch.tensor( int( 10e3 ), dtype = torch.int32, device = device )
 
@@ -345,4 +345,3 @@ print( '------------------------------------------------------------------------
 print( 'COMPLETE' )
 print( '------------------------------------------------------------------------------------------------------------------------' )
 print( '\n' )
-
