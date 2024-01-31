@@ -1,7 +1,18 @@
+#%% ---------------------------------------- CONFIGURATION ANALYSIS ----------------------------------------
+
+# This script analzes the results of a DROA grid search by analyzing searched configurations and their associated losses.
+
+
+#%% ---------------------------------------- IMPORT LIBRARIES ----------------------------------------
 
 # Import standard libraries.
 import dill as pkl
 import numpy as np
+
+# Import custom libraries.
+
+
+#%% ---------------------------------------- READ IN GRID SEARCH CONFIGURATIONS ----------------------------------------
 
 # # Define the config, config losses, and average config losses paths.
 # configs_path = r'ann/simple_pendulum/save/run1_coarse_grid_repeat1/configs.pkl'
@@ -33,10 +44,9 @@ import numpy as np
 # losses_path = r'ann/simple_pendulum/save/run2_fine_grid_repeat1/config_losses.pkl'
 # avg_losses_path = r'ann/simple_pendulum/save/run2_fine_grid_repeat1/avg_config_losses.pkl'
 
-configs_path = r'ann/simple_pendulum/save/run3_coarse_grid_different_BCs/configs.pkl'
-losses_path = r'ann/simple_pendulum/save/run3_coarse_grid_different_BCs/config_losses.pkl'
-avg_losses_path = r'ann/simple_pendulum/save/run3_coarse_grid_different_BCs/avg_config_losses.pkl'
-
+configs_path = r'ann/simple_pendulum/save/run6_larger_coarse_grid_open_BCs/configs.pkl'
+losses_path = r'ann/simple_pendulum/save/run6_larger_coarse_grid_open_BCs/config_losses.pkl'
+avg_losses_path = r'ann/simple_pendulum/save/run6_larger_coarse_grid_open_BCs/avg_config_losses.pkl'
 
 # Open the config file.
 with open( configs_path, 'rb' ) as file:                   # With the config file open...
@@ -55,6 +65,14 @@ with open( avg_losses_path, 'rb' ) as file:              # With the average conf
 
     # Load the average config losses data.
     avg_losses = pkl.load( file )
+
+
+#%% ---------------------------------------- ANALYZE GRID SEARCH CONFIGURATIONS ----------------------------------------
+
+# Compute the number of completed configurations.
+num_configs = len( configs )
+num_completed_configs = len( avg_losses )
+percent_configs_completed = 100*( num_completed_configs/num_configs )
 
 # Convert the losses to np arrays.
 losses = np.array( losses )
@@ -82,6 +100,9 @@ max_avg_config = configs[ max_avg_loss_index ]
 
 # Compute the loss range.
 loss_range = max_loss - min_loss
+
+
+#%% ---------------------------------------- PRINT GRID SEARCH INFORMATION ----------------------------------------
 
 # Print out the relavent information.
 print( '\n' )
@@ -149,10 +170,9 @@ print( '------------------------------------------------------------------' )
 
 print( '\n' )
 print( '-------------------- SUMMARY INFORMATION --------------------' )
+print( f'# of Configs: {num_completed_configs} / {num_configs} ({percent_configs_completed} [%])' )
 print( f'Minimum Loss: {min_loss} [%] (Avg. {min_avg_loss} [%])' )
 print( f'Maximum Loss: {max_loss} [%] (Avg. {max_avg_loss} [%])' )
 print( f'Loss Range: {loss_range} [%]' )
 print( '-------------------------------------------------------------' )
 
-
-asdf = 1

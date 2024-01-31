@@ -36,7 +36,8 @@ SAVE_DIR = r'./ann/simple_pendulum/save'
 # SEARCH_ID = 'run2_fine_grid'
 # SEARCH_ID = 'run3_coarse_grid_different_BCs'
 # SEARCH_ID = 'run4_fine_grid_different_BCs'
-SEARCH_ID = 'run5_coarse_grid_different_BCs'
+# SEARCH_ID = 'run5_larger_coarse_grid_closed_BCs'
+SEARCH_ID = 'run6_larger_coarse_grid_open_BCs'
 
 
 #%% ---------------------------------------- DEFINE GRID SEARCH SPACE ----------------------------------------
@@ -77,17 +78,41 @@ SEARCH_ID = 'run5_coarse_grid_different_BCs'
 #     'learning_rate':       [ float( 0.005 ) ],
 # }
 
-# Define the search space. SINGLE TEST PARAMETERS.
+# # Define the search space. Run 5 - Larger Coarse Grid (Closed Boundary Conditions).
+# SEARCH_SPACE = {
+#     'c_IC': [ float( 1.0 ) ],
+#     'c_BC': [ float( 1.0 ) ],
+#     'c_residual':     [ float( 1e-5 ), float( 5e-5 ), float( 1e-4 ), float( 5e-4 ), float( 1e-3 ) ],
+#     'c_variational':  [ float( 1e-5 ), float( 5e-5 ), float( 1e-4 ), float( 5e-4 ), float( 1e-3 ) ],
+#     'c_monotonicity': [ float( 1e2 ) ],
+#     'hidden_layer_widths': [ int( 125 ), int( 250 ), int( 500 ) ],
+#     'num_hidden_layers':   [ int( 3 ), int( 5 ), int( 7 ) ],
+#     'learning_rate':       [ float( 5e-4 ), float( 5e-3 ), float( 5e-2 ) ],
+# }
+
+# Define the search space. Run 6 - Larger Coarse Grid (Open Boundary Conditions).
 SEARCH_SPACE = {
     'c_IC': [ float( 1.0 ) ],
     'c_BC': [ float( 1.0 ) ],
-    'c_residual':     [ float( 1e-4 ) ],
-    'c_variational':  [ float( 1e-4 ) ],
+    'c_residual':     [ float( 1e-5 ), float( 5e-5 ), float( 1e-4 ), float( 5e-4 ), float( 1e-3 ) ],
+    'c_variational':  [ float( 1e-5 ), float( 5e-5 ), float( 1e-4 ), float( 5e-4 ), float( 1e-3 ) ],
     'c_monotonicity': [ float( 1e2 ) ],
-    'hidden_layer_widths': [ int( 175 ) ],
-    'num_hidden_layers':   [ int( 5 ) ],
-    'learning_rate':       [ float( 5e-4 ) ],
+    'hidden_layer_widths': [ int( 125 ), int( 250 ), int( 500 ) ],
+    'num_hidden_layers':   [ int( 3 ), int( 5 ), int( 7 ) ],
+    'learning_rate':       [ float( 5e-4 ), float( 5e-3 ), float( 5e-2 ) ],
 }
+
+# # Define the search space. SINGLE TEST PARAMETERS.
+# SEARCH_SPACE = {
+#     'c_IC': [ float( 1.0 ) ],
+#     'c_BC': [ float( 1.0 ) ],
+#     'c_residual':     [ float( 1e-4 ) ],
+#     'c_variational':  [ float( 1e-4 ) ],
+#     'c_monotonicity': [ float( 1e2 ) ],
+#     'hidden_layer_widths': [ int( 175 ) ],
+#     'num_hidden_layers':   [ int( 5 ) ],
+#     'learning_rate':       [ float( 5e-4 ) ],
+# }
 
 
 # Implement the main function.

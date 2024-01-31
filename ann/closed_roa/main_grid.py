@@ -29,7 +29,7 @@ from main_eval import BASE_CONFIG, eval_closed_roa
 NUM_REPEATS = 1                 # [#] Number of times each configuration in the grid search is run.
 
 # Define the save directory for all grid search runs.
-SAVE_DIR = r'./ann/simple_pendulum/save'
+SAVE_DIR = r'./ann/closed_roa/save'
 
 # Define the folder in which to save results for this particular grid search.
 SEARCH_ID = 'run1_coarse_grid'
