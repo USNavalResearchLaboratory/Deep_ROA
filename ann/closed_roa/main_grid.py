@@ -243,11 +243,11 @@ def main( base_config = BASE_CONFIG, num_repeats = NUM_REPEATS, search_id = SEAR
                     # Create the save path.
                     os.makedirs( eval_config[ 'paths' ][ 'save_path' ], exist_ok = True )
 
-                # Evaluate the loss of this configuration.
-                loss = eval_closed_roa( eval_config )
+                    # Evaluate the loss of this configuration.
+                    loss = eval_closed_roa( eval_config )
 
-                # Append this loss to the loss array.
-                losses.append( loss )
+                    # Append this loss to the loss array.
+                    losses.append( loss )
 
                 # Compute the average loss for this configuration.
                 mean_loss = sum( losses ) / len( losses )                                   # [%] Average loss for this configuration across its repeats.
