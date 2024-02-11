@@ -242,7 +242,6 @@ c_residual = torch.tensor( 0.00408349, dtype = torch.float32, device = device ) 
 c_variational = torch.tensor( 0.00408349, dtype = torch.float32, device = device )                 # [-] Variational loss weight.
 c_monotonicity = torch.tensor( 0.9974927, dtype = torch.float32, device = device )               # [-] Monotonicity loss weight.
 
-
 # Create the hyper-parameters object.
 hyperparameters = hyperparameters_class( activation_function, num_hidden_layers, hidden_layer_widths, num_training_data, num_testing_data, p_initial, p_boundary, p_residual, num_epochs, residual_batch_size, learning_rate, integration_order, element_volume_percent, element_type, element_computation_option, c_IC, c_BC, c_residual, c_variational, c_monotonicity, save_path, load_path )
 
