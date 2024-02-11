@@ -65,7 +65,7 @@ BASE_CONFIG = {
         'neuron_persistent_state': False,
         'neuron_requires_grad': False,
         'synapse_gain': float( 1.0 ),
-        'num_timesteps': int( 10 ),
+        'num_timesteps': int( 1 ),
     },
     'newton_parameters': {
         'tolerance': float( 1e-6 ),
@@ -76,7 +76,7 @@ BASE_CONFIG = {
         'load_path': r'./ann/closed_roa/load',
     },
     'plotting_parameters': {
-        'num_plotting_samples': int( 20 ),
+        'num_plotting_samples': int( 10 ),
         'plot_flag': bool( False ),
     },
     'printing_parameters': {
@@ -386,8 +386,7 @@ def eval_simple_pendulum(config: dict = BASE_CONFIG) -> int:
     print( '------------------------------------------------------------------------------------------------------------------------' )
     print( 'Computing classification loss...' )
 
-    # Compute the classification loss.
-    classification_loss, num_classification_points = pinn.compute_classification_loss( pde = pinn.pde, network = pinn.network, classification_data = None, num_spatial_dimensions = pinn.domain.num_spatial_dimensions, domain = pinn.domain, plot_time = pinn.domain.temporal_domain[ 1, : ], level = torch.tensor( 0, dtype = torch.float32, device = pinn.pinn_options.device ), level_set_guesses = None, num_guesses = torch.tensor( int( 1e2 ), dtype = torch.int64, device = pinn.pinn_options.device ), newton_tolerance = newton_tolerance, newton_max_iterations = newton_max_iterations, exploration_radius = pinn.network.exploration_radius_spatial, num_exploration_points = num_exploration_points, unique_tolerance = pinn.network.unique_tolerance_spatial, classification_noise_magnitude = pinn.network.classification_noise_magnitude_spatial, num_noisy_samples_per_level_set_point = pinn.pinn_options.num_noisy_samples_per_level_set_point, domain_subset_type = 'spatial', tspan = torch.tensor( [ 0, classification_tfinal.item(  ) ], dtype = classification_tfinal.dtype, device = classification_tfinal.device ), dt = classification_dt )
+    classification_loss, num_classification_points = pinn.compute_classification_loss( pde = pinn.pde, network = pinn.network, classification_data = None, num_spatial_dimensions = pinn.domain.num_spatial_dimensions, num_timesteps = pinn.hyperparameters.num_timesteps, domain = pinn.domain, plot_time = pinn.domain.temporal_domain[ 1, : ], level = torch.tensor( 0, dtype = torch.float32, device = pinn.pinn_options.device ), level_set_guesses = None, num_guesses = torch.tensor( int( 1e2 ), dtype = torch.int64, device = pinn.pinn_options.device ), newton_tolerance = newton_tolerance, newton_max_iterations = newton_max_iterations, exploration_radius = pinn.network.exploration_radius_spatial, num_exploration_points = num_exploration_points, unique_tolerance = pinn.network.unique_tolerance_spatial, classification_noise_magnitude = pinn.network.classification_noise_magnitude_spatial, num_noisy_samples_per_level_set_point = pinn.pinn_options.num_noisy_samples_per_level_set_point, domain_subset_type = 'spatial', tspan = torch.tensor( [ 0, classification_tfinal.item(  ) ], dtype = classification_tfinal.dtype, device = classification_tfinal.device ), dt = classification_dt )
 
     # Print the classification loss.
     print( '\n' )
