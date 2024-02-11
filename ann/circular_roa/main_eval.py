@@ -48,6 +48,67 @@ plt.rcParams.update( { 'figure.max_open_warning': 0 } )                     # Di
 
 #%% ---------------------------------------- DEFINE CONFIGURATION ----------------------------------------
 
+# # Define the base configuration.
+# BASE_CONFIG = {
+#     'classification_parameters': {
+#         'num_noisy_samples_per_level_set_point': int( 5 ),
+#         'noise_percentage': float( 1e-3 ),
+#         'dt': float( 1e-2 ),
+#         'tfinal': float( 10 ),
+#     },
+#     'exploration_parameters': {
+#         'volume_percentage': float( 1e-2 ),
+#         'num_points': int( 50 ),
+#         'unique_percentage': float( 1e-4 ),
+#     },
+#     'hyperparameters': {
+#         'activation_function': 'sigmoid',
+#         'c_IC': float( 1.0 ),
+#         'c_BC': float( 1.0 ),
+#         'c_residual': float( 1e-4 ),
+#         'c_residual_gradient': float( 0 ),
+#         'c_variational': float( 1e-5 ),
+#         'c_monotonicity': float( 100 ),
+#         'hidden_layer_widths': int( 175 ),
+#         'num_epochs': int( 400 ),
+#         'num_hidden_layers': int( 5 ),
+#         'num_training_data': int( 100e3 ),
+#         'num_testing_data': int( 20e3 ),
+#         'learning_rate': float( 5e-3 ),
+#     },
+#     'newton_parameters': {
+#         'tolerance': float( 1e-4 ),
+#         'max_iterations': int( 1e2 ),
+#     },
+#     'paths': {
+#         'save_path': r'./ann/circular_roa/save',
+#         'load_path': r'./ann/circular_roa/load',
+#     },
+#     'plotting_parameters': {
+#         'num_plotting_samples': int( 20 ),
+#         'plot_flag': bool( False ),
+#         # 'plot_flag': bool( True ),
+#     },
+#     'printing_parameters': {
+#         'batch_print_frequency': int( 10 ),
+#         'epoch_print_frequency': int( 10 ),
+#         'print_flag': bool( True ),
+#     },
+#     'runtime': {
+#         'device': 'cuda:6' if torch.cuda.is_available(  ) else 'cpu',
+#         'seed': int( 0 ),
+#         'load_flag': bool( False ),
+#         'train_flag': bool( True ),
+#         'verbose_flag': bool( True ),
+#     },
+#     'saving_parameters': {
+#         'save_flag': bool( True ),
+#         'save_frequency': int( 10 ),
+#     }
+# }
+
+
+# Define the base configuration.
 BASE_CONFIG = {
     'classification_parameters': {
         'num_noisy_samples_per_level_set_point': int( 5 ),
@@ -64,10 +125,10 @@ BASE_CONFIG = {
         'activation_function': 'sigmoid',
         'c_IC': float( 1.0 ),
         'c_BC': float( 1.0 ),
-        'c_residual': float( 1e-4 ),
+        'c_residual': float( 1.0 ),
         'c_residual_gradient': float( 0 ),
-        'c_variational': float( 1e-5 ),
-        'c_monotonicity': float( 100 ),
+        'c_variational': float( 0.01 ),
+        'c_monotonicity': float( 1000 ),
         'hidden_layer_widths': int( 175 ),
         'num_epochs': int( 400 ),
         'num_hidden_layers': int( 5 ),
@@ -85,8 +146,8 @@ BASE_CONFIG = {
     },
     'plotting_parameters': {
         'num_plotting_samples': int( 20 ),
-        'plot_flag': bool( False ),
-        # 'plot_flag': bool( True ),
+        # 'plot_flag': bool( False ),
+        'plot_flag': bool( True ),
     },
     'printing_parameters': {
         'batch_print_frequency': int( 10 ),
@@ -94,7 +155,7 @@ BASE_CONFIG = {
         'print_flag': bool( True ),
     },
     'runtime': {
-        'device': 'cuda:6' if torch.cuda.is_available(  ) else 'cpu',
+        'device': 'cuda:7' if torch.cuda.is_available(  ) else 'cpu',
         'seed': int( 0 ),
         'load_flag': bool( False ),
         'train_flag': bool( True ),
