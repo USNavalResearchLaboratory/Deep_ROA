@@ -86,7 +86,8 @@ BASE_CONFIG = {
     },
     'plotting_parameters': {
         'num_plotting_samples': int( 20 ),
-        'plot_flag': bool( False ),
+        # 'plot_flag': bool( False ),
+        'plot_flag': bool( True ),
     },
     'printing_parameters': {
         'batch_print_frequency': int( 10 ),

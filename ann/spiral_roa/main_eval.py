@@ -48,7 +48,7 @@ plt.rcParams.update( { 'figure.max_open_warning': 0 } )                     # Di
 
 #%% ---------------------------------------- DEFINE CONFIGURATION ----------------------------------------
 
-# Coarse Grid Search Best. (Closed Boundary Conditions)
+# Coarse Grid Search. (Closed Boundary Conditions)
 BASE_CONFIG = {
     'classification_parameters': {
         'num_noisy_samples_per_level_set_point': int( 5 ),
@@ -65,16 +65,16 @@ BASE_CONFIG = {
         'activation_function': 'sigmoid',
         'c_IC': float( 1.0 ),
         'c_BC': float( 1.0 ),
-        'c_residual': float( 1e-4 ),
+        'c_residual': float( 5e-4 ),
         'c_residual_gradient': float( 0 ),
-        'c_variational': float( 1e-5 ),
+        'c_variational': float( 1e-3 ),
         'c_monotonicity': float( 100 ),
-        'hidden_layer_widths': int( 175 ),
+        'hidden_layer_widths': int( 250 ),
         'num_epochs': int( 400 ),
         'num_hidden_layers': int( 7 ),
         'num_training_data': int( 100e3 ),
         'num_testing_data': int( 20e3 ),
-        'learning_rate': float( 5e-4 ),
+        'learning_rate': float( 5e-3 ),
     },
     'newton_parameters': {
         'tolerance': float( 1e-4 ),
@@ -86,7 +86,8 @@ BASE_CONFIG = {
     },
     'plotting_parameters': {
         'num_plotting_samples': int( 20 ),
-        'plot_flag': bool( False ),
+        # 'plot_flag': bool( False ),
+        'plot_flag': bool( True ),
     },
     'printing_parameters': {
         'batch_print_frequency': int( 10 ),
@@ -94,7 +95,7 @@ BASE_CONFIG = {
         'print_flag': bool( True ),
     },
     'runtime': {
-        'device': 'cuda:8' if torch.cuda.is_available(  ) else 'cpu',
+        'device': 'cuda:9' if torch.cuda.is_available(  ) else 'cpu',
         'seed': int( 0 ),
         'load_flag': bool( False ),
         'train_flag': bool( True ),
