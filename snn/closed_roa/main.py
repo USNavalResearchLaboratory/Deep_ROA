@@ -45,7 +45,7 @@ torch.manual_seed( 0 )
 
 # Set the computational device.
 # device = 'cuda' if torch.cuda.is_available(  ) else 'cpu'
-device = 'cuda:7' if torch.cuda.is_available(  ) else 'cpu'
+device = 'cuda:0' if torch.cuda.is_available(  ) else 'cpu'
 # device = 'cpu'
 
 #%% ---------------------------------------- DEFINE PINN OPTIONS ----------------------------------------
