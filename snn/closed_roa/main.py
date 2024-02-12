@@ -38,7 +38,7 @@ from pinn_class import pinn_class as pinn_class
 os.system( 'cls' if os.name == 'nt' else 'clear' )
 
 # Set matplotlib options.
-plt.rcParams.update( { 'figure.max_open_warning': 0 } )                                         # [-] Disable maximum open figure warning.
+plt.rcParams.update( { 'figure.max_open_warning': 0 } )                                             # [-] Disable maximum open figure warning.
 
 # Set the random seeds.
 torch.manual_seed( 0 )
@@ -54,34 +54,34 @@ device = 'cuda:7' if torch.cuda.is_available(  ) else 'cpu'
 # Instead, the pinn option parameters are those that define the tasks the user would like performed and adjust quality-of-life factors, such as where and how often to save, print, and plot relevant network data before, during, and after the training process.
 
 # Define the save options.
-save_path = r'./snn/closed_roa/save'                                 # [-] Relative path to the directory in which to save network data, figures, etc.
-save_frequency = torch.tensor( int( 1e1 ), dtype = torch.int16, device = device )               # [#] Number of epochs after which to save intermediate networks during training. e.g., 1 = Save after every training epoch, 10 = Save after every ten training epochs, 100 = Save after every hundred training epochs.
-save_flag = True                                                                                # [T/F] Flag that determines whether to save networks during and after training, as well as training and network analysis plots.
+save_path = r'./snn/closed_roa/save'                                                                # [-] Relative path to the directory in which to save network data, figures, etc.
+save_frequency = torch.tensor( int( 1e1 ), dtype = torch.int16, device = device )                   # [#] Number of epochs after which to save intermediate networks during training. e.g., 1 = Save after every training epoch, 10 = Save after every ten training epochs, 100 = Save after every hundred training epochs.
+save_flag = True                                                                                    # [T/F] Flag that determines whether to save networks during and after training, as well as training and network analysis plots.
 
 # Define the load options.
-load_path = r'./snn/closed_roa/load'                                 # [-] Relative path to the directory from which to load network data.
-# load_flag = True                                                                              # [T/F] Flag that determines whether to load network data from the given load directory before training.
-load_flag = False                                                                               # [T/F] Flag that determines whether to load network data from the given load directory before training.
+load_path = r'./snn/closed_roa/load'                                                                # [-] Relative path to the directory from which to load network data.
+# load_flag = True                                                                                  # [T/F] Flag that determines whether to load network data from the given load directory before training.
+load_flag = False                                                                                   # [T/F] Flag that determines whether to load network data from the given load directory before training.
 
 # Define the training options.
-train_flag = True                                                                               # [T/F] Flag that determines whether to train the network after creation or loading.
-# train_flag = False                                                                            # [T/F] Flag that determines whether to train the network after creation or loading.
+train_flag = True                                                                                   # [T/F] Flag that determines whether to train the network after creation or loading.
+# train_flag = False                                                                                # [T/F] Flag that determines whether to train the network after creation or loading.
 
 # Define the printing options.
-batch_print_frequency = torch.tensor( int( 1e1 ), dtype = torch.int16, device = device )        # [#] Number of batches after which to print training information (during an epoch that has been selected for printing).
-epoch_print_frequency = torch.tensor( int( 1e1 ), dtype = torch.int16, device = device )        # [#] Number of epochs after which to print training information
+batch_print_frequency = torch.tensor( int( 1e1 ), dtype = torch.int16, device = device )            # [#] Number of batches after which to print training information (during an epoch that has been selected for printing).
+epoch_print_frequency = torch.tensor( int( 1e1 ), dtype = torch.int16, device = device )            # [#] Number of epochs after which to print training information
 print_flag = True
 
 # Define the plotting options.
-num_plotting_samples = torch.tensor( int( 20 ), dtype = torch.int16, device = device )         # [#] Number of sample points to use per dimension when plotting network results.
-plot_flag = True                                                                                # [T/F] Flag that determines whether training and network analysis plots are created.
+num_plotting_samples = torch.tensor( int( 20 ), dtype = torch.int16, device = device )              # [#] Number of sample points to use per dimension when plotting network results.
+plot_flag = True                                                                                    # [T/F] Flag that determines whether training and network analysis plots are created.
 
 # Define the verbosity setting.
-verbose_flag = True                                                                             # [T/F] Flag that determines whether to print more or less information when printing.
+verbose_flag = True                                                                                 # [T/F] Flag that determines whether to print more or less information when printing.
 
 # Define the newton parameters (used for level set generation).
 newton_tolerance = torch.tensor( 1e-4, dtype = torch.float32, device = device )                     # [-] Convergence tolerance for the Newton's root finding method.
-newton_max_iterations = torch.tensor( int( 1e2 ), dtype = torch.int32, device = device )                   # [#] Maximum number of Newton's method steps to perform.
+newton_max_iterations = torch.tensor( int( 1e2 ), dtype = torch.int32, device = device )            # [#] Maximum number of Newton's method steps to perform.
 
 # Define the exploration parameters (used for level set generation).
 exploration_volume_percentage = torch.tensor( 1e-2, dtype = torch.float32, device = device )        # [%] The level set method step size represented as a percentage of the domain volume.  This parameter conveniently scales the step size of the level set method as the dimension of the problem is adjusted. # This works for both initial and final times.
@@ -89,7 +89,7 @@ num_exploration_points = torch.tensor( 50, dtype = torch.int16, device = device 
 unique_volume_percentage = torch.tensor( 1e-4, dtype = torch.float32, device = device )             # [%] The tolerance used to determine whether level set points are unique as a percentage of the domain volume.  This parameter conveniently scales the unique tolerance of the level set points as the dimension of the problem is adjusted.
 
 # Define the classification parameters.
-num_noisy_samples_per_level_set_point = torch.tensor( 5, dtype = torch.int16, device = device )   # [#] Number of noisy samples per level set point.
+num_noisy_samples_per_level_set_point = torch.tensor( 5, dtype = torch.int16, device = device )     # [#] Number of noisy samples per level set point.
 classification_noise_percentage = torch.tensor( 1e-3, dtype = torch.float32, device = device )      # [%] The classification point noise magnitude represented as a percentage of the domain volume.  This parameter conveniently scales the noise magnitude of the classification points as the dimension of the problem is adjusted.
 classification_dt = torch.tensor( 1e-2, dtype = torch.float32, device = device )                    # [s] The classification simulation timestep used to forecast classification points.
 classification_tfinal = torch.tensor( 10, dtype = torch.float32, device = device )                  # [s] The classification simulation duration used to forecast classification points.
@@ -143,23 +143,23 @@ temporal_code = [ torch.tensor( [ 0 ], dtype = torch.uint8, device = device ) ] 
 # f_bc_3 = lambda s: 0.32*torch.norm( s[ :, 1:, -1 ], 2, dim = 1, keepdim = True )**2 - 0.96*torch.norm( s[ :, 1:, -1 ], 2, dim = 1, keepdim = True ) - 0.28              # [-] Boundary condition function.
 # f_bc_4 = lambda s: 0.32*torch.norm( s[ :, 1:, -1 ], 2, dim = 1, keepdim = True )**2 - 0.96*torch.norm( s[ :, 1:, -1 ], 2, dim = 1, keepdim = True ) - 0.28              # [-] Boundary condition function.
 
-# f_ic = lambda s: torch.unsqueeze( 0.32*s[ :, 1, -1 ]**2 - 0.96*s[ :, 1, -1 ] - 0.28, dim = 1 )               # [-] Initial condition function.
+# f_ic = lambda s: torch.unsqueeze( 0.32*s[ :, 1, -1 ]**2 - 0.96*s[ :, 1, -1 ] - 0.28, dim = 1 )                # [-] Initial condition function.
 # f_bc_1 = lambda s: torch.unsqueeze( 0.32*s[ :, 1, -1 ]**2 - 0.96*s[ :, 1, -1 ] - 0.28, dim = 1 )              # [-] Boundary condition function.
 # f_bc_2 = lambda s: torch.unsqueeze( 0.32*s[ :, 1, -1 ]**2 - 0.96*s[ :, 1, -1 ] - 0.28, dim = 1 )              # [-] Boundary condition function.
 # f_bc_3 = lambda s: torch.unsqueeze( 0.32*s[ :, 1, -1 ]**2 - 0.96*s[ :, 1, -1 ] - 0.28, dim = 1 )              # [-] Boundary condition function.
 # f_bc_4 = lambda s: torch.unsqueeze( 0.32*s[ :, 1, -1 ]**2 - 0.96*s[ :, 1, -1 ] - 0.28, dim = 1 )              # [-] Boundary condition function.
 
-# f_ic = lambda s: torch.unsqueeze( ( 2/5 )*s[ :, 1, -1 ] - ( 3/5 ), dim = 1 )               # [-] Initial condition function.
-# f_bc_1 = lambda s: torch.unsqueeze( ( 2/5 )*s[ :, 1, -1 ] - ( 3/5 ), dim = 1 )              # [-] Boundary condition function.
-# f_bc_2 = lambda s: torch.unsqueeze( ( 2/5 )*s[ :, 1, -1 ] - ( 3/5 ), dim = 1 )              # [-] Boundary condition function.
-# f_bc_3 = lambda s: torch.unsqueeze( ( 2/5 )*s[ :, 1, -1 ] - ( 3/5 ), dim = 1 )              # [-] Boundary condition function.
-# f_bc_4 = lambda s: torch.unsqueeze( ( 2/5 )*s[ :, 1, -1 ] - ( 3/5 ), dim = 1 )              # [-] Boundary condition function.
+# f_ic = lambda s: torch.unsqueeze( ( 2/5 )*s[ :, 1, -1 ] - ( 3/5 ), dim = 1 )                  # [-] Initial condition function.
+# f_bc_1 = lambda s: torch.unsqueeze( ( 2/5 )*s[ :, 1, -1 ] - ( 3/5 ), dim = 1 )                # [-] Boundary condition function.
+# f_bc_2 = lambda s: torch.unsqueeze( ( 2/5 )*s[ :, 1, -1 ] - ( 3/5 ), dim = 1 )                # [-] Boundary condition function.
+# f_bc_3 = lambda s: torch.unsqueeze( ( 2/5 )*s[ :, 1, -1 ] - ( 3/5 ), dim = 1 )                # [-] Boundary condition function.
+# f_bc_4 = lambda s: torch.unsqueeze( ( 2/5 )*s[ :, 1, -1 ] - ( 3/5 ), dim = 1 )                # [-] Boundary condition function.
 
-# f_ic = lambda s: torch.unsqueeze( ( 2/5 )*s[ :, 2, -1 ] - ( 3/5 ), dim = 1 )               # [-] Initial condition function.
-# f_bc_1 = lambda s: torch.unsqueeze( ( 2/5 )*s[ :, 2, -1 ] - ( 3/5 ), dim = 1 )              # [-] Boundary condition function.
-# f_bc_2 = lambda s: torch.unsqueeze( ( 2/5 )*s[ :, 2, -1 ] - ( 3/5 ), dim = 1 )              # [-] Boundary condition function.
-# f_bc_3 = lambda s: torch.unsqueeze( ( 2/5 )*s[ :, 2, -1 ] - ( 3/5 ), dim = 1 )              # [-] Boundary condition function.
-# f_bc_4 = lambda s: torch.unsqueeze( ( 2/5 )*s[ :, 2, -1 ] - ( 3/5 ), dim = 1 )              # [-] Boundary condition function.
+# f_ic = lambda s: torch.unsqueeze( ( 2/5 )*s[ :, 2, -1 ] - ( 3/5 ), dim = 1 )                  # [-] Initial condition function.
+# f_bc_1 = lambda s: torch.unsqueeze( ( 2/5 )*s[ :, 2, -1 ] - ( 3/5 ), dim = 1 )                # [-] Boundary condition function.
+# f_bc_2 = lambda s: torch.unsqueeze( ( 2/5 )*s[ :, 2, -1 ] - ( 3/5 ), dim = 1 )                # [-] Boundary condition function.
+# f_bc_3 = lambda s: torch.unsqueeze( ( 2/5 )*s[ :, 2, -1 ] - ( 3/5 ), dim = 1 )                # [-] Boundary condition function.
+# f_bc_4 = lambda s: torch.unsqueeze( ( 2/5 )*s[ :, 2, -1 ] - ( 3/5 ), dim = 1 )                # [-] Boundary condition function.
 
 f_ic = lambda s: A0/( 1 + torch.exp( -S0*( torch.norm( s[ :, 1:, -1 ] - P0_shift, 2, dim = 1, keepdim = True ) - R0 ) ) ) + z0_shift                # [-] Initial condition function.
 f_bc_1 = lambda s: A0/( 1 + torch.exp( -S0*( torch.norm( s[ :, 1:, -1 ] - P0_shift, 2, dim = 1, keepdim = True ) - R0 ) ) ) + z0_shift              # [-] Boundary condition function.
@@ -190,10 +190,10 @@ problem_specifications = problem_specifications_class( num_inputs, num_outputs, 
 problem_specifications.save( save_path, r'problem_specifications.pkl' )
 
 
-#%% ---------------------------------------- DEFINE HYPER-PARAMETERS ----------------------------------------
+#%% ---------------------------------------- DEFINE HYPERPARAMETERS ----------------------------------------
 
-# The hyper-parameters are those that do not affect the problem that is being solved but impact how that problem is being solved, typically by adjusting the underlying neural architecture under consideration or the techniques used to train this network.
-# Examples of several hyper-parameters include the number of network hidden layers, along with their widths and activation functions, as well as the optimizer learning rate and training data quantity.
+# The hyperparameters are those that do not affect the problem that is being solved but impact how that problem is being solved, typically by adjusting the underlying neural architecture under consideration or the techniques used to train this network.
+# Examples of several hyperparameters include the number of network hidden layers, along with their widths and activation functions, as well as the optimizer learning rate and training data quantity.
 
 # Set the neuron & synapse parameters.
 neuron_parameters = { 'threshold' : torch.tensor( 1.0, dtype = torch.float32, device = device ), 'current_decay' : torch.tensor( 1.0, dtype = torch.float32, device = device ), 'voltage_decay' : torch.tensor( 1.0, dtype = torch.float32, device = device ), 'persistent_state': False, 'requires_grad' : False }
@@ -207,20 +207,20 @@ synapse_parameters = { 'gain' : torch.tensor( 1.0, dtype = torch.float32, device
 
 # Define the number of timesteps for which each input is presented to the network.
 num_timesteps = torch.tensor( 1, dtype = torch.int16, device = device )                                 # [#] Number of timesteps for which each input is presented to the network.
-# num_timesteps = torch.tensor( 10, dtype = torch.int16, device = device )                                 # [#] Number of timesteps for which each input is presented to the network.
+# num_timesteps = torch.tensor( 10, dtype = torch.int16, device = device )                              # [#] Number of timesteps for which each input is presented to the network.
 
 # Store the network parameters.
 activation_function = 'tanh'                                                                            # [-] Activation function (e.g., tanh, sigmoid, etc.)
 
-# num_hidden_layers = torch.tensor( 3, dtype = torch.uint8, device = device )                             # [#] Number of hidden layers.
-# num_hidden_layers = torch.tensor( 4, dtype = torch.uint8, device = device )                             # [#] Number of hidden layers.
+# num_hidden_layers = torch.tensor( 3, dtype = torch.uint8, device = device )                           # [#] Number of hidden layers.
+# num_hidden_layers = torch.tensor( 4, dtype = torch.uint8, device = device )                           # [#] Number of hidden layers.
 num_hidden_layers = torch.tensor( 5, dtype = torch.uint8, device = device )                             # [#] Number of hidden layers.
 
 # hidden_layer_widths = torch.tensor( int( 5e1 ), dtype = torch.int16, device = device )                # [#] Hidden layer widths.
 # hidden_layer_widths = torch.tensor( int( 1e2 ), dtype = torch.int16, device = device )                # [#] Hidden layer widths.
 
 # # This captured the initial & boundary condition fairly well.
-hidden_layer_widths = torch.tensor( 250, dtype = torch.int16, device = device )                  # [#] Hidden layer widths.
+hidden_layer_widths = torch.tensor( 250, dtype = torch.int16, device = device )                         # [#] Hidden layer widths.
 
 # Set the quantity of training and testing data.
 num_training_data = torch.tensor( int( 100e3 ), dtype = torch.int32, device = device )                  # [#] Number of training data points.
@@ -232,7 +232,7 @@ p_boundary = torch.tensor( 0.25, dtype = torch.float16, device = device )       
 p_residual = torch.tensor( 0.5, dtype = torch.float16, device = device )                                # [%] Percentage of training and testing data associated with the residual.
 
 # Define the number of training epochs.
-num_epochs = torch.tensor( 400, dtype = torch.int32, device = device )                           # [#] Number of training epochs to perform.
+num_epochs = torch.tensor( 400, dtype = torch.int32, device = device )                                  # [#] Number of training epochs to perform.
 
 # Define the residual batch size.
 residual_batch_size = torch.tensor( int( 10e3 ), dtype = torch.int32, device = device )                 # [#] Training batch size. # This works for variational loss integration order 1.
@@ -259,7 +259,7 @@ c_residual = torch.tensor( 0.0, dtype = torch.float32, device = device )        
 c_variational = torch.tensor( 0.0, dtype = torch.float32, device = device )             # [-] Variational loss weight.
 c_monotonicity = torch.tensor( 0.0, dtype = torch.float32, device = device )            # [-] Monotonicity loss weight.
 
-# Create the hyper-parameters object.
+# Create the hyperparameters object.
 hyperparameters = hyperparameters_class( neuron_parameters, synapse_parameters, num_timesteps, activation_function, num_hidden_layers, hidden_layer_widths, num_training_data, num_testing_data, p_initial, p_boundary, p_residual, num_epochs, residual_batch_size, learning_rate, integration_order, element_volume_percent, element_type, element_computation_option, c_IC, c_BC, c_residual, c_variational, c_monotonicity, save_path, load_path )
 
 # Save the hyperparameters.
