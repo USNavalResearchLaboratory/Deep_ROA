@@ -26,11 +26,11 @@ from main_eval import BASE_CONFIG, eval_spiral_roa
 #%% ---------------------------------------- GRID SEARCH SETUP ----------------------------------------
 
 # Define whether to attempt to continue an earlier grid search.
-# LOAD_FLAG = False
+# LOAD_FLAG = False                                         # [T/F] True = Attempt to resume a previous, unfinished grid search. False - Start a new grid search, replacing any existing searches with the same name.
 LOAD_FLAG = True                                            # [T/F] True = Attempt to resume a previous, unfinished grid search. False - Start a new grid search, replacing any existing searches with the same name.
 
 # Define the number of times to repeat each configuration in the grid.
-NUM_REPEATS = 1                 # [#] Number of times each configuration in the grid search is run.
+NUM_REPEATS = 1                                             # [#] Number of times each configuration in the grid search is run.
 
 # Define the save directory for all grid search runs.
 SAVE_DIR = r'./ann/spiral_roa/save'

@@ -43,7 +43,7 @@ from pinn_class import pinn_class as pinn_class
 os.system( 'cls' if os.name == 'nt' else 'clear' )
 
 # Set matplotlib options.
-plt.rcParams.update( { 'figure.max_open_warning': 0 } )                     # Disable maximum open figure warning.
+plt.rcParams.update( { 'figure.max_open_warning': 0 } )                         # Disable maximum open figure warning.
 
 
 #%% ---------------------------------------- DEFINE CONFIGURATION ----------------------------------------
@@ -51,59 +51,59 @@ plt.rcParams.update( { 'figure.max_open_warning': 0 } )                     # Di
 # Coarse Grid Search Best. (Closed Boundary Conditions)
 BASE_CONFIG = {
     'classification_parameters': {
-        'num_noisy_samples_per_level_set_point': int( 5 ),
-        'noise_percentage': float( 1e-3 ),
-        'dt': float( 1e-2),
-        'tfinal': float( 10 ),
+        'num_noisy_samples_per_level_set_point': int( 5 ),                      # [#] Number of Noisy Samples Per Level Set Points. (i.e., how many new level set points are generated for each of the existing level set points in the level set algorithm.)
+        'noise_percentage': float( 1e-3 ),                                      # [%] Noise Magnitude. (Specified as a percentage of the total state space volume.)
+        'dt': float( 1e-2 ),                                                    # [s] Classification Algorithm Simulation Timestep.
+        'tfinal': float( 10 ),                                                  # [s] Classification Algorithm Simulation Duration.
     },
     'exploration_parameters': {
-        'volume_percentage': float( 1e-2 ),
-        'num_points': int( 50 ),
-        'unique_percentage': float( 1e-4 ),
+        'volume_percentage': float( 1e-2 ),                                     # [%] Exploration Magnitude. (Specified as a percentage of the total state space volume.)
+        'num_points': int( 50 ),                                                # [#] Number of Initial Level Set Points.
+        'unique_percentage': float( 1e-4 ),                                     # [%] Level Set Point Uniqueness Tolerance. (Specified as a percentage of the total state space volume.)
     },
     'hyperparameters': {
-        'activation_function': 'sigmoid',
-        'c_IC': float( 1.0 ),
-        'c_BC': float( 1.0 ),
-        'c_residual': float( 1e-4 ),
-        'c_residual_gradient': float( 0 ),
-        'c_variational': float( 1e-5 ),
-        'c_monotonicity': float( 100 ),
-        'hidden_layer_widths': int( 175 ),
-        'num_epochs': int( 400 ),
-        'num_hidden_layers': int( 7 ),
-        'num_training_data': int( 100e3 ),
-        'num_testing_data': int( 20e3 ),
-        'learning_rate': float( 5e-4 ),
+        'activation_function': 'sigmoid',                                       # [-] Activation Function.
+        'c_IC': float( 1.0 ),                                                   # [-] Initial Condition Loss Coefficient.
+        'c_BC': float( 1.0 ),                                                   # [-] Boundary Condition Loss Coefficient.
+        'c_residual': float( 5e-4 ),                                            # [-] Residual Loss Coefficient.
+        'c_residual_gradient': float( 0 ),                                      # [-] Residual Gradient Loss Coefficient.
+        'c_variational': float( 1e-3 ),                                         # [-] Variational Loss Coefficient.
+        'c_monotonicity': float( 100 ),                                         # [-] Monotonicity Loss Coefficient.
+        'hidden_layer_widths': int( 250 ),                                      # [#] Number of Neurons Per Hidden Layer.
+        'num_epochs': int( 400 ),                                               # [#] Number of Training Epochs.
+        'num_hidden_layers': int( 7 ),                                          # [#] Number of Hidden Layers.
+        'num_training_data': int( 100e3 ),                                      # [#] Total Quantity of Training Data.
+        'num_testing_data': int( 20e3 ),                                        # [#] Total Quantity of Testing Data.
+        'learning_rate': float( 5e-4 ),                                         # [-] Learning Rate.
     },
     'newton_parameters': {
-        'tolerance': float( 1e-4 ),
-        'max_iterations': int( 1e2 ),
+        'tolerance': float( 1e-4 ),                                             # [-] Newton Method Tolerance.
+        'max_iterations': int( 1e2 ),                                           # [#] Maximum Number of Netwon Method Iterations.
     },
     'paths': {
-        'save_path': r'./ann/vanderpol/save',
-        'load_path': r'./ann/vanderpol/load',
+        'save_path': r'./ann/vanderpol/save',                                   # [-] Save Path.
+        'load_path': r'./ann/vanderpol/load',                                   # [-] Load Path.
     },
     'plotting_parameters': {
-        'num_plotting_samples': int( 20 ),
-        # 'plot_flag': bool( False ),
-        'plot_flag': bool( True ),
+        'num_plotting_samples': int( 20 ),                                      # [#] Number of Plotting Samples.
+        'plot_flag': bool( False ),                                             # [T/F] Plotting Flag. (Determines whether plots are generated.  Should be false during grid searches.)
+        # 'plot_flag': bool( True ),                                            # [T/F] Plotting Flag. (Determines whether plots are generated.  Should be false during grid searches.)
     },
     'printing_parameters': {
-        'batch_print_frequency': int( 10 ),
-        'epoch_print_frequency': int( 10 ),
-        'print_flag': bool( True ),
+        'batch_print_frequency': int( 10 ),                                     # [#] Batch Print Frequency. (i.e., How often batch training information should be printed.  Specified as the number of iterations between prints.)
+        'epoch_print_frequency': int( 10 ),                                     # [#] Epoch Print Frequency. (i.e., How often epoch training information should be printed.  Specific as the number of iterations between prints.)
+        'print_flag': bool( True ),                                             # [T/F] Print Flag. (Determines whether to print status information.)
     },
     'runtime': {
-        'device': 'cuda:8' if torch.cuda.is_available(  ) else 'cpu',
-        'seed': int( 0 ),
-        'load_flag': bool( False ),
-        'train_flag': bool( True ),
-        'verbose_flag': bool( True ),
+        'device': 'cuda:8' if torch.cuda.is_available(  ) else 'cpu',           # [-] Computational Device.
+        'seed': int( 0 ),                                                       # [#] Numerical Seed.
+        'load_flag': bool( False ),                                             # [T/F] Load Flag. (Determines whether to load an existing network or create a new one.)
+        'train_flag': bool( True ),                                             # [T/F] Train Flag. (Determines whether to train the network or just evaluate it.)
+        'verbose_flag': bool( True ),                                           # [T/F] Verbosity Flag. (Determines how much status information is printed, if printing is enabled.)
     },
     'saving_parameters': {
-        'save_flag': bool( True ),
-        'save_frequency': int( 10 ),
+        'save_flag': bool( True ),                                              # [T/F] Save Flag. (Determines whether to save training results.)
+        'save_frequency': int( 10 ),                                            # [#] Save Frequency. (Determines how often to save checkpoints during training.  Specified as the number of iterations between checkpoint saves.)
     }
 }
 

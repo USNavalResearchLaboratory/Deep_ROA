@@ -80,7 +80,7 @@ plot_flag = True                                                                
 verbose_flag = True                                                                             # [T/F] Flag that determines whether to print more or less information when printing.
 
 # Define the newton parameters (used for level set generation).
-newton_tolerance = torch.tensor( 1e-6, dtype = torch.float32, device = device )                     # [-] Convergence tolerance for the Newton's root finding method.
+newton_tolerance = torch.tensor( 1e-4, dtype = torch.float32, device = device )                     # [-] Convergence tolerance for the Newton's root finding method.
 newton_max_iterations = torch.tensor( int( 1e2 ), dtype = torch.int32, device = device )                   # [#] Maximum number of Newton's method steps to perform.
 
 # Define the exploration parameters (used for level set generation).
@@ -91,7 +91,7 @@ unique_volume_percentage = torch.tensor( 1e-4, dtype = torch.float32, device = d
 # Define the classification parameters.
 num_noisy_samples_per_level_set_point = torch.tensor( 5, dtype = torch.int16, device = device )   # [#] Number of noisy samples per level set point.
 classification_noise_percentage = torch.tensor( 1e-3, dtype = torch.float32, device = device )      # [%] The classification point noise magnitude represented as a percentage of the domain volume.  This parameter conveniently scales the noise magnitude of the classification points as the dimension of the problem is adjusted.
-classification_dt = torch.tensor( 1e-3, dtype = torch.float32, device = device )                    # [s] The classification simulation timestep used to forecast classification points.
+classification_dt = torch.tensor( 1e-2, dtype = torch.float32, device = device )                    # [s] The classification simulation timestep used to forecast classification points.
 classification_tfinal = torch.tensor( 10, dtype = torch.float32, device = device )                  # [s] The classification simulation duration used to forecast classification points.
 
 # Create the pinn options object.
@@ -196,14 +196,14 @@ problem_specifications.save( save_path, r'problem_specifications.pkl' )
 # Examples of several hyper-parameters include the number of network hidden layers, along with their widths and activation functions, as well as the optimizer learning rate and training data quantity.
 
 # Set the neuron & synapse parameters.
-# neuron_parameters = { 'threshold' : torch.tensor( 1.0, dtype = torch.float32, device = device ), 'current_decay' : torch.tensor( 1.0, dtype = torch.float32, device = device ), 'voltage_decay' : torch.tensor( 1.0, dtype = torch.float32, device = device ), 'persistent_state': False, 'requires_grad' : False }
-# synapse_parameters = { 'gain' : torch.tensor( 1.0, dtype = torch.float32, device = device ) }
+neuron_parameters = { 'threshold' : torch.tensor( 1.0, dtype = torch.float32, device = device ), 'current_decay' : torch.tensor( 1.0, dtype = torch.float32, device = device ), 'voltage_decay' : torch.tensor( 1.0, dtype = torch.float32, device = device ), 'persistent_state': False, 'requires_grad' : False }
+synapse_parameters = { 'gain' : torch.tensor( 1.0, dtype = torch.float32, device = device ) }
 
 # neuron_parameters = { 'threshold' : torch.tensor( 0.5, dtype = torch.float32, device = device ), 'current_decay' : torch.tensor( 1.0, dtype = torch.float32, device = device ), 'voltage_decay' : torch.tensor( 1.0, dtype = torch.float32, device = device ), 'persistent_state': False, 'requires_grad' : False }
 # synapse_parameters = { 'gain' : torch.tensor( 3.0, dtype = torch.float32, device = device ) }
 
-neuron_parameters = { 'threshold' : torch.tensor( 0.5, dtype = torch.float32, device = device ), 'current_decay' : torch.tensor( 0.9, dtype = torch.float32, device = device ), 'voltage_decay' : torch.tensor( 0.9, dtype = torch.float32, device = device ), 'persistent_state': True, 'requires_grad' : False }
-synapse_parameters = { 'gain' : torch.tensor( 3.0, dtype = torch.float32, device = device ) }
+# neuron_parameters = { 'threshold' : torch.tensor( 0.5, dtype = torch.float32, device = device ), 'current_decay' : torch.tensor( 0.9, dtype = torch.float32, device = device ), 'voltage_decay' : torch.tensor( 0.9, dtype = torch.float32, device = device ), 'persistent_state': True, 'requires_grad' : False }
+# synapse_parameters = { 'gain' : torch.tensor( 3.0, dtype = torch.float32, device = device ) }
 
 # Define the number of timesteps for which each input is presented to the network.
 num_timesteps = torch.tensor( 1, dtype = torch.int16, device = device )                                 # [#] Number of timesteps for which each input is presented to the network.
@@ -213,19 +213,14 @@ num_timesteps = torch.tensor( 1, dtype = torch.int16, device = device )         
 activation_function = 'tanh'                                                                            # [-] Activation function (e.g., tanh, sigmoid, etc.)
 
 # num_hidden_layers = torch.tensor( 3, dtype = torch.uint8, device = device )                             # [#] Number of hidden layers.
-num_hidden_layers = torch.tensor( 4, dtype = torch.uint8, device = device )                             # [#] Number of hidden layers.
-# num_hidden_layers = torch.tensor( 5, dtype = torch.uint8, device = device )                             # [#] Number of hidden layers.
+# num_hidden_layers = torch.tensor( 4, dtype = torch.uint8, device = device )                             # [#] Number of hidden layers.
+num_hidden_layers = torch.tensor( 5, dtype = torch.uint8, device = device )                             # [#] Number of hidden layers.
 
 # hidden_layer_widths = torch.tensor( int( 5e1 ), dtype = torch.int16, device = device )                # [#] Hidden layer widths.
 # hidden_layer_widths = torch.tensor( int( 1e2 ), dtype = torch.int16, device = device )                # [#] Hidden layer widths.
 
 # # This captured the initial & boundary condition fairly well.
-hidden_layer_widths = torch.tensor( int( 5e2 ), dtype = torch.int16, device = device )                  # [#] Hidden layer widths.
-
-# hidden_layer_widths = torch.tensor( int( 1e3 ), dtype = torch.int16, device = device )                  # [#] Hidden layer widths.
-# hidden_layer_widths = torch.tensor( int( 2e3 ), dtype = torch.int16, device = device )                  # [#] Hidden layer widths.
-# hidden_layer_widths = torch.tensor( int( 5e3 ), dtype = torch.int16, device = device )                  # [#] Hidden layer widths.
-# hidden_layer_widths = torch.tensor( int( 1e4 ), dtype = torch.int16, device = device )                  # [#] Hidden layer widths.
+hidden_layer_widths = torch.tensor( 250, dtype = torch.int16, device = device )                  # [#] Hidden layer widths.
 
 # Set the quantity of training and testing data.
 num_training_data = torch.tensor( int( 100e3 ), dtype = torch.int32, device = device )                  # [#] Number of training data points.
@@ -237,9 +232,7 @@ p_boundary = torch.tensor( 0.25, dtype = torch.float16, device = device )       
 p_residual = torch.tensor( 0.5, dtype = torch.float16, device = device )                                # [%] Percentage of training and testing data associated with the residual.
 
 # Define the number of training epochs.
-# num_epochs = torch.tensor( int( 1e2 ), dtype = torch.int32, device = device )                           # [#] Number of training epochs to perform.
-num_epochs = torch.tensor( int( 1e3 ), dtype = torch.int32, device = device )                           # [#] Number of training epochs to perform.
-# num_epochs = torch.tensor( int( 5e3 ), dtype = torch.int32, device = device )                           # [#] Number of training epochs to perform.
+num_epochs = torch.tensor( 400, dtype = torch.int32, device = device )                           # [#] Number of training epochs to perform.
 
 # Define the residual batch size.
 residual_batch_size = torch.tensor( int( 10e3 ), dtype = torch.int32, device = device )                 # [#] Training batch size. # This works for variational loss integration order 1.
@@ -249,7 +242,6 @@ learning_rate = torch.tensor( 5e-3, dtype = torch.float32, device = device )    
 
 # Define the element computation option.
 element_computation_option = 'precompute'                                                               # [string] Determines whether to precompute the finite elements associated with the variational loss (costs more memory) or to dynamically generate these elements during training (costs more time per epoch) (e.g., 'precompute, 'dynamic', etc.).
-# element_computation_option = 'dynamic'
 
 # Define the element type.
 element_type = 'rectangular'                                                                            # [string] Finite element type associated with the variational loss (e.g., rectangular, spherical, etc.).  Only rectangular elements are currently supported.
@@ -261,12 +253,6 @@ element_volume_percent = torch.tensor( 0.01, dtype = torch.float32, device = dev
 integration_order = torch.tensor( 1, dtype = torch.uint8, device = device )                             # [#] Gauss-Legendre integration order.
 
 # Store the loss coefficients.
-# c_IC = torch.tensor( 1.0, dtype = torch.float32, device = device )                      # [-] Initial condition loss weight.
-# c_BC = torch.tensor( 1.0, dtype = torch.float32, device = device )                      # [-] Boundary condition loss weight.
-# c_residual = torch.tensor( 1.0, dtype = torch.float32, device = device )                # [-] Residual loss weight.
-# c_variational = torch.tensor( 1.0, dtype = torch.float32, device = device )             # [-] Variational loss weight.
-# c_monotonicity = torch.tensor( 10.0, dtype = torch.float32, device = device )           # [-] Monotonicity loss weight.
-
 c_IC = torch.tensor( 1.0, dtype = torch.float32, device = device )                      # [-] Initial condition loss weight.
 c_BC = torch.tensor( 1.0, dtype = torch.float32, device = device )                      # [-] Boundary condition loss weight.
 c_residual = torch.tensor( 0.0, dtype = torch.float32, device = device )                # [-] Residual loss weight.
