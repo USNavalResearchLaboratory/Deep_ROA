@@ -65,7 +65,7 @@ BASE_CONFIG = {
         'activation_function': 'sigmoid',
         'c_IC': float( 1.0 ),
         'c_BC': float( 1.0 ),
-        'c_residual': float( 5e-4 ),
+        'c_residual': float( 1e-5 ),
         'c_residual_gradient': float( 0 ),
         'c_variational': float( 1e-3 ),
         'c_monotonicity': float( 100 ),
@@ -86,8 +86,8 @@ BASE_CONFIG = {
     },
     'plotting_parameters': {
         'num_plotting_samples': int( 20 ),
-        'plot_flag': bool( False ),
-        # 'plot_flag': bool( True ),
+        # 'plot_flag': bool( False ),
+        'plot_flag': bool( True ),
     },
     'printing_parameters': {
         'batch_print_frequency': int( 10 ),

@@ -45,6 +45,10 @@ os.system( 'cls' if os.name == 'nt' else 'clear' )
 # Set matplotlib options.
 plt.rcParams.update( { 'figure.max_open_warning': 0 } )                     # Disable maximum open figure warning.
 
+
+#%% ---------------------------------------- DEFINE DEFAULT CONFIGURATION ----------------------------------------
+
+# Define the default configuration.
 BASE_CONFIG = {
     'classification_parameters': {
         'num_noisy_samples_per_level_set_point': int( 5 ),
@@ -102,11 +106,9 @@ BASE_CONFIG = {
     }
 }
 
+
 # Implement a function to evaluate the closed roa.
-def eval_closed_roa(config: dict = BASE_CONFIG) -> int:
-    """
-    TODO Finish Documentation
-    """
+def eval_closed_roa( config: dict = BASE_CONFIG ) -> int:
 
     # Print out a message saying that we are beginning Deep ROA Trial.
     print( '\n' )
@@ -150,8 +152,6 @@ def eval_closed_roa(config: dict = BASE_CONFIG) -> int:
     # Set the computational device.
     device = torch.device( config[ 'runtime' ][ 'device' ] )
 
-    start_time = time.time(  )
-
 
     #%% ---------------------------------------- DEFINE PINN OPTIONS ----------------------------------------
 
@@ -177,8 +177,8 @@ def eval_closed_roa(config: dict = BASE_CONFIG) -> int:
     train_flag = bool( config[ 'runtime' ][ 'train_flag' ] )                                                                                                        # [T/F] Flag that determines whether to train the network after creation or loading.
 
     # Define the printing options.
-    batch_print_frequency = torch.tensor( float( config[ 'printing_parameters' ][ 'batch_print_frequency' ] ), dtype = torch.float32, device = device )             # [%] Percent of batches after which to print training information (during an epoch that has been selected for printing).
-    epoch_print_frequency = torch.tensor( float( config[ 'printing_parameters' ][ 'epoch_print_frequency' ] ), dtype = torch.float32, device = device )             # [%] Percent of epochs after which to print training information.
+    batch_print_frequency = torch.tensor( int( config[ 'printing_parameters' ][ 'batch_print_frequency' ] ), dtype = torch.int16, device = device )             # [%] Percent of batches after which to print training information (during an epoch that has been selected for printing).
+    epoch_print_frequency = torch.tensor( int( config[ 'printing_parameters' ][ 'epoch_print_frequency' ] ), dtype = torch.int16, device = device )             # [%] Percent of epochs after which to print training information.
     print_flag = bool( config[ 'printing_parameters' ][ 'print_flag' ] )                                                                                            # [T/F] Flag that determines whether to print more or less information when printing.
 
     # Define the plotting options.
@@ -322,7 +322,7 @@ def eval_closed_roa(config: dict = BASE_CONFIG) -> int:
     num_hidden_layers = torch.tensor( int( config[ 'hyperparameters' ][ 'num_hidden_layers' ] ), dtype = torch.uint8, device = device )                 # [#] Number of hidden layers.
     hidden_layer_widths = torch.tensor( int( config[ 'hyperparameters' ][ 'hidden_layer_widths' ] ), dtype = torch.int16, device = device )             # [#] Hidden layer widths.
 
-    # This set works for variational loss integration order 1.
+    # Set the quantity of training and testing data.
     num_training_data = torch.tensor( int( config[ 'hyperparameters' ][ 'num_training_data' ] ), dtype = torch.int32, device = device )                 # [#] Number of training data points.
     num_testing_data = torch.tensor( int( config[ 'hyperparameters' ][ 'num_testing_data' ] ), dtype = torch.int32, device = device )                   # [#] Number of testing data points.
 

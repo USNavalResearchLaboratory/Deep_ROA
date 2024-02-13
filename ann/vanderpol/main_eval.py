@@ -65,16 +65,16 @@ BASE_CONFIG = {
         'activation_function': 'sigmoid',                                       # [-] Activation Function.
         'c_IC': float( 1.0 ),                                                   # [-] Initial Condition Loss Coefficient.
         'c_BC': float( 1.0 ),                                                   # [-] Boundary Condition Loss Coefficient.
-        'c_residual': float( 5e-4 ),                                            # [-] Residual Loss Coefficient.
+        'c_residual': float( 1e-5 ),                                            # [-] Residual Loss Coefficient.
         'c_residual_gradient': float( 0 ),                                      # [-] Residual Gradient Loss Coefficient.
-        'c_variational': float( 1e-3 ),                                         # [-] Variational Loss Coefficient.
+        'c_variational': float( 1e-4 ),                                         # [-] Variational Loss Coefficient.
         'c_monotonicity': float( 100 ),                                         # [-] Monotonicity Loss Coefficient.
         'hidden_layer_widths': int( 250 ),                                      # [#] Number of Neurons Per Hidden Layer.
         'num_epochs': int( 400 ),                                               # [#] Number of Training Epochs.
         'num_hidden_layers': int( 7 ),                                          # [#] Number of Hidden Layers.
         'num_training_data': int( 100e3 ),                                      # [#] Total Quantity of Training Data.
         'num_testing_data': int( 20e3 ),                                        # [#] Total Quantity of Testing Data.
-        'learning_rate': float( 5e-4 ),                                         # [-] Learning Rate.
+        'learning_rate': float( 5e-3 ),                                         # [-] Learning Rate.
     },
     'newton_parameters': {
         'tolerance': float( 1e-4 ),                                             # [-] Newton Method Tolerance.
@@ -95,7 +95,7 @@ BASE_CONFIG = {
         'print_flag': bool( True ),                                             # [T/F] Print Flag. (Determines whether to print status information.)
     },
     'runtime': {
-        'device': 'cuda:8' if torch.cuda.is_available(  ) else 'cpu',           # [-] Computational Device.
+        'device': 'cuda:9' if torch.cuda.is_available(  ) else 'cpu',           # [-] Computational Device.
         'seed': int( 0 ),                                                       # [#] Numerical Seed.
         'load_flag': bool( False ),                                             # [T/F] Load Flag. (Determines whether to load an existing network or create a new one.)
         'train_flag': bool( True ),                                             # [T/F] Train Flag. (Determines whether to train the network or just evaluate it.)
