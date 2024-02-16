@@ -21,7 +21,9 @@ import sys
 import torch
 import math
 import matplotlib.pyplot as plt
+import time
 
+start_time = time.time()
 # Ensure that the utilities folder for this project is on the system path.
 sys.path.append( r'./snn/utilities' )
 
@@ -238,7 +240,7 @@ p_residual = torch.tensor( 0.5, dtype = torch.float16, device = device )        
 
 # Define the number of training epochs.
 # num_epochs = torch.tensor( int( 1e2 ), dtype = torch.int32, device = device )                           # [#] Number of training epochs to perform.
-num_epochs = torch.tensor( int( 1e3 ), dtype = torch.int32, device = device )                           # [#] Number of training epochs to perform.
+num_epochs = torch.tensor( int( 1000 ), dtype = torch.int32, device = device )                           # [#] Number of training epochs to perform.
 # num_epochs = torch.tensor( int( 5e3 ), dtype = torch.int32, device = device )                           # [#] Number of training epochs to perform.
 
 # Define the residual batch size.
@@ -388,3 +390,6 @@ print( '------------------------------------------------------------------------
 print( 'COMPLETE' )
 print( '------------------------------------------------------------------------------------------------------------------------' )
 print( '\n' )
+
+end_time = time.time()
+print(end_time - start_time)

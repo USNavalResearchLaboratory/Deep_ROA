@@ -29,7 +29,7 @@ BASE_CONFIG = {
     'classification_parameters': {
         'num_noisy_samples_per_level_set_point': int( 5 ),
         'noise_percentage': float( 1e-3 ),
-        'dt': float( 1e-3 ),
+        'dt': float( 1e-2 ),
         'tfinal': float( 10 ),
     },
     'exploration_parameters': {
@@ -41,7 +41,7 @@ BASE_CONFIG = {
         'activation_function': 'tanh',
         'c_IC': float( 1.0 ),
         'c_BC': float( 1.0 ),
-        'c_residual': float( 0 ),
+        'c_residual': float(  ),
         'c_variational': float( 0 ),
         'c_monotonicity': float( 0 ),
         'hidden_layer_widths': int( 5e2 ),
@@ -59,7 +59,7 @@ BASE_CONFIG = {
         'num_timesteps': int( 1 ),
     },
     'newton_parameters': {
-        'tolerance': float( 1e-6 ),
+        'tolerance': float( 1e-4 ),
         'max_iterations': int( 1e2 ),
     },
     'paths': {
@@ -150,16 +150,30 @@ def eval_closed_roa(config: dict = BASE_CONFIG) -> int:
     newton_tolerance = torch.tensor(float( config[ 'newton_parameters' ][ 'tolerance' ] ), dtype = torch.float32, device = device )                     # [-] Convergence tolerance for the Newton's root finding method.
     newton_max_iterations = torch.tensor( int( config[ 'newton_parameters' ][ 'max_iterations' ] ), dtype = torch.int32, device = device )                   # [#] Maximum number of Newton's method steps to perform.
 
+    # print(f"newton_tolerance: {newton_tolerance}")
+    # print(f"newton_max_iterations: {newton_max_iterations}")
+
     # Define the exploration parameters (used for level set generation).
     exploration_volume_percentage = torch.tensor( float( config[ 'exploration_parameters' ][ 'volume_percentage' ] ), dtype = torch.float32, device = device )        # [%] The level set method step size represented as a percentage of the domain volume.  This parameter conveniently scales the step size of the level set method as the dimension of the problem is adjusted. # This works for both initial and final times.
     num_exploration_points = torch.tensor( int( config[ 'exploration_parameters' ][ 'num_points' ] ), dtype = torch.int16, device = device )                   # [#] Number of exploration points to generate at each level set method step.
     unique_volume_percentage = torch.tensor( float( config[ 'exploration_parameters' ][ 'unique_percentage' ] ), dtype = torch.float32, device = device )             # [%] The tolerance used to determine whether level set points are unique as a percentage of the domain volume.  This parameter conveniently scales the unique tolerance of the level set points as the dimension of the problem is adjusted.
 
+    # print(f"exploration_volume_percentage: {exploration_volume_percentage}")
+    # print(f"num_exploration_points: {num_exploration_points}")
+    # print(f"unique_volume_percentage: {unique_volume_percentage}")
+
     # Define the classification parameters.
     num_noisy_samples_per_level_set_point = torch.tensor( int( config[ 'classification_parameters' ][ 'num_noisy_samples_per_level_set_point' ] ), dtype = torch.int16, device = device )   # [#] Number of noisy samples per level set point.
+
+    # print(f"num_noisy_samples_per_level_set_point: {num_noisy_samples_per_level_set_point}")
+
     classification_noise_percentage = torch.tensor( float( config[ 'classification_parameters' ][ 'noise_percentage' ] ), dtype = torch.float32, device = device )      # [%] The classification point noise magnitude represented as a percentage of the domain volume.  This parameter conveniently scales the noise magnitude of the classification points as the dimension of the problem is adjusted.
     classification_dt = torch.tensor( float( config[ 'classification_parameters' ][ 'dt' ] ), dtype = torch.float32, device = device )                    # [s] The classification simulation timestep used to forecast classification points.
     classification_tfinal = torch.tensor( float( config[ 'classification_parameters' ][ 'tfinal' ] ), dtype = torch.float32, device = device )                  # [s] The classification simulation duration used to forecast classification points.
+
+    # print(f"classification_noise_percentage: {classification_noise_percentage}")
+    # print(f"classification_dt: {classification_dt}")
+    # print(f"classification_tfinal: {classification_tfinal}")
 
     # Create the pinn options object.
     pinn_options = pinn_options_class( save_path, save_frequency, save_flag, load_path, load_flag, train_flag, batch_print_frequency, epoch_print_frequency, print_flag, num_plotting_samples, newton_tolerance, newton_max_iterations, exploration_volume_percentage, num_exploration_points, unique_volume_percentage, classification_noise_percentage, num_noisy_samples_per_level_set_point, classification_dt, classification_tfinal, plot_flag, device, verbose_flag )
@@ -269,6 +283,11 @@ def eval_closed_roa(config: dict = BASE_CONFIG) -> int:
     # neuron_parameters = { 'threshold' : torch.tensor( 0.5, dtype = torch.float32, device = device ), 'current_decay' : torch.tensor( 1.0, dtype = torch.float32, device = device ), 'voltage_decay' : torch.tensor( 1.0, dtype = torch.float32, device = device ), 'persistent_state': False, 'requires_grad' : False }
     # synapse_parameters = { 'gain' : torch.tensor( 3.0, dtype = torch.float32, device = device ) }
 
+    print(f"neuron_threshold: {config['hyperparameters']['neuron_threshold']}")
+    print(f"neuron_current_decay: {config['hyperparameters']['neuron_current_decay']}")
+    print(f"neuron_voltage_decay: {config['hyperparameters']['neuron_voltage_decay']}")
+    print(f"synapse_gain: {config['hyperparameters']['synapse_gain']}")
+
     neuron_parameters = {
         'threshold': torch.tensor( float(config['hyperparameters']['neuron_threshold']), dtype = torch.float32, device = device ),
         'current_decay': torch.tensor( float(config['hyperparameters']['neuron_current_decay']), dtype = torch.float32, device = device ),
@@ -280,22 +299,34 @@ def eval_closed_roa(config: dict = BASE_CONFIG) -> int:
         'gain': torch.tensor( float(config['hyperparameters']['synapse_gain']), dtype = torch.float32, device = device )
     }
 
+    print( f'neuron_parameters: {neuron_parameters}' )
+    print( f'synapse_parameters: {synapse_parameters}' )
+
     # Define the number of timesteps for which each input is presented to the network.
     num_timesteps = torch.tensor( int(config['hyperparameters']['num_timesteps']), dtype = torch.int16, device = device )                                 # [#] Number of timesteps for which each input is presented to the network.
+
+    print( f'num_timesteps: {num_timesteps}' )
+
     # num_timesteps = torch.tensor( 10, dtype = torch.int16, device = device )                                 # [#] Number of timesteps for which each input is presented to the network.
 
     # Store the network parameters.
     activation_function = str( config[ 'hyperparameters' ][ 'activation_function' ] )                                                                             # [-] Activation function (e.g., tanh, sigmoid, etc.)
 
+    # print( f'activation_function: {activation_function}' )
+
     # num_hidden_layers = torch.tensor( 3, dtype = torch.uint8, device = device )                             # [#] Number of hidden layers.
     num_hidden_layers = torch.tensor( int( config[ 'hyperparameters' ][ 'num_hidden_layers' ] ), dtype = torch.uint8, device = device )                             # [#] Number of hidden layers.
     # num_hidden_layers = torch.tensor( 5, dtype = torch.uint8, device = device )                             # [#] Number of hidden layers.
+
+    # print( f'num_hidden_layers: {num_hidden_layers}' )
 
     # hidden_layer_widths = torch.tensor( int( 5e1 ), dtype = torch.int16, device = device )                # [#] Hidden layer widths.
     # hidden_layer_widths = torch.tensor( int( 1e2 ), dtype = torch.int16, device = device )                # [#] Hidden layer widths.
 
     # # This captured the initial & boundary condition fairly well.
     hidden_layer_widths = torch.tensor( int( config[ 'hyperparameters' ][ 'hidden_layer_widths' ] ), dtype = torch.int16, device = device )                  # [#] Hidden layer widths.
+
+    # print( f'hidden_layer_widths: {hidden_layer_widths}' )
 
     # hidden_layer_widths = torch.tensor( int( 1e3 ), dtype = torch.int16, device = device )                  # [#] Hidden layer widths.
     # hidden_layer_widths = torch.tensor( int( 2e3 ), dtype = torch.int16, device = device )                  # [#] Hidden layer widths.
@@ -306,21 +337,32 @@ def eval_closed_roa(config: dict = BASE_CONFIG) -> int:
     num_training_data = torch.tensor( int( config[ 'hyperparameters' ][ 'num_training_data' ] ), dtype = torch.int32, device = device )                  # [#] Number of training data points.
     num_testing_data = torch.tensor( int( config[ 'hyperparameters' ][ 'num_testing_data' ] ), dtype = torch.int32, device = device )                    # [#] Number of testing data points.
 
+    # print( f'num_training_data: {num_training_data}' )
+    # print( f'num_testing_data: {num_testing_data}' )
+
     # Define the percent of training and testing data that should be sampled from the initial condition, the boundary condition, and the interior of the domain.
     p_initial = torch.tensor( 0.25, dtype = torch.float16, device = device )                                # [%] Percentage of training and testing data associated with the initial condition.
     p_boundary = torch.tensor( 0.25, dtype = torch.float16, device = device )                               # [%] Percentage of training and testing data associated with the boundary condition.
     p_residual = torch.tensor( 0.5, dtype = torch.float16, device = device )                                # [%] Percentage of training and testing data associated with the residual.
+
+    # print( f'p_initial: {p_initial}' )
+    # print( f'p_boundary: {p_boundary}' )
+    # print( f'p_residual: {p_residual}' )
 
     # Define the number of training epochs.
     # num_epochs = torch.tensor( int( 1e2 ), dtype = torch.int32, device = device )                           # [#] Number of training epochs to perform.
     num_epochs = torch.tensor( int( config[ 'hyperparameters' ][ 'num_epochs' ] ), dtype = torch.int32, device = device )                           # [#] Number of training epochs to perform.
     # num_epochs = torch.tensor( int( 5e3 ), dtype = torch.int32, device = device )                           # [#] Number of training epochs to perform.
 
+    # print( f'num_epochs: {num_epochs}' )
+
     # Define the residual batch size.
     residual_batch_size = torch.tensor( int( 10e3 ), dtype = torch.int32, device = device )                 # [#] Training batch size. # This works for variational loss integration order 1.
 
     # Store the optimizer parameters.
     learning_rate = torch.tensor( float( config[ 'hyperparameters' ][ 'learning_rate' ] ), dtype = torch.float32, device = device )                            # [-] Learning rate.
+
+    # print( f'learning_rate: {learning_rate}' )
 
     # Define the element computation option.
     element_computation_option = 'precompute'                                                               # [string] Determines whether to precompute the finite elements associated with the variational loss (costs more memory) or to dynamically generate these elements during training (costs more time per epoch) (e.g., 'precompute, 'dynamic', etc.).
@@ -348,6 +390,14 @@ def eval_closed_roa(config: dict = BASE_CONFIG) -> int:
     c_residual = torch.tensor( float( config[ 'hyperparameters' ][ 'c_residual' ] ), dtype = torch.float32, device = device )                    # [-] Residual loss weight.
     c_variational = torch.tensor( float( config[ 'hyperparameters' ][ 'c_variational' ] ), dtype = torch.float32, device = device )                 # [-] Variational loss weight.
     c_monotonicity = torch.tensor( float( config[ 'hyperparameters' ][ 'c_monotonicity' ] ), dtype = torch.float32, device = device )               # [-] Monotonicity loss weight.
+
+    print( f'c_IC: {c_IC}' )
+    print( f'c_BC: {c_BC}' )
+    print( f'c_residual: {c_residual}' )
+    print( f'c_variational: {c_variational}' )
+    print( f'c_monotonicity: {c_monotonicity}' )
+
+    exit()
 
     # Create the hyper-parameters object.
     hyperparameters = hyperparameters_class( neuron_parameters, synapse_parameters, num_timesteps, activation_function, num_hidden_layers, hidden_layer_widths, num_training_data, num_testing_data, p_initial, p_boundary, p_residual, num_epochs, residual_batch_size, learning_rate, integration_order, element_volume_percent, element_type, element_computation_option, c_IC, c_BC, c_residual, c_variational, c_monotonicity, save_path, load_path )
