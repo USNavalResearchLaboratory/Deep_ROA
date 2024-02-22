@@ -18,8 +18,8 @@ SEARCH_SPACE = {
 }
 
 SUB_SS: dict = {
-    "neuron_current_decay": [float(0.5), float(1.0), float(1.5)],
-    "neuron_voltage_decay": [float(0.5), float(1.0), float(1.5)],
+    "neuron_current_decay": [float(0.1), float(0.3), float(0.5)],
+    "neuron_voltage_decay": [float(0.1), float(0.3), float(0.5)],
     "synapse_gain": [float(1.0), float(3.0), float(5.0)],
     "num_timesteps": [int(1), int(3), int(5)],
 }

@@ -397,8 +397,6 @@ def eval_closed_roa(config: dict = BASE_CONFIG) -> int:
     print( f'c_variational: {c_variational}' )
     print( f'c_monotonicity: {c_monotonicity}' )
 
-    exit()
-
     # Create the hyper-parameters object.
     hyperparameters = hyperparameters_class( neuron_parameters, synapse_parameters, num_timesteps, activation_function, num_hidden_layers, hidden_layer_widths, num_training_data, num_testing_data, p_initial, p_boundary, p_residual, num_epochs, residual_batch_size, learning_rate, integration_order, element_volume_percent, element_type, element_computation_option, c_IC, c_BC, c_residual, c_variational, c_monotonicity, save_path, load_path )
 

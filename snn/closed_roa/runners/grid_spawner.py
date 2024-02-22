@@ -51,6 +51,6 @@ if __name__ == '__main__':
         for j in range(3):
             for k in range(3):
                 for l in range(3):
-                    if counter >= 39:
+                    if counter <= 39:
                         run_subset([i, j, k, l], idx=counter)
                     counter += 1
