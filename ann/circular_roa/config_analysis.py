@@ -15,17 +15,43 @@ import numpy as np
 #%% ---------------------------------------- READ IN GRID SEARCH CONFIGURATIONS ----------------------------------------
 
 # # Define the config, config losses, and average config losses paths.
+# configs_path = r'ann/simple_pendulum/save/run1_coarse_grid_repeat1/configs.pkl'
+# losses_path = r'ann/simple_pendulum/save/run1_coarse_grid_repeat1/config_losses.pkl'
+# avg_losses_path = r'ann/simple_pendulum/save/run1_coarse_grid_repeat1/avg_config_losses.pkl'
+
+# configs_path = r'ann/simple_pendulum/save/run1_coarse_grid_repeat2/configs.pkl'
+# losses_path = r'ann/simple_pendulum/save/run1_coarse_grid_repeat2/config_losses.pkl'
+# avg_losses_path = r'ann/simple_pendulum/save/run1_coarse_grid_repeat2/avg_config_losses.pkl'
+
+# # This set appears to be incomplete.
+# configs_path = r'ann/simple_pendulum/save/run1_coarse_grid_repeat3/configs.pkl'
+# losses_path = r'ann/simple_pendulum/save/run1_coarse_grid_repeat3/config_losses.pkl'
+# avg_losses_path = r'ann/simple_pendulum/save/run1_coarse_grid_repeat3/avg_config_losses.pkl'
+
+# configs_path = r'ann/simple_pendulum/save/run2_coarse_grid_repeat1/configs.pkl'
+# losses_path = r'ann/simple_pendulum/save/run2_coarse_grid_repeat1/config_losses.pkl'
+# avg_losses_path = r'ann/simple_pendulum/save/run2_coarse_grid_repeat1/avg_config_losses.pkl'
+
+# configs_path = r'ann/simple_pendulum/save/run2_coarse_grid_repeat2/configs.pkl'
+# losses_path = r'ann/simple_pendulum/save/run2_coarse_grid_repeat2/config_losses.pkl'
+# avg_losses_path = r'ann/simple_pendulum/save/run2_coarse_grid_repeat2/avg_config_losses.pkl'
+
+# configs_path = r'ann/simple_pendulum/save/run1_coarse_grid_repeat1/configs.pkl'
+# losses_path = r'ann/simple_pendulum/save/run1_coarse_grid_repeat1/config_losses.pkl'
+# avg_losses_path = r'ann/simple_pendulum/save/run1_coarse_grid_repeat1/avg_config_losses.pkl'
+
+# configs_path = r'ann/simple_pendulum/save/run2_fine_grid_repeat1/configs.pkl'
+# losses_path = r'ann/simple_pendulum/save/run2_fine_grid_repeat1/config_losses.pkl'
+# avg_losses_path = r'ann/simple_pendulum/save/run2_fine_grid_repeat1/avg_config_losses.pkl'
+
 # configs_path = r'ann/simple_pendulum/save/run7_testing/configs.pkl'
 # losses_path = r'ann/simple_pendulum/save/run7_testing/config_losses.pkl'
 # avg_losses_path = r'ann/simple_pendulum/save/run7_testing/avg_config_losses.pkl'
 
-# configs_path = r'ann/simple_pendulum/save/run5_larger_coarse_grid_closed_BCs/configs.pkl'
-# losses_path = r'ann/simple_pendulum/save/run5_larger_coarse_grid_closed_BCs/config_losses.pkl'
-# avg_losses_path = r'ann/simple_pendulum/save/run5_larger_coarse_grid_closed_BCs/avg_config_losses.pkl'
+configs_path = r'ann/circular_roa/save/run1_coarse_grid/configs.pkl'
+losses_path = r'ann/circular_roa/save/run1_coarse_grid/config_losses.pkl'
+avg_losses_path = r'ann/circular_roa/save/run1_coarse_grid/avg_config_losses.pkl'
 
-configs_path = r'ann/simple_pendulum/save/run6_larger_coarse_grid_open_BCs/configs.pkl'
-losses_path = r'ann/simple_pendulum/save/run6_larger_coarse_grid_open_BCs/config_losses.pkl'
-avg_losses_path = r'ann/simple_pendulum/save/run6_larger_coarse_grid_open_BCs/avg_config_losses.pkl'
 
 # Open the config file.
 with open( configs_path, 'rb' ) as file:                   # With the config file open...

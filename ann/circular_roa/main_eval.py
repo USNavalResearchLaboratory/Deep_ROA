@@ -9,9 +9,9 @@
 ####################################################################################### 
 
 
-#%% ---------------------------------------- SPIKING CLOSED REGION OF ATTRACTION PINN EXAMPLE MAIN SCRIPT ----------------------------------------
+#%% ---------------------------------------- NON-SPIKING CIRCULAR REGION OF ATTRACTION PINN EXAMPLE MAIN SCRIPT ----------------------------------------
 
-# This file trains a spiking neural network to estimate the region of attraction of an autonomous dynamical system that features a closed stable region.
+# This file serves to implement the main code necessary to integrate the Yuan-Li PDE for a dynamical system with a circular ROA using the Non-Spiking Physics Informed Neural Network (PINN) framework.
 
 
 #%% ---------------------------------------- IMPORT LIBRARIES ----------------------------------------
@@ -28,7 +28,7 @@ from copy import deepcopy
 import matplotlib.pyplot as plt
 
 # Ensure that the utilities folder for this project is on the system path.
-sys.path.append( r'./snn/utilities' )
+sys.path.append( r'./ann/utilities' )
 
 # Import custom libraries.
 from pinn_options_class import pinn_options_class as pinn_options_class
@@ -46,9 +46,69 @@ os.system( 'cls' if os.name == 'nt' else 'clear' )
 plt.rcParams.update( { 'figure.max_open_warning': 0 } )                     # Disable maximum open figure warning.
 
 
-#%% ---------------------------------------- DEFINE DEFAULT CONFIGURATION ----------------------------------------
+#%% ---------------------------------------- DEFINE CONFIGURATION ----------------------------------------
 
-# Define the default configuration.
+# # Define the base configuration.
+# BASE_CONFIG = {
+#     'classification_parameters': {
+#         'num_noisy_samples_per_level_set_point': int( 5 ),
+#         'noise_percentage': float( 1e-3 ),
+#         'dt': float( 1e-2 ),
+#         'tfinal': float( 10 ),
+#     },
+#     'exploration_parameters': {
+#         'volume_percentage': float( 1e-2 ),
+#         'num_points': int( 50 ),
+#         'unique_percentage': float( 1e-4 ),
+#     },
+#     'hyperparameters': {
+#         'activation_function': 'sigmoid',
+#         'c_IC': float( 1.0 ),
+#         'c_BC': float( 1.0 ),
+#         'c_residual': float( 1e-4 ),
+#         'c_residual_gradient': float( 0 ),
+#         'c_variational': float( 1e-5 ),
+#         'c_monotonicity': float( 100 ),
+#         'hidden_layer_widths': int( 175 ),
+#         'num_epochs': int( 400 ),
+#         'num_hidden_layers': int( 5 ),
+#         'num_training_data': int( 100e3 ),
+#         'num_testing_data': int( 20e3 ),
+#         'learning_rate': float( 5e-3 ),
+#     },
+#     'newton_parameters': {
+#         'tolerance': float( 1e-4 ),
+#         'max_iterations': int( 1e2 ),
+#     },
+#     'paths': {
+#         'save_path': r'./ann/circular_roa/save',
+#         'load_path': r'./ann/circular_roa/load',
+#     },
+#     'plotting_parameters': {
+#         'num_plotting_samples': int( 20 ),
+#         'plot_flag': bool( False ),
+#         # 'plot_flag': bool( True ),
+#     },
+#     'printing_parameters': {
+#         'batch_print_frequency': int( 10 ),
+#         'epoch_print_frequency': int( 10 ),
+#         'print_flag': bool( True ),
+#     },
+#     'runtime': {
+#         'device': 'cuda:6' if torch.cuda.is_available(  ) else 'cpu',
+#         'seed': int( 0 ),
+#         'load_flag': bool( False ),
+#         'train_flag': bool( True ),
+#         'verbose_flag': bool( True ),
+#     },
+#     'saving_parameters': {
+#         'save_flag': bool( True ),
+#         'save_frequency': int( 10 ),
+#     }
+# }
+
+
+# Define the base configuration.
 BASE_CONFIG = {
     'classification_parameters': {
         'num_noisy_samples_per_level_set_point': int( 5 ),
@@ -65,34 +125,29 @@ BASE_CONFIG = {
         'activation_function': 'sigmoid',
         'c_IC': float( 1.0 ),
         'c_BC': float( 1.0 ),
-        'c_residual': float(  ),
-        'c_variational': float( 0 ),
-        'c_monotonicity': float( 0 ),
-        'hidden_layer_widths': int( 250 ),
+        'c_residual': float( 1.0 ),
+        'c_residual_gradient': float( 0 ),
+        'c_variational': float( 0.01 ),
+        'c_monotonicity': float( 1000 ),
+        'hidden_layer_widths': int( 175 ),
         'num_epochs': int( 400 ),
         'num_hidden_layers': int( 5 ),
         'num_training_data': int( 100e3 ),
         'num_testing_data': int( 20e3 ),
-        'learning_rate': float( 0.005 ),
-        "neuron_threshold": float( 0.5 ),
-        "neuron_current_decay": float( 1.0 ),
-        "neuron_voltage_decay": float( 1.0 ),
-        "neuron_persistent_state": bool( False ),
-        "neuron_requires_grad": bool( False ),
-        "synapse_gain": float( 3.0 ),
-        'num_timesteps': int( 1 ),
+        'learning_rate': float( 5e-3 ),
     },
     'newton_parameters': {
         'tolerance': float( 1e-4 ),
         'max_iterations': int( 1e2 ),
     },
     'paths': {
-        'save_path': r'./ann/closed_roa/save',
-        'load_path': r'./ann/closed_roa/load',
+        'save_path': r'./ann/circular_roa/save',
+        'load_path': r'./ann/circular_roa/load',
     },
     'plotting_parameters': {
         'num_plotting_samples': int( 20 ),
-        'plot_flag': bool( False ),
+        # 'plot_flag': bool( False ),
+        'plot_flag': bool( True ),
     },
     'printing_parameters': {
         'batch_print_frequency': int( 10 ),
@@ -113,18 +168,11 @@ BASE_CONFIG = {
 }
 
 
-# Implement a function to evaluate the closed roa.
-def eval_closed_roa( config: dict = BASE_CONFIG ) -> int:
+# Implement a function to evaluate the circular roa.
+def eval_circular_roa( config: dict = BASE_CONFIG ) -> int:
 
     """
-    Evaluate the closed region of attraction (ROA) for a given configuration.
-
-    Args:
-        config (dict): Configuration parameters for the evaluation.
-
-    Returns:
-        int: The result of the evaluation.
-
+    TODO Finish Documentation
     """
 
     # Print out a message saying that we are beginning Deep ROA Trial.
@@ -155,7 +203,6 @@ def eval_closed_roa( config: dict = BASE_CONFIG ) -> int:
     if config:                  # If there is a configuration to use...
 
         # Update the hyperparmaeters of the default configuration to match the user provided configuration.
-            # # new_config[ 'hyperparameters' ].update( config )
         new_config[ 'hyperparameters' ].update( config[ 'hyperparameters' ] )
 
     # Make a copy of the new configuration.
@@ -168,6 +215,8 @@ def eval_closed_roa( config: dict = BASE_CONFIG ) -> int:
 
     # Set the computational device.
     device = torch.device( config[ 'runtime' ][ 'device' ] )
+
+    start_time = time.time(  )
 
 
     #%% ---------------------------------------- DEFINE PINN OPTIONS ----------------------------------------
@@ -194,8 +243,8 @@ def eval_closed_roa( config: dict = BASE_CONFIG ) -> int:
     train_flag = bool( config[ 'runtime' ][ 'train_flag' ] )                                                                                                        # [T/F] Flag that determines whether to train the network after creation or loading.
 
     # Define the printing options.
-    batch_print_frequency = torch.tensor( int( config[ 'printing_parameters' ][ 'batch_print_frequency' ] ), dtype = torch.int16, device = device )             # [%] Percent of batches after which to print training information (during an epoch that has been selected for printing).
-    epoch_print_frequency = torch.tensor( int( config[ 'printing_parameters' ][ 'epoch_print_frequency' ] ), dtype = torch.int16, device = device )             # [%] Percent of epochs after which to print training information.
+    batch_print_frequency = torch.tensor( float( config[ 'printing_parameters' ][ 'batch_print_frequency' ] ), dtype = torch.float32, device = device )             # [%] Percent of batches after which to print training information (during an epoch that has been selected for printing).
+    epoch_print_frequency = torch.tensor( float( config[ 'printing_parameters' ][ 'epoch_print_frequency' ] ), dtype = torch.float32, device = device )             # [%] Percent of epochs after which to print training information.
     print_flag = bool( config[ 'printing_parameters' ][ 'print_flag' ] )                                                                                            # [T/F] Flag that determines whether to print more or less information when printing.
 
     # Define the plotting options.
@@ -209,27 +258,16 @@ def eval_closed_roa( config: dict = BASE_CONFIG ) -> int:
     newton_tolerance = torch.tensor( float( config[ 'newton_parameters' ][ 'tolerance' ] ), dtype = torch.float32, device = device )                                                            # [-] Convergence tolerance for the Newton's root finding method.
     newton_max_iterations = torch.tensor( int( config[ 'newton_parameters' ][ 'max_iterations' ] ), dtype = torch.int32, device = device )                                                      # [#] Maximum number of Newton's method steps to perform.
 
-    # print(f"newton_tolerance: {newton_tolerance}")
-    # print(f"newton_max_iterations: {newton_max_iterations}")
-
     # Define the exploration parameters (used for level set generation).
     exploration_volume_percentage = torch.tensor( float( config[ 'exploration_parameters' ][ 'volume_percentage' ] ), dtype = torch.float32, device = device )                                  # [%] The level set method step size represented as a percentage of the domain volume.  This parameter conveniently scales the step size of the level set method as the dimension of the problem is adjusted. # This works for both initial and final times.
     num_exploration_points = torch.tensor( int( config[ 'exploration_parameters' ][ 'num_points' ] ), dtype = torch.int16, device = device )                                                    # [#] Number of exploration points to generate at each level set method step.
     unique_volume_percentage = torch.tensor( float( config[ 'exploration_parameters' ][ 'unique_percentage' ] ), dtype = torch.float32, device = device )                                       # [%] The tolerance used to determine whether level set points are unique as a percentage of the domain volume.  This parameter conveniently scales the unique tolerance of the level set points as the dimension of the problem is adjusted.
-
-    # print(f"exploration_volume_percentage: {exploration_volume_percentage}")
-    # print(f"num_exploration_points: {num_exploration_points}")
-    # print(f"unique_volume_percentage: {unique_volume_percentage}")
 
     # Define the classification parameters.
     num_noisy_samples_per_level_set_point = torch.tensor( int( config[ 'classification_parameters' ][ 'num_noisy_samples_per_level_set_point' ] ), dtype = torch.int16, device = device )       # [#] Number of noisy samples per level set point.
     classification_noise_percentage = torch.tensor( float( config[ 'classification_parameters' ][ 'noise_percentage' ] ), dtype = torch.float32, device = device )                              # [%] The classification point noise magnitude represented as a percentage of the domain volume.  This parameter conveniently scales the noise magnitude of the classification points as the dimension of the problem is adjusted.
     classification_dt = torch.tensor( float( config[ 'classification_parameters' ][ 'dt' ] ), dtype = torch.float32, device = device )                                                          # [s] The classification simulation timestep used to forecast classification points.
     classification_tfinal = torch.tensor( float( config[ 'classification_parameters' ][ 'tfinal' ] ), dtype = torch.float32, device = device )                                                  # [s] The classification simulation duration used to forecast classification points.
-
-    # print(f"classification_noise_percentage: {classification_noise_percentage}")
-    # print(f"classification_dt: {classification_dt}")
-    # print(f"classification_tfinal: {classification_tfinal}")
 
     # Create the pinn options object.
     pinn_options = pinn_options_class( save_path, save_frequency, save_flag, load_path, load_flag, train_flag, batch_print_frequency, epoch_print_frequency, print_flag, num_plotting_samples, newton_tolerance, newton_max_iterations, exploration_volume_percentage, num_exploration_points, unique_volume_percentage, classification_noise_percentage, num_noisy_samples_per_level_set_point, classification_dt, classification_tfinal, plot_flag, device, verbose_flag )
@@ -265,76 +303,71 @@ def eval_closed_roa( config: dict = BASE_CONFIG ) -> int:
 
     # Define the temporal and spatial domains.
     domain_type = 'cartesian'                                                                                                             # [-] The type of domain (cartesian, spherical, etc.).  Only cartesian domains are currently supported.
-    temporal_domain = torch.tensor( [ 0, 30 ], dtype = torch.float32, device = device )                                                             # [-] Temporal domain of the underlying dynamical system.                                                         # [-] Temporal domain of the underlying dynamical system.
-    spatial_domain = torch.tensor( [ [ -1, 4 ], [ -1, 4 ] ], dtype = torch.float32, device = device ).T                                             # [-] Spatial domain of the underlying dynamical system.
+    temporal_domain = torch.tensor( [ 0, 10 ], dtype = torch.float32, device = device )                                                             # [-] Temporal domain of the underlying dynamical system.
+    spatial_domain = torch.tensor( [ [ -3, 3 ], [ -3, 3 ] ], dtype = torch.float32, device = device ).T                                             # [-] Spatial domain of the underlying dynamical system.
 
     # Define the initial condition parameters.
-    R0 = torch.tensor( 1.0, dtype = torch.float32, device = device )                                                                                  # [-] Initial condition radius.
-    A0 = torch.tensor( 2.0, dtype = torch.float32, device = device )                                                                                  # [-] Initial condition amplitude.
-    S0 = torch.tensor( 20.0, dtype = torch.float32, device = device )                                                                                 # [-] Initial condition slope.
-    P0_shift = torch.tensor( [ math.pi/2, math.pi/2 ], dtype = torch.float32, device = device )                                                     # [-] Initial condition input offset.
-    z0_shift = -A0/2                                                                                                                                # [-] Initial condition output offset.
+    R0 = torch.tensor( 0.5, dtype = torch.float32, device = device )                                                                                  # [-] Initial condition radius.
+    A0 = torch.tensor( 2, dtype = torch.float32, device = device )                                                                                  # [-] Initial condition amplitude.
+    S0 = torch.tensor( 20, dtype = torch.float32, device = device )                                                                                 # [-] Initial condition slope.
+    P0_shift = torch.tensor( [ 0, 0 ], dtype = torch.float32, device = device )                                                     # [-] Initial condition input offset.
+    z0_shift = -A0/2                                                                                                                            # [-] Initial condition output offset.
 
-    # Define the flow functions.
-    flow_function1 = lambda s: torch.unsqueeze( torch.unsqueeze( -torch.sin( s[ :, 1, -1 ] )*( -0.1*torch.cos( s[ :, 1, -1 ] ) - torch.cos( s[ :, 2, -1 ] ) ), dim = 1 ), dim = 2 )     # [-] Flow function associated with the first state of the underlying dynamical system.
-    flow_function2 = lambda s: torch.unsqueeze( torch.unsqueeze( -torch.sin( s[ :, 2, -1 ] )*( torch.cos( s[ :, 1, -1 ] ) - 0.1*torch.cos( s[ :, 2, -1 ] ) ), dim = 1 ), dim = 2 )      # [-] Flow function associated with the second state of the underlying dynamical system.
-    flow_functions = [ flow_function1, flow_function2 ]                                                                                                                                 # [-] Flow functions associated with the underlying dynamical system.
+    # Define the flow field parameters.
+    mu = torch.tensor( 12, dtype = torch.float32, device = device )
+    sqrsum = lambda s: s[ :, 1 ]**2 + s[ :, 2 ]**2
+    comm = lambda s: mu + sqrsum( s ) - sqrsum( s )**2
+
+    # Define the flow field.
+    flow_function1 = lambda s: torch.unsqueeze( -( s[ :, 1 ]*comm( s ) - s[ :, 2 ] ), dim = 1 )
+    flow_function2 = lambda s: torch.unsqueeze( -( s[ :, 2 ]*comm( s ) + s[ :, 1 ] ), dim = 1 )
+    flow_functions = [ flow_function1, flow_function2 ]
 
     # Define the residual function.
-    residual_function = lambda s, dphidt, dphidx1, dphidx2: dphidt - torch.minimum( torch.zeros( size = ( s.shape[ 0 ], 1, num_timesteps ), dtype = torch.float32, device = device ), dphidx1*flow_functions[ 0 ]( s ) + dphidx2*flow_functions[ 1 ]( s ) )         # [-] Residual function associated with the Yuan-Li PDE.
+    residual_function = lambda s, dphidt, dphidx1, dphidx2: dphidt - torch.minimum( torch.zeros( size = ( s.shape[ 0 ], 1 ), dtype = torch.float32, device = device ), dphidx1*flow_functions[ 0 ]( s ) + dphidx2*flow_functions[ 1 ]( s ) )                    # [-] Residual function associated with the Yuan-Li PDE.
 
     # Define the residual code.
     residual_code = [ None, torch.tensor( [ 0 ], dtype = torch.uint8, device = device ), torch.tensor( [ 1 ], dtype = torch.uint8, device = device ), torch.tensor( [ 2 ], dtype = torch.uint8, device = device ) ]                                             # [-] Residual code.  This list specifies which derivatives with respect to the network inputs are required for the residual function inputs.
 
-    # Define the temporal code. Determines how to compute the temporal derivative of the network output.    
-    temporal_code = [ torch.tensor( [ 0 ], dtype = torch.uint8, device = device ) ]                                                                                                                                                                             # [-]    
+    # Define the temporal code.
+    temporal_code = [ torch.tensor( [ 0 ], dtype = torch.uint8, device = device ) ]                                                                                                                                                                             # [-] Temporal code.  Determines how to compute the temporal derivative of the network output.      
 
     # Define the initial-boundary condition functions.
-    # f_ic = lambda s: 0.32*torch.norm( s[ :, 1:, -1 ], 2, dim = 1, keepdim = True )**2 - 0.96*torch.norm( s[ :, 1:, -1 ], 2, dim = 1, keepdim = True ) - 0.28               # [-] Initial condition function.
-    # f_bc_1 = lambda s: 0.32*torch.norm( s[ :, 1:, -1 ], 2, dim = 1, keepdim = True )**2 - 0.96*torch.norm( s[ :, 1:, -1 ], 2, dim = 1, keepdim = True ) - 0.28              # [-] Boundary condition function.
-    # f_bc_2 = lambda s: 0.32*torch.norm( s[ :, 1:, -1 ], 2, dim = 1, keepdim = True )**2 - 0.96*torch.norm( s[ :, 1:, -1 ], 2, dim = 1, keepdim = True ) - 0.28              # [-] Boundary condition function.
-    # f_bc_3 = lambda s: 0.32*torch.norm( s[ :, 1:, -1 ], 2, dim = 1, keepdim = True )**2 - 0.96*torch.norm( s[ :, 1:, -1 ], 2, dim = 1, keepdim = True ) - 0.28              # [-] Boundary condition function.
-    # f_bc_4 = lambda s: 0.32*torch.norm( s[ :, 1:, -1 ], 2, dim = 1, keepdim = True )**2 - 0.96*torch.norm( s[ :, 1:, -1 ], 2, dim = 1, keepdim = True ) - 0.28              # [-] Boundary condition function.
+    # f_ic = lambda s: A0/( 1 + torch.exp( -S0*( torch.norm( s[ :, 1: ] - P0_shift, 2, dim = 1, keepdim = True ) - R0 ) ) ) + z0_shift                # [-] Initial condition function.
+    # f_bc_1 = lambda s: A0/( 1 + torch.exp( -S0*( torch.norm( s[ :, 1: ] - P0_shift, 2, dim = 1, keepdim = True ) - R0 ) ) ) + z0_shift              # [-] Boundary condition function.
+    # f_bc_2 = lambda s: A0/( 1 + torch.exp( -S0*( torch.norm( s[ :, 1: ] - P0_shift, 2, dim = 1, keepdim = True ) - R0 ) ) ) + z0_shift              # [-] Boundary condition function.
 
-    # f_ic = lambda s: torch.unsqueeze( 0.32*s[ :, 1, -1 ]**2 - 0.96*s[ :, 1, -1 ] - 0.28, dim = 1 )               # [-] Initial condition function.
-    # f_bc_1 = lambda s: torch.unsqueeze( 0.32*s[ :, 1, -1 ]**2 - 0.96*s[ :, 1, -1 ] - 0.28, dim = 1 )              # [-] Boundary condition function.
-    # f_bc_2 = lambda s: torch.unsqueeze( 0.32*s[ :, 1, -1 ]**2 - 0.96*s[ :, 1, -1 ] - 0.28, dim = 1 )              # [-] Boundary condition function.
-    # f_bc_3 = lambda s: torch.unsqueeze( 0.32*s[ :, 1, -1 ]**2 - 0.96*s[ :, 1, -1 ] - 0.28, dim = 1 )              # [-] Boundary condition function.
-    # f_bc_4 = lambda s: torch.unsqueeze( 0.32*s[ :, 1, -1 ]**2 - 0.96*s[ :, 1, -1 ] - 0.28, dim = 1 )              # [-] Boundary condition function.
+    f_ic = lambda s: A0/( 1 + torch.exp( -S0*( torch.norm( s[ :, 1: ] - P0_shift, 2, dim = 1, keepdim = True ) - R0 ) ) ) + z0_shift                # [-] Initial condition function.
+    f_bc_1 = lambda s: A0/( 1 + torch.exp( -S0*( torch.norm( s[ :, 1: ] - P0_shift, 2, dim = 1, keepdim = True ) - R0 ) ) ) + z0_shift              # [-] Boundary condition function.
+    f_bc_2 = lambda s: A0/( 1 + torch.exp( -S0*( torch.norm( s[ :, 1: ] - P0_shift, 2, dim = 1, keepdim = True ) - R0 ) ) ) + z0_shift              # [-] Boundary condition function.
+    f_bc_3 = lambda s: A0/( 1 + torch.exp( -S0*( torch.norm( s[ :, 1: ] - P0_shift, 2, dim = 1, keepdim = True ) - R0 ) ) ) + z0_shift              # [-] Boundary condition function.
+    f_bc_4 = lambda s: A0/( 1 + torch.exp( -S0*( torch.norm( s[ :, 1: ] - P0_shift, 2, dim = 1, keepdim = True ) - R0 ) ) ) + z0_shift              # [-] Boundary condition function.
 
-    # f_ic = lambda s: torch.unsqueeze( ( 2/5 )*s[ :, 1, -1 ] - ( 3/5 ), dim = 1 )               # [-] Initial condition function.
-    # f_bc_1 = lambda s: torch.unsqueeze( ( 2/5 )*s[ :, 1, -1 ] - ( 3/5 ), dim = 1 )              # [-] Boundary condition function.
-    # f_bc_2 = lambda s: torch.unsqueeze( ( 2/5 )*s[ :, 1, -1 ] - ( 3/5 ), dim = 1 )              # [-] Boundary condition function.
-    # f_bc_3 = lambda s: torch.unsqueeze( ( 2/5 )*s[ :, 1, -1 ] - ( 3/5 ), dim = 1 )              # [-] Boundary condition function.
-    # f_bc_4 = lambda s: torch.unsqueeze( ( 2/5 )*s[ :, 1, -1 ] - ( 3/5 ), dim = 1 )              # [-] Boundary condition function.
-
-    # f_ic = lambda s: torch.unsqueeze( ( 2/5 )*s[ :, 2, -1 ] - ( 3/5 ), dim = 1 )               # [-] Initial condition function.
-    # f_bc_1 = lambda s: torch.unsqueeze( ( 2/5 )*s[ :, 2, -1 ] - ( 3/5 ), dim = 1 )              # [-] Boundary condition function.
-    # f_bc_2 = lambda s: torch.unsqueeze( ( 2/5 )*s[ :, 2, -1 ] - ( 3/5 ), dim = 1 )              # [-] Boundary condition function.
-    # f_bc_3 = lambda s: torch.unsqueeze( ( 2/5 )*s[ :, 2, -1 ] - ( 3/5 ), dim = 1 )              # [-] Boundary condition function.
-    # f_bc_4 = lambda s: torch.unsqueeze( ( 2/5 )*s[ :, 2, -1 ] - ( 3/5 ), dim = 1 )              # [-] Boundary condition function.
-
-    f_ic = lambda s: A0/( 1 + torch.exp( -S0*( torch.norm( s[ :, 1:, -1 ] - P0_shift, 2, dim = 1, keepdim = True ) - R0 ) ) ) + z0_shift                # [-] Initial condition function.
-    f_bc_1 = lambda s: A0/( 1 + torch.exp( -S0*( torch.norm( s[ :, 1:, -1 ] - P0_shift, 2, dim = 1, keepdim = True ) - R0 ) ) ) + z0_shift              # [-] Boundary condition function.
-    f_bc_2 = lambda s: A0/( 1 + torch.exp( -S0*( torch.norm( s[ :, 1:, -1 ] - P0_shift, 2, dim = 1, keepdim = True ) - R0 ) ) ) + z0_shift              # [-] Boundary condition function.
-    f_bc_3 = lambda s: A0/( 1 + torch.exp( -S0*( torch.norm( s[ :, 1:, -1 ] - P0_shift, 2, dim = 1, keepdim = True ) - R0 ) ) ) + z0_shift              # [-] Boundary condition function.
-    f_bc_4 = lambda s: A0/( 1 + torch.exp( -S0*( torch.norm( s[ :, 1:, -1 ] - P0_shift, 2, dim = 1, keepdim = True ) - R0 ) ) ) + z0_shift              # [-] Boundary condition function.
-
-    # f_ic = lambda s: A0/( 1 + torch.exp( -S0*( torch.norm( s[ :, 1:, : ] - torch.unsqueeze( torch.unsqueeze( P0_shift, dim = 0 ), dim = 2 ), 2, dim = 1, keepdim = True ) - R0 ) ) ) + z0_shift                # [-] Initial condition function.
-    # f_bc_1 = lambda s: A0/( 1 + torch.exp( -S0*( torch.norm( s[ :, 1:, : ] - torch.unsqueeze( torch.unsqueeze( P0_shift, dim = 0 ), dim = 2 ), 2, dim = 1, keepdim = True ) - R0 ) ) ) + z0_shift              # [-] Boundary condition function.
-    # f_bc_2 = lambda s: A0/( 1 + torch.exp( -S0*( torch.norm( s[ :, 1:, : ] - torch.unsqueeze( torch.unsqueeze( P0_shift, dim = 0 ), dim = 2 ), 2, dim = 1, keepdim = True ) - R0 ) ) ) + z0_shift              # [-] Boundary condition function.
-    # f_bc_3 = lambda s: A0/( 1 + torch.exp( -S0*( torch.norm( s[ :, 1:, : ] - torch.unsqueeze( torch.unsqueeze( P0_shift, dim = 0 ), dim = 2 ), 2, dim = 1, keepdim = True ) - R0 ) ) ) + z0_shift              # [-] Boundary condition function.
-    # f_bc_4 = lambda s: A0/( 1 + torch.exp( -S0*( torch.norm( s[ :, 1:, : ] - torch.unsqueeze( torch.unsqueeze( P0_shift, dim = 0 ), dim = 2 ), 2, dim = 1, keepdim = True ) - R0 ) ) ) + z0_shift              # [-] Boundary condition function.
+    # f_ic = lambda s: A0/( 1 + torch.exp( -S0*( torch.norm( s[ :, 1: ] - P0_shift, 2, dim = 1, keepdim = True ) - R0 ) ) ) + z0_shift                # [-] Initial condition function.
+    # f_bc_1 = lambda s: torch.zeros( ( s.shape[ 0 ], 1 ), dtype = torch.float32, device = device )                                                   # [-] Boundary condition function 1.
+    # f_bc_2 = lambda s: torch.zeros( ( s.shape[ 0 ], 1 ), dtype = torch.float32, device = device )                                                   # [-] Boundary condition function 2.
+    # f_bc_3 = lambda s: torch.zeros( ( s.shape[ 0 ], 1 ), dtype = torch.float32, device = device )                                                   # [-] Boundary condition function 3.
+    # f_bc_4 = lambda s: torch.zeros( ( s.shape[ 0 ], 1 ), dtype = torch.float32, device = device )                                                   # [-] Boundary condition function 4.
 
     # Define the initial-boundary condition information.
-    ibc_types = [ 'dirichlet', 'dirichlet', 'dirichlet', 'dirichlet', 'dirichlet' ]                                                                     # [-] Initial-Boundary condition types (e.g., dirichlet, neumann, etc.).
-    ibc_dimensions = torch.tensor( [ 0, 1, 1, 2, 2 ], dtype = torch.uint8, device = device )                                                            # [-] Dimensions associated with each initial-boundary condition.
-    ibc_condition_functions = [ f_ic, f_bc_1, f_bc_2, f_bc_3, f_bc_4 ]                                                                                  # [-] List of initial-boundary conditions.
-    ibc_placements = [ 'lower', 'lower', 'upper', 'lower', 'upper' ]                                                                                    # [Lower/Upper] Initial-Boundary condition placement.
+    # ibc_types = [ 'dirichlet', 'dirichlet', 'dirichlet' ]                                                                                           # [-] Initial-Boundary condition types (e.g., dirichlet, neumann, etc.).
+    # ibc_dimensions = torch.tensor( [ 0, 1, 2 ], dtype = torch.uint8, device = device )
+    # ibc_condition_functions = [ f_ic, f_bc_1, f_bc_2 ]
+    # ibc_placements = [ 'lower', 'lower', 'lower' ]  
+
+    ibc_types = [ 'dirichlet', 'dirichlet', 'dirichlet', 'dirichlet', 'dirichlet' ]                                                                                           # [-] Initial-Boundary condition types (e.g., dirichlet, neumann, etc.).
+    ibc_dimensions = torch.tensor( [ 0, 1, 1, 2, 2 ], dtype = torch.uint8, device = device )
+    ibc_condition_functions = [ f_ic, f_bc_1, f_bc_2, f_bc_3, f_bc_4 ]
+    ibc_placements = [ 'lower', 'lower', 'upper', 'lower', 'upper' ]  
+
+    # ibc_types = [ 'dirichlet', 'yuan-li', 'yuan-li', 'yuan-li', 'yuan-li' ]
+    # ibc_dimensions = torch.tensor( [ 0, 1, 1, 2, 2 ], dtype = torch.uint8, device = device )
+    # ibc_condition_functions = [ f_ic, f_bc_1, f_bc_2, f_bc_3, f_bc_4 ]
+    # ibc_placements = [ 'lower', 'lower', 'upper', 'lower', 'upper' ]  
 
     # Define the PDE name and type.
-    pde_name = 'Yuan-Li PDE: Closed ROA'                                                                                                            # [-] PDE name.
-    pde_type = 'First Order'                                                                                                                        # [-] PDE type.
+    pde_name = 'Yuan-Li PDE: Circular ROA'                                                                                                            # [-] PDE name.
+    pde_type = 'First Order'                                                                                                                   # [-] PDE type.
 
     # Create the problem specifications object.
     problem_specifications = problem_specifications_class( num_inputs, num_outputs, temporal_domain, spatial_domain, domain_type, residual_function, residual_code, temporal_code, flow_functions, ibc_types, ibc_dimensions, ibc_condition_functions, ibc_placements, pde_name, pde_type, save_path, load_path )
@@ -363,58 +396,29 @@ def eval_closed_roa( config: dict = BASE_CONFIG ) -> int:
 
     # Retrieve the hyperparameter setup start time.
     start_time_hyperparameters = time.time(  )
-    
-    neuron_parameters = {
-        'threshold': torch.tensor( float(config['hyperparameters']['neuron_threshold']), dtype = torch.float32, device = device ),
-        'current_decay': torch.tensor( float(config['hyperparameters']['neuron_current_decay']), dtype = torch.float32, device = device ),
-        'voltage_decay': torch.tensor( float(config['hyperparameters']['neuron_voltage_decay']), dtype = torch.float32, device = device ),
-        'persistent_state': bool(config['hyperparameters']['neuron_persistent_state']),
-        'requires_grad': bool(config['hyperparameters']['neuron_requires_grad'])
-    }
-    synapse_parameters = {
-        'gain': torch.tensor( float(config['hyperparameters']['synapse_gain']), dtype = torch.float32, device = device )
-    }
-
-    print( f'neuron_parameters: {neuron_parameters}' )
-    print( f'synapse_parameters: {synapse_parameters}' )
-
-    # Define the number of timesteps for which each input is presented to the network.
-    num_timesteps = torch.tensor( int(config['hyperparameters']['num_timesteps']), dtype = torch.int16, device = device )                                 # [#] Number of timesteps for which each input is presented to the network.
 
     # Store the network parameters.
     activation_function = str( config[ 'hyperparameters' ][ 'activation_function' ] )                                                                   # [-] Activation function (e.g., tanh, sigmoid, etc.)
     num_hidden_layers = torch.tensor( int( config[ 'hyperparameters' ][ 'num_hidden_layers' ] ), dtype = torch.uint8, device = device )                 # [#] Number of hidden layers.
     hidden_layer_widths = torch.tensor( int( config[ 'hyperparameters' ][ 'hidden_layer_widths' ] ), dtype = torch.int16, device = device )             # [#] Hidden layer widths.
 
-
-    # Set the quantity of training and testing data.
+    # This set works for variational loss integration order 1.
     num_training_data = torch.tensor( int( config[ 'hyperparameters' ][ 'num_training_data' ] ), dtype = torch.int32, device = device )                 # [#] Number of training data points.
     num_testing_data = torch.tensor( int( config[ 'hyperparameters' ][ 'num_testing_data' ] ), dtype = torch.int32, device = device )                   # [#] Number of testing data points.
-
-    # print( f'num_training_data: {num_training_data}' )
-    # print( f'num_testing_data: {num_testing_data}' )
 
     # Define the percent of training and testing data that should be sampled from the initial condition, the boundary condition, and the interior of the domain.
     p_initial = torch.tensor( 0.25, dtype = torch.float16, device = device )                                                                            # [%] Percentage of training and testing data associated with the initial condition.
     p_boundary = torch.tensor( 0.25, dtype = torch.float16, device = device )                                                                           # [%] Percentage of training and testing data associated with the boundary condition.
     p_residual = torch.tensor( 0.5, dtype = torch.float16, device = device )                                                                            # [%] Percentage of training and testing data associated with the residual.
 
-    # print( f'p_initial: {p_initial}' )
-    # print( f'p_boundary: {p_boundary}' )
-    # print( f'p_residual: {p_residual}' )
-
     # Define the number of training epochs.
     num_epochs = torch.tensor( int( config[ 'hyperparameters' ][ 'num_epochs' ] ), dtype = torch.int32, device = device )                               # [#] Number of training epochs to perform.
-
-    # print( f'num_epochs: {num_epochs}' )
 
     # Define the residual batch size.
     residual_batch_size = torch.tensor( int( 10e3 ), dtype = torch.int32, device = device )                                                             # [#] Training batch size. # This works for variational loss integration order 1.
 
     # Store the optimizer parameters.
     learning_rate = torch.tensor( float( config[ 'hyperparameters' ][ 'learning_rate' ] ), dtype = torch.float32, device = device )                     # [-] Learning rate.
-
-    # print( f'learning_rate: {learning_rate}' )
 
     # Define the element computation option.
     element_computation_option = 'precompute'                                                                                                           # [string] Determines whether to precompute the finite elements associated with the variational loss (costs more memory) or to dynamically generate these elements during training (costs more time per epoch) (e.g., 'precompute, 'dynamic', etc.).
@@ -429,20 +433,15 @@ def eval_closed_roa( config: dict = BASE_CONFIG ) -> int:
     integration_order = torch.tensor( 1, dtype = torch.uint8, device = device )                                                                         # [#] Gauss-Legendre integration order.
 
     # Store the loss coefficients.
-    c_IC = torch.tensor( float( config[ 'hyperparameters' ][ 'c_IC' ] ), dtype = torch.float32, device = device )                          # [-] Initial condition loss weight.
-    c_BC = torch.tensor( float( config[ 'hyperparameters' ][ 'c_BC' ] ), dtype = torch.float32, device = device )                          # [-] Boundary condition loss weight.
-    c_residual = torch.tensor( float( config[ 'hyperparameters' ][ 'c_residual' ] ), dtype = torch.float32, device = device )                    # [-] Residual loss weight.
-    c_variational = torch.tensor( float( config[ 'hyperparameters' ][ 'c_variational' ] ), dtype = torch.float32, device = device )                 # [-] Variational loss weight.
-    c_monotonicity = torch.tensor( float( config[ 'hyperparameters' ][ 'c_monotonicity' ] ), dtype = torch.float32, device = device )               # [-] Monotonicity loss weight.
+    c_IC = torch.tensor( float( config[ 'hyperparameters' ][ 'c_IC' ] ), dtype = torch.float32, device = device )                                       # [-] Initial condition loss weight.
+    c_BC = torch.tensor( float( config[ 'hyperparameters' ][ 'c_BC' ] ), dtype = torch.float32, device = device )                                       # [-] Boundary condition loss weight.
+    c_residual = torch.tensor( float( config[ 'hyperparameters' ][ 'c_residual' ] ), dtype = torch.float32, device = device )                           # [-] Residual loss weight.
+    c_residual_gradient = torch.tensor( float( config[ 'hyperparameters' ][ 'c_residual_gradient' ] ), dtype = torch.float32, device = device )         # [-] Residual gradient loss weight.
+    c_variational = torch.tensor( float( config[ 'hyperparameters' ][ 'c_variational' ] ), dtype = torch.float32, device = device )                     # [-] Variational loss weight.
+    c_monotonicity = torch.tensor( float( config[ 'hyperparameters' ][ 'c_monotonicity' ] ), dtype = torch.float32, device = device )                   # [-] Monotonicity loss weight.
 
-    print( f'c_IC: {c_IC}' )
-    print( f'c_BC: {c_BC}' )
-    print( f'c_residual: {c_residual}' )
-    print( f'c_variational: {c_variational}' )
-    print( f'c_monotonicity: {c_monotonicity}' )
-
-    # Create the hyper-parameters object.
-    hyperparameters = hyperparameters_class( neuron_parameters, synapse_parameters, num_timesteps, activation_function, num_hidden_layers, hidden_layer_widths, num_training_data, num_testing_data, p_initial, p_boundary, p_residual, num_epochs, residual_batch_size, learning_rate, integration_order, element_volume_percent, element_type, element_computation_option, c_IC, c_BC, c_residual, c_variational, c_monotonicity, save_path, load_path )
+    # Create the hyperparameters object.
+    hyperparameters = hyperparameters_class( activation_function, num_hidden_layers, hidden_layer_widths, num_training_data, num_testing_data, p_initial, p_boundary, p_residual, num_epochs, residual_batch_size, learning_rate, integration_order, element_volume_percent, element_type, element_computation_option, c_IC, c_BC, c_residual, c_residual_gradient, c_variational, c_monotonicity, save_path, load_path )
 
     # Save the hyperparameters.
     hyperparameters.save( save_path, r'hyperparameters.pkl' )
@@ -474,22 +473,6 @@ def eval_closed_roa( config: dict = BASE_CONFIG ) -> int:
 
     # Set the training flag object.
     pinn.pinn_options.train_flag = train_flag
-
-    # Ensure that the user specified exploration radii are used (not those that were loaded).
-    pinn.network.exploration_radius_spatial = pinn.compute_exploration_radius( exploration_volume_percentage, pinn.domain, 'spatial' )
-    pinn.network.exploration_radius_spatiotemporal = pinn.compute_exploration_radius( exploration_volume_percentage, pinn.domain, 'spatiotemporal' )
-
-    # Ensure that the user specified unique tolerances are used (not those that were loaded).
-    pinn.network.unique_tolerance_spatial = pinn.compute_exploration_radius( unique_volume_percentage, pinn.domain, 'spatial' )
-    pinn.network.unique_tolerance_spatiotemporal = pinn.compute_exploration_radius( unique_volume_percentage, pinn.domain, 'spatiotemporal' )
-
-    # Ensure that the user specified classification noise parameters are used (not those that were loaded).
-    pinn.pinn_options.classification_noise_percentage = classification_noise_percentage
-    pinn.network.classification_noise_magnitude_spatial = pinn.compute_classification_noise_magnitude( pinn.pinn_options.classification_noise_percentage, pinn.domain, 'spatial' )
-    pinn.network.classification_noise_magnitude_spatiotemporal = pinn.compute_classification_noise_magnitude( pinn.pinn_options.classification_noise_percentage, pinn.domain, 'spatiotemporal' )
-
-    # Save the network before training.
-    pinn.save( save_path, 'pinn_before_training.pkl' )
 
     # Save the network before training.
     pinn.save( save_path, 'pinn_before_training.pkl' )
@@ -541,7 +524,7 @@ def eval_closed_roa( config: dict = BASE_CONFIG ) -> int:
     pinn.pinn_options.num_noisy_samples_per_level_set_point = num_noisy_samples_per_level_set_point
 
     # Compute the classification loss.
-    classification_loss, num_classification_points = pinn.compute_classification_loss( pde = pinn.pde, network = pinn.network, classification_data = None, num_spatial_dimensions = pinn.domain.num_spatial_dimensions, num_timesteps = pinn.hyperparameters.num_timesteps, domain = pinn.domain, plot_time = pinn.domain.temporal_domain[ 1, : ], level = torch.tensor( 0, dtype = torch.float32, device = pinn.pinn_options.device ), level_set_guesses = None, num_guesses = torch.tensor( int( 1e2 ), dtype = torch.int64, device = pinn.pinn_options.device ), newton_tolerance = newton_tolerance, newton_max_iterations = newton_max_iterations, exploration_radius = pinn.network.exploration_radius_spatial, num_exploration_points = num_exploration_points, unique_tolerance = pinn.network.unique_tolerance_spatial, classification_noise_magnitude = pinn.network.classification_noise_magnitude_spatial, num_noisy_samples_per_level_set_point = pinn.pinn_options.num_noisy_samples_per_level_set_point, domain_subset_type = 'spatial', tspan = torch.tensor( [ 0, classification_tfinal.item(  ) ], dtype = classification_tfinal.dtype, device = classification_tfinal.device ), dt = classification_dt )
+    classification_loss, num_classification_points = pinn.compute_classification_loss( pde = pinn.pde, network = pinn.network, classification_data = None, num_spatial_dimensions = pinn.domain.num_spatial_dimensions, domain = pinn.domain, plot_time = pinn.domain.temporal_domain[ 1, : ], level = torch.tensor( 0, dtype = torch.float32, device = pinn.pinn_options.device ), level_set_guesses = None, num_guesses = torch.tensor( int( 1e2 ), dtype = torch.int64, device = pinn.pinn_options.device ), newton_tolerance = newton_tolerance, newton_max_iterations = newton_max_iterations, exploration_radius = pinn.network.exploration_radius_spatial, num_exploration_points = num_exploration_points, unique_tolerance = pinn.network.unique_tolerance_spatial, classification_noise_magnitude = pinn.network.classification_noise_magnitude_spatial, num_noisy_samples_per_level_set_point = pinn.pinn_options.num_noisy_samples_per_level_set_point, domain_subset_type = 'spatial', tspan = torch.tensor( [ 0, classification_tfinal.item(  ) ], dtype = classification_tfinal.dtype, device = classification_tfinal.device ), dt = classification_dt )
 
     # Print the classification loss.
     print( f'# of Classification Points: {num_classification_points}' )
@@ -579,7 +562,7 @@ def eval_closed_roa( config: dict = BASE_CONFIG ) -> int:
         figs_domain, axes_domain = pinn.plot_domain( pinn.pde, projection_dimensions = None, projection_values = None, level = torch.tensor( 0, dtype = torch.float32, device = pinn.pinn_options.device ), fig = None, domain_type = 'spatiotemporal', save_directory = save_path, as_surface = True, as_stream = True, as_contour = True, show_plot = False )
 
         # Plot the initial-boundary conditions.
-        figs, axes = pinn.plot_initial_boundary_condition( 20*torch.ones( pinn.domain.spatiotemporal_domain.shape[ -1 ], dtype = torch.int16, device = pinn.pinn_options.device ), pinn.hyperparameters.num_timesteps, pinn.pde, projection_dimensions = None, projection_values = None, level = torch.tensor( 0, dtype = torch.float32, device = pinn.pinn_options.device ), fig = None, save_directory = save_path, as_surface = True, as_stream = True, as_contour = True, show_plot = False )
+        figs, axes = pinn.plot_initial_boundary_condition( 20*torch.ones( pinn.domain.spatiotemporal_domain.shape[ -1 ], dtype = torch.int16, device = pinn.pinn_options.device ), pinn.pde, projection_dimensions = None, projection_values = None, level = torch.tensor( 0, dtype = torch.float32, device = pinn.pinn_options.device ), fig = None, save_directory = save_path, as_surface = True, as_stream = True, as_contour = True, show_plot = False )
 
         # Plot the network training data.
         figs_training_data, axes_training_data = pinn.plot_training_data( pinn.network, projection_dimensions = None, projection_values = None, level = torch.tensor( 0, dtype = torch.float32, device = pinn.pinn_options.device ), fig = None, plot_type1 = 'all', plot_type2 = 'all', save_directory = save_path, as_surface = True, as_stream = True, as_contour = True, show_plot = False )
@@ -613,10 +596,10 @@ def eval_closed_roa( config: dict = BASE_CONFIG ) -> int:
         pinn.network.exploration_radius_spatiotemporal = pinn.compute_exploration_radius( exploration_volume_percentage, pinn.domain, 'spatiotemporal' )
         pinn.network.unique_tolerance_spatial = pinn.compute_exploration_radius( unique_volume_percentage, pinn.domain, 'spatial' )
         pinn.network.unique_tolerance_spatiotemporal = pinn.compute_exploration_radius( unique_volume_percentage, pinn.domain, 'spatiotemporal' )
-        fig_initial_level_set, ax_initial_level_set = pinn.plot_network_initial_level_set( domain = pinn.domain, network = pinn.network, num_timesteps = pinn.hyperparameters.num_timesteps, level = torch.tensor( 0, dtype = torch.float32, device = pinn.pinn_options.device ), level_set_guess = None, num_guesses = torch.tensor( int( 1e2 ), dtype = torch.int64, device = pinn.pinn_options.device ), newton_tolerance = newton_tolerance, newton_max_iterations = newton_max_iterations, exploration_radius = pinn.network.exploration_radius_spatial, num_exploration_points = num_exploration_points, unique_tolerance = pinn.network.unique_tolerance_spatial, projection_dimensions = None, projection_values = None, fig = fig_initial_prediction, dimension_labels = pinn.domain.dimension_labels, save_directory = save_path, as_surface = False, as_stream = False, as_contour = False, show_plot = False )
+        fig_initial_level_set, ax_initial_level_set = pinn.plot_network_initial_level_set( domain = pinn.domain, network = pinn.network, level = torch.tensor( 0, dtype = torch.float32, device = pinn.pinn_options.device ), level_set_guess = None, num_guesses = torch.tensor( 100, dtype = torch.int64, device = pinn.pinn_options.device ), newton_tolerance = newton_tolerance, newton_max_iterations = newton_max_iterations, exploration_radius = pinn.network.exploration_radius_spatial, num_exploration_points = num_exploration_points, unique_tolerance = pinn.network.unique_tolerance_spatial, projection_dimensions = None, projection_values = None, fig = fig_initial_prediction, dimension_labels = pinn.domain.dimension_labels, save_directory = save_path, as_surface = False, as_stream = False, as_contour = False, show_plot = False )
 
         # Plot the final level set estimate.
-        fig_final_level_set, ax_final_level_set = pinn.plot_network_final_level_set( domain = pinn.domain, network = pinn.network, num_timesteps = pinn.hyperparameters.num_timesteps, level = torch.tensor( 0, dtype = torch.float32, device = pinn.pinn_options.device ), level_set_guess = None, num_guesses = torch.tensor( int( 1e2 ), dtype = torch.int64, device = pinn.pinn_options.device ), newton_tolerance = newton_tolerance, newton_max_iterations = newton_max_iterations, exploration_radius = pinn.network.exploration_radius_spatial, num_exploration_points = num_exploration_points, unique_tolerance = pinn.network.unique_tolerance_spatial, projection_dimensions = None, projection_values = None, fig = fig_final_prediction, dimension_labels = pinn.domain.dimension_labels, save_directory = save_path, as_surface = False, as_stream = False, as_contour = False, show_plot = False )
+        fig_final_level_set, ax_final_level_set = pinn.plot_network_final_level_set( domain = pinn.domain, network = pinn.network, level = torch.tensor( 0, dtype = torch.float32, device = pinn.pinn_options.device ), level_set_guess = None, num_guesses = torch.tensor( int( 1e3 ), dtype = torch.int64, device = pinn.pinn_options.device ), newton_tolerance = newton_tolerance, newton_max_iterations = newton_max_iterations, exploration_radius = pinn.network.exploration_radius_spatial, num_exploration_points = num_exploration_points, unique_tolerance = pinn.network.unique_tolerance_spatial, projection_dimensions = None, projection_values = None, fig = fig_final_prediction, dimension_labels = pinn.domain.dimension_labels, save_directory = save_path, as_surface = False, as_stream = False, as_contour = False, show_plot = False )
 
         # Plot the classification data.
         fig_classification, ax_classification = pinn.plot_network_classifications( network = pinn.network, fig = fig_roa, dimension_labels = pinn.domain.dimension_labels, save_directory = save_path, show_plot = False )
@@ -653,8 +636,7 @@ def eval_closed_roa( config: dict = BASE_CONFIG ) -> int:
 
 # Define behavior when running as main.
 if __name__ == "__main__":
-
-    # Compute the classification loss of the closed roa example.
-    loss = eval_closed_roa(  )
-
-    print( f"Loss: {loss}" )
+    
+    # Compute the classification loss of the circular roa example.
+    loss = eval_circular_roa(  )
+    

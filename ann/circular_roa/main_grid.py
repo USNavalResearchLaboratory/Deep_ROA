@@ -1,6 +1,6 @@
-#%%---------------------------------------- SIMPLE PENDULUM HYPERPARAMETER GRID SEARCH ----------------------------------------
+#%%---------------------------------------- CLOSED ROA HYPERPARAMETER GRID SEARCH ----------------------------------------
 
-# This file performs a grid search over the hyperparameter space of the deep roa network for the simple pendulum problem.
+# This file performs a grid search over the hyperparameter space of the deep roa network for the closed roa problem.
 
 
 #%% ---------------------------------------- IMPORT LIBRARIES ----------------------------------------
@@ -17,32 +17,27 @@ import matplotlib.pyplot as plt
 from typing import List
 
 # Edit the system path to include the working directory.
-sys.path.append(r'./ann/simple_pendulum')
+sys.path.append(r'./ann/circular_roa')
 
 # Import custom libraries.
-from main_eval import BASE_CONFIG, eval_simple_pendulum
+from main_eval import BASE_CONFIG, eval_circular_roa
 
 
 #%% ---------------------------------------- GRID SEARCH SETUP ----------------------------------------
 
 # Define whether to attempt to continue an earlier grid search.
-# LOAD_FLAG = False
-LOAD_FLAG = True                                            # [T/F] True = Attempt to resume a previous, unfinished grid search. False - Start a new grid search, replacing any existing searches with the same name.
+LOAD_FLAG = False
+# LOAD_FLAG = True                                            # [T/F] True = Attempt to resume a previous, unfinished grid search. False - Start a new grid search, replacing any existing searches with the same name.
 
 # Define the number of times to repeat each configuration in the grid.
 NUM_REPEATS = 1                 # [#] Number of times each configuration in the grid search is run.
 
 # Define the save directory for all grid search runs.
-SAVE_DIR = r'./ann/simple_pendulum/save'
+SAVE_DIR = r'./ann/circular_roa/save'
 
 # Define the folder in which to save results for this particular grid search.
-# SEARCH_ID = 'run1_coarse_grid'
+SEARCH_ID = 'run1_coarse_grid'
 # SEARCH_ID = 'run2_fine_grid'
-# SEARCH_ID = 'run3_coarse_grid_different_BCs'
-# SEARCH_ID = 'run4_fine_grid_different_BCs'
-# SEARCH_ID = 'run5_larger_coarse_grid_closed_BCs'
-SEARCH_ID = 'run6_larger_coarse_grid_open_BCs'
-# SEARCH_ID = 'run7_testing'
 
 
 #%% ---------------------------------------- DEFINE GRID SEARCH SPACE ----------------------------------------
@@ -59,68 +54,45 @@ SEARCH_ID = 'run6_larger_coarse_grid_open_BCs'
 #     'learning_rate':       [ float( 0.01 ), float( 0.005 ), float( 0.001 ) ],
 # }
 
-# # Define the search space. Run 1 - Coarse grid.
-# SEARCH_SPACE = {
-#     'c_IC': [ float( 1.0 ) ],
-#     'c_BC': [ float( 1.0 ) ],
-#     'c_residual':     [ float( 1e-5 ), float( 1e-4 ), float( 1e-3 ) ],
-#     'c_variational':  [ float( 1e-5 ), float( 1e-4 ), float( 1e-3 ) ],
-#     'c_monotonicity': [ float( 1e2 ) ],
-#     'hidden_layer_widths': [ int( 50 ), int( 175 ), int( 500 ) ],
-#     'num_hidden_layers':   [ int( 3 ), int( 5 ), int( 7 ) ],
-#     'learning_rate':       [ float( 5e-4 ), float( 5e-3 ), float( 5e-2 ) ],
-# }
+# Define the search space. Run 1 - Coarse grid.
+SEARCH_SPACE = {
+    'c_IC': [ float( 1.0 ) ],
+    'c_BC': [ float( 1.0 ) ],
+    'c_residual':     [ float( 1e-2 ), float( 1 ), float( 1e2 ) ],
+    'c_variational':  [ float( 1e-2 ), float( 1 ), float( 1e2 ) ],
+    'c_monotonicity': [ float( 1e3 ) ],
+    'hidden_layer_widths': [ int( 50 ), int( 175 ), int( 500 ) ],
+    'num_hidden_layers':   [ int( 3 ), int( 5 ), int( 7 ) ],
+    'learning_rate':       [ float( 5e-4 ), float( 5e-3 ), float( 5e-2 ) ],
+}
 
-# # Define the search space. Run 2 - Refined Grid.
+# # Define the search space. Run 2 - Refined grid.
 # SEARCH_SPACE = {
 #     'c_IC': [ float( 1.0 ) ],
 #     'c_BC': [ float( 1.0 ) ],
-#     'c_residual':     [ float( 1e-7 ), float( 5e-7 ), float( 1e-6 ), float( 5e-6 ), float( 1e-5 ), float( 5e-5 ), float( 1e-4 ), float( 5e-4 ), float( 1e-3 ), float( 5e-3 ), float( 1e-2 ), float( 5e-2 ), float( 1e-1 ) ],
-#     'c_variational':  [ float( 1e-7 ), float( 5e-7 ), float( 1e-6 ), float( 5e-6 ), float( 1e-5 ), float( 5e-5 ), float( 1e-4 ), float( 5e-4 ), float( 1e-3 ), float( 5e-3 ), float( 1e-2 ), float( 5e-2 ), float( 1e-1 ) ],
-#     'c_monotonicity': [ float( 1e2 ) ],
+#     'c_residual':     [ float( 1e-3 ), float( 5e-3 ), float( 1e-2 ), float( 5e-2 ), float( 1e-1 ), float( 5e-1 ), float( 1 ), float( 5 ), float( 1e1 ), float( 5e1 ), float( 1e2 ), float( 5e2 ), float( 1e3 ) ],
+#     'c_variational':  [ float( 1e-3 ), float( 5e-3 ), float( 1e-2 ), float( 5e-2 ), float( 1e-1 ), float( 5e-1 ), float( 1 ), float( 5 ), float( 1e1 ), float( 5e1 ), float( 1e2 ), float( 5e2 ), float( 1e3 ) ],
+#     'c_monotonicity': [ float( 1e3 ) ],
 #     'hidden_layer_widths': [ int( 175 ) ],
 #     'num_hidden_layers':   [ int( 5 ) ],
 #     'learning_rate':       [ float( 0.005 ) ],
 # }
 
-# # Define the search space. Run 5 - Larger Coarse Grid (Closed Boundary Conditions).
+# # Define the search space. SINGLE TEST PARAMETERS.
 # SEARCH_SPACE = {
 #     'c_IC': [ float( 1.0 ) ],
 #     'c_BC': [ float( 1.0 ) ],
-#     'c_residual':     [ float( 1e-5 ), float( 5e-5 ), float( 1e-4 ), float( 5e-4 ), float( 1e-3 ) ],
-#     'c_variational':  [ float( 1e-5 ), float( 5e-5 ), float( 1e-4 ), float( 5e-4 ), float( 1e-3 ) ],
-#     'c_monotonicity': [ float( 1e2 ) ],
-#     'hidden_layer_widths': [ int( 125 ), int( 250 ), int( 500 ) ],
-#     'num_hidden_layers':   [ int( 3 ), int( 5 ), int( 7 ) ],
-#     'learning_rate':       [ float( 5e-4 ), float( 5e-3 ), float( 5e-2 ) ],
-# }
-
-# Define the search space. Run 6 - Larger Coarse Grid (Open Boundary Conditions).
-SEARCH_SPACE = {
-    'c_IC': [ float( 1.0 ) ],
-    'c_BC': [ float( 1.0 ) ],
-    'c_residual':     [ float( 1e-5 ), float( 5e-5 ), float( 1e-4 ), float( 5e-4 ), float( 1e-3 ) ],
-    'c_variational':  [ float( 1e-5 ), float( 5e-5 ), float( 1e-4 ), float( 5e-4 ), float( 1e-3 ) ],
-    'c_monotonicity': [ float( 1e2 ) ],
-    'hidden_layer_widths': [ int( 125 ), int( 250 ), int( 500 ) ],
-    'num_hidden_layers':   [ int( 3 ), int( 5 ), int( 7 ) ],
-    'learning_rate':       [ float( 5e-4 ), float( 5e-3 ), float( 5e-2 ) ],
-}
-
-# # Define the search space. TEST PARAMETERS.
-# SEARCH_SPACE = {
-#     'c_IC': [ float( 1.0 ) ],                                                               # [-] Initial Condition Loss Coefficient
-#     'c_BC': [ float( 1.0 ) ],                                                               # [-] Boundary Condition Loss Coefficient
-#     'c_residual':     [ float( 1e-5 ), float( 1e-4 ), float( 1e-3 ) ],                      # [-] Residual Loss Coefficient
-#     'c_variational':  [ float( 1e-5 ), float( 1e-4 ), float( 1e-3 ) ],                      # [-] Variational Loss Coefficient
-#     'c_monotonicity': [ float( 1e2 ) ],                                                     # [-] Monotonicity Loss Coefficient
-#     'hidden_layer_widths': [ int( 175 ) ],                                                  # [#] Number of neurons per hidden layer.
-#     'num_hidden_layers':   [ int( 5 ) ],                                                    # [#] Number of hidden layers.
-#     'learning_rate':       [ float( 5e-4 ) ],                                               # [-] Learning Rate.
+#     'c_residual':     [ float( 1 ) ],
+#     'c_variational':  [ float( 1 ) ],
+#     'c_monotonicity': [ float( 1e3 ) ],
+#     'hidden_layer_widths': [ int( 175 ) ],
+#     'num_hidden_layers':   [ int( 5 ) ],
+#     'learning_rate':       [ float( 0.005 ) ],
 # }
 
 
 #%% ---------------------------------------- IMPLEMENT MAIN FUNCTION ----------------------------------------
+
 
 # Implement the main function.
 def main( base_config = BASE_CONFIG, num_repeats = NUM_REPEATS, search_id = SEARCH_ID, save_dir = SAVE_DIR, search_space = SEARCH_SPACE, load_flag = LOAD_FLAG ):
@@ -273,7 +245,7 @@ def main( base_config = BASE_CONFIG, num_repeats = NUM_REPEATS, search_id = SEAR
                     os.makedirs( eval_config[ 'paths' ][ 'save_path' ], exist_ok = True )
 
                     # Evaluate the loss of this configuration.
-                    loss = eval_simple_pendulum( eval_config )
+                    loss = eval_circular_roa( eval_config )
 
                     # Append this loss to the loss array.
                     losses.append( loss )

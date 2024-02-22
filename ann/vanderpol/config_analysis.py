@@ -14,18 +14,10 @@ import numpy as np
 
 #%% ---------------------------------------- READ IN GRID SEARCH CONFIGURATIONS ----------------------------------------
 
-# # Define the config, config losses, and average config losses paths.
-# configs_path = r'ann/simple_pendulum/save/run7_testing/configs.pkl'
-# losses_path = r'ann/simple_pendulum/save/run7_testing/config_losses.pkl'
-# avg_losses_path = r'ann/simple_pendulum/save/run7_testing/avg_config_losses.pkl'
-
-# configs_path = r'ann/simple_pendulum/save/run5_larger_coarse_grid_closed_BCs/configs.pkl'
-# losses_path = r'ann/simple_pendulum/save/run5_larger_coarse_grid_closed_BCs/config_losses.pkl'
-# avg_losses_path = r'ann/simple_pendulum/save/run5_larger_coarse_grid_closed_BCs/avg_config_losses.pkl'
-
-configs_path = r'ann/simple_pendulum/save/run6_larger_coarse_grid_open_BCs/configs.pkl'
-losses_path = r'ann/simple_pendulum/save/run6_larger_coarse_grid_open_BCs/config_losses.pkl'
-avg_losses_path = r'ann/simple_pendulum/save/run6_larger_coarse_grid_open_BCs/avg_config_losses.pkl'
+# Define the config, config losses, and average config losses paths.
+configs_path = r'ann/vanderpol/save/run5_larger_coarse_grid_closed_BCs/configs.pkl'
+losses_path = r'ann/vanderpol/save/run5_larger_coarse_grid_closed_BCs/config_losses.pkl'
+avg_losses_path = r'ann/vanderpol/save/run5_larger_coarse_grid_closed_BCs/avg_config_losses.pkl'
 
 # Open the config file.
 with open( configs_path, 'rb' ) as file:                   # With the config file open...

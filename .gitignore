@@ -1,15 +1,15 @@
-# ignore specific folders
-# save/
-# load/
-*/ann/*/save/run*
-*/ann/*/save/grid_search*
+#%% -------------------- DEEP ROA BO GIT IGNORE --------------------
 
-.testing/**
+# Ignore specific directories.
+*/ann/*/save/run*/*
+*/ann/*/save/grid_search*/*
 
-# Ignore specific file extensions
+# Ignore specific file extensions.
 *.pkl
 *.png
 *.jpg
+*.log
+*.txt
 
 # Ignore pycache folders.
 */ann/utilities/__pycache__
