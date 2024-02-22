@@ -12,6 +12,10 @@ def run_grid_search(eval_func: Callable, base_config: dict, device: str,
     """
     TODO Add Documentation
     """
+
+    print("init")
+    print("neuron_current_decay: ", base_config['hyperparameters']['neuron_current_decay'])
+    print("neuron_voltage_decay: ", base_config['hyperparameters']['neuron_voltage_decay'])
     
     base_config = deepcopy(base_config)
     base_config_len: int = len(base_config)
@@ -49,7 +53,17 @@ def run_grid_search(eval_func: Callable, base_config: dict, device: str,
 
             for repeat in range(num_repeats):
                 eval_config = deepcopy(base_config)
+                # print("before")
+                # print("neuron_current_decay: ", config['neuron_current_decay'])
+                # print("neuron_voltage_decay: ", config['neuron_voltage_decay'])
+                # print("synapse_gain: ", config['synapse_gain'])
+                # print("num_timesteps: ", config['num_timesteps'])
                 eval_config['hyperparameters'].update(config)
+                print("after")
+                print("neuron_current_decay: ", eval_config['hyperparameters']['neuron_current_decay'])
+                print("neuron_voltage_decay: ", eval_config['hyperparameters']['neuron_voltage_decay'])
+                print("synapse_gain: ", eval_config['hyperparameters']['synapse_gain'])
+                print("num_timesteps: ", eval_config['hyperparameters']['num_timesteps'])
                 eval_config['runtime']['seed'] = repeat
                 eval_config['paths']['save_path'] = os.path.join(
                     base_config['paths']['save_path'],
