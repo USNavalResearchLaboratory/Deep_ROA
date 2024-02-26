@@ -21,7 +21,9 @@ import sys
 import torch
 import math
 import matplotlib.pyplot as plt
+import time
 
+start_time = time.time()
 # Ensure that the utilities folder for this project is on the system path.
 sys.path.append( r'./snn/utilities' )
 
@@ -236,6 +238,7 @@ p_residual = torch.tensor( 0.5, dtype = torch.float16, device = device )        
 num_epochs = torch.tensor( 400, dtype = torch.int32, device = device )                                  # [#] Number of training epochs to perform.
 # num_epochs = torch.tensor( 1000, dtype = torch.int32, device = device )                                  # [#] Number of training epochs to perform.
 
+
 # Define the residual batch size.
 residual_batch_size = torch.tensor( int( 10e3 ), dtype = torch.int32, device = device )                 # [#] Training batch size. # This works for variational loss integration order 1.
 
@@ -376,3 +379,6 @@ print( '------------------------------------------------------------------------
 print( 'COMPLETE' )
 print( '------------------------------------------------------------------------------------------------------------------------' )
 print( '\n' )
+
+end_time = time.time()
+print(end_time - start_time)
