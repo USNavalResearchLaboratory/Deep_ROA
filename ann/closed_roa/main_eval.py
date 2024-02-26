@@ -86,7 +86,8 @@ BASE_CONFIG = {
     },
     'plotting_parameters': {
         'num_plotting_samples': int( 20 ),
-        'plot_flag': bool( False ),
+        # 'plot_flag': bool( False ),
+        'plot_flag': bool( True ),
     },
     'printing_parameters': {
         'batch_print_frequency': int( 10 ),
@@ -94,7 +95,7 @@ BASE_CONFIG = {
         'print_flag': bool( True ),
     },
     'runtime': {
-        'device': 'cuda:9' if torch.cuda.is_available(  ) else 'cpu',
+        'device': 'cuda:8' if torch.cuda.is_available(  ) else 'cpu',
         'seed': int( 0 ),
         'load_flag': bool( False ),
         'train_flag': bool( True ),

@@ -2506,6 +2506,7 @@ class neural_network_class( torch.nn.Module ):
 
         # Compute the gradients associated with the loss.
         batch_loss.backward(  )
+        # batch_loss.backward( retain_graph = True )
 
         # Perform an optimizer step on this batch.
         self.optimizer.step(  )

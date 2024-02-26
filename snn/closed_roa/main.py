@@ -44,7 +44,7 @@ plt.rcParams.update( { 'figure.max_open_warning': 0 } )                         
 torch.manual_seed( 0 )
 
 # Set the computational device.
-device = 'cuda:8' if torch.cuda.is_available(  ) else 'cpu'
+device = 'cuda:9' if torch.cuda.is_available(  ) else 'cpu'
 
 #%% ---------------------------------------- DEFINE PINN OPTIONS ----------------------------------------
 
@@ -78,8 +78,8 @@ plot_flag = True                                                                
 verbose_flag = True                                                                                 # [T/F] Flag that determines whether to print more or less information when printing.
 
 # Define the newton parameters (used for level set generation).
-newton_tolerance = torch.tensor( 1e-6, dtype = torch.float32, device = device )                     # [-] Convergence tolerance for the Newton's root finding method.
-# newton_tolerance = torch.tensor( 1e-4, dtype = torch.float32, device = device )                     # [-] Convergence tolerance for the Newton's root finding method.
+# newton_tolerance = torch.tensor( 1e-6, dtype = torch.float32, device = device )                     # [-] Convergence tolerance for the Newton's root finding method.
+newton_tolerance = torch.tensor( 1e-4, dtype = torch.float32, device = device )                     # [-] Convergence tolerance for the Newton's root finding method.
 newton_max_iterations = torch.tensor( int( 1e2 ), dtype = torch.int32, device = device )            # [#] Maximum number of Newton's method steps to perform.
 
 # Define the exploration parameters (used for level set generation).
@@ -90,8 +90,8 @@ unique_volume_percentage = torch.tensor( 1e-4, dtype = torch.float32, device = d
 # Define the classification parameters.
 num_noisy_samples_per_level_set_point = torch.tensor( 5, dtype = torch.int16, device = device )     # [#] Number of noisy samples per level set point.
 classification_noise_percentage = torch.tensor( 1e-3, dtype = torch.float32, device = device )      # [%] The classification point noise magnitude represented as a percentage of the domain volume.  This parameter conveniently scales the noise magnitude of the classification points as the dimension of the problem is adjusted.
-classification_dt = torch.tensor( 1e-3, dtype = torch.float32, device = device )                    # [s] The classification simulation timestep used to forecast classification points.
-# classification_dt = torch.tensor( 1e-2, dtype = torch.float32, device = device )                    # [s] The classification simulation timestep used to forecast classification points.
+# classification_dt = torch.tensor( 1e-3, dtype = torch.float32, device = device )                    # [s] The classification simulation timestep used to forecast classification points.
+classification_dt = torch.tensor( 1e-2, dtype = torch.float32, device = device )                    # [s] The classification simulation timestep used to forecast classification points.
 classification_tfinal = torch.tensor( 10, dtype = torch.float32, device = device )                  # [s] The classification simulation duration used to forecast classification points.
 
 # Create the pinn options object.
@@ -210,18 +210,18 @@ num_timesteps = torch.tensor( 1, dtype = torch.int16, device = device )         
 # num_timesteps = torch.tensor( 10, dtype = torch.int16, device = device )                              # [#] Number of timesteps for which each input is presented to the network.
 
 # Store the network parameters.
-activation_function = 'tanh'                                                                            # [-] Activation function (e.g., tanh, sigmoid, etc.)
+activation_function = 'tanh'                                                                             # [-] Activation function (e.g., tanh, sigmoid, etc.)
 
-# num_hidden_layers = torch.tensor( 3, dtype = torch.uint8, device = device )                           # [#] Number of hidden layers.
-num_hidden_layers = torch.tensor( 4, dtype = torch.uint8, device = device )                           # [#] Number of hidden layers.
+num_hidden_layers = torch.tensor( 3, dtype = torch.uint8, device = device )                           # [#] Number of hidden layers.
+# num_hidden_layers = torch.tensor( 4, dtype = torch.uint8, device = device )                           # [#] Number of hidden layers.
 # num_hidden_layers = torch.tensor( 5, dtype = torch.uint8, device = device )                             # [#] Number of hidden layers.
 
 # hidden_layer_widths = torch.tensor( int( 5e1 ), dtype = torch.int16, device = device )                # [#] Hidden layer widths.
 # hidden_layer_widths = torch.tensor( int( 1e2 ), dtype = torch.int16, device = device )                # [#] Hidden layer widths.
 
 # # This captured the initial & boundary condition fairly well.
-# hidden_layer_widths = torch.tensor( 250, dtype = torch.int16, device = device )                         # [#] Hidden layer widths.
-hidden_layer_widths = torch.tensor( 500, dtype = torch.int16, device = device )                         # [#] Hidden layer widths.
+hidden_layer_widths = torch.tensor( 250, dtype = torch.int16, device = device )                         # [#] Hidden layer widths.
+# hidden_layer_widths = torch.tensor( 500, dtype = torch.int16, device = device )                         # [#] Hidden layer widths.
 
 # Set the quantity of training and testing data.
 num_training_data = torch.tensor( int( 100e3 ), dtype = torch.int32, device = device )                  # [#] Number of training data points.
@@ -233,8 +233,8 @@ p_boundary = torch.tensor( 0.25, dtype = torch.float16, device = device )       
 p_residual = torch.tensor( 0.5, dtype = torch.float16, device = device )                                # [%] Percentage of training and testing data associated with the residual.
 
 # Define the number of training epochs.
-# num_epochs = torch.tensor( 400, dtype = torch.int32, device = device )                                  # [#] Number of training epochs to perform.
-num_epochs = torch.tensor( 1000, dtype = torch.int32, device = device )                                  # [#] Number of training epochs to perform.
+num_epochs = torch.tensor( 400, dtype = torch.int32, device = device )                                  # [#] Number of training epochs to perform.
+# num_epochs = torch.tensor( 1000, dtype = torch.int32, device = device )                                  # [#] Number of training epochs to perform.
 
 # Define the residual batch size.
 residual_batch_size = torch.tensor( int( 10e3 ), dtype = torch.int32, device = device )                 # [#] Training batch size. # This works for variational loss integration order 1.
