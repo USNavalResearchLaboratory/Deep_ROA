@@ -65,21 +65,21 @@ BASE_CONFIG = {
         'activation_function': 'sigmoid',
         'c_IC': float( 1.0 ),
         'c_BC': float( 1.0 ),
-        'c_residual': float(  ),
+        'c_residual': float( 0 ),
         'c_variational': float( 0 ),
         'c_monotonicity': float( 0 ),
         'hidden_layer_widths': int( 250 ),
         'num_epochs': int( 400 ),
-        'num_hidden_layers': int( 5 ),
+        'num_hidden_layers': int( 3 ),
         'num_training_data': int( 100e3 ),
         'num_testing_data': int( 20e3 ),
-        'learning_rate': float( 0.005 ),
-        "neuron_threshold": float( 0.5 ),
+        'learning_rate': float( 5e-3 ),
+        "neuron_threshold": float( 1.0 ),
         "neuron_current_decay": float( 1.0 ),
         "neuron_voltage_decay": float( 1.0 ),
         "neuron_persistent_state": bool( False ),
         "neuron_requires_grad": bool( False ),
-        "synapse_gain": float( 3.0 ),
+        "synapse_gain": float( 1.0 ),
         'num_timesteps': int( 1 ),
     },
     'newton_parameters': {
@@ -92,7 +92,7 @@ BASE_CONFIG = {
     },
     'plotting_parameters': {
         'num_plotting_samples': int( 20 ),
-        'plot_flag': bool( False ),
+        'plot_flag': bool( True ),
     },
     'printing_parameters': {
         'batch_print_frequency': int( 10 ),
@@ -100,7 +100,7 @@ BASE_CONFIG = {
         'print_flag': bool( True ),
     },
     'runtime': {
-        'device': 'cuda:7' if torch.cuda.is_available(  ) else 'cpu',
+        'device': 'cuda:9' if torch.cuda.is_available(  ) else 'cpu',
         'seed': int( 0 ),
         'load_flag': bool( False ),
         'train_flag': bool( True ),
@@ -148,6 +148,15 @@ def eval_closed_roa( config: dict = BASE_CONFIG ) -> int:
     # Retrieve the starting time for setting up.
     start_time_setup = time.time(  )
 
+
+    #%% ---------------------------------------- SETUP CONFIGURATION ----------------------------------------
+
+    # Print out a message stating that we are setting up the configuration.
+    print( 'Setting up configuration...' )
+
+    # Retrieve the configuration start time.
+    start_time_config = time.time(  )
+
     # Create a copy of the default configuration.
     new_config = deepcopy( BASE_CONFIG )
 
@@ -161,13 +170,55 @@ def eval_closed_roa( config: dict = BASE_CONFIG ) -> int:
     # Make a copy of the new configuration.
     config = deepcopy( new_config )
 
+    # Retrieve the configuration end time.
+    end_time_config = time.time(  )
+
+    # Compute the configuration duration.
+    duration_config = end_time_config - start_time_config
+
+    # Print out the configuration.
+    print( '\n' )
+    print( 'Configuration:\n' )
+    print( config )
+    print( '\n' )
+
+    # Print out a message saying that we are done setting up the configuration.
+    print( f'Setting up configuration... Done. Duration = {duration_config}s = {duration_config/60}min = {duration_config/3600}hr' )
+    print( '\n' )
+
+
+    #%% ---------------------------------------- SETUP SIMULATION PROPERTIES ----------------------------------------
+
+    # Print a message starting that we are setting up simulation properties.
+    print( 'Setting up simulation properties...' )
+
+    # Retrieve the simulation properties starting time.
+    start_time_simprop = time.time(  )
+
     # Set the random seeds.
-    np.random.seed( config[ 'runtime' ]['seed' ] )
-    random.seed( config[ 'runtime' ][ 'seed' ] )
-    torch.manual_seed( config[ 'runtime' ][ 'seed' ] )
+    random_seed = config[ 'runtime' ]['seed' ]
+    np.random.seed( random_seed )
+    random.seed( random_seed )
+    torch.manual_seed( random_seed )
 
     # Set the computational device.
     device = torch.device( config[ 'runtime' ][ 'device' ] )
+
+    # Retrieve the simulation properties ending time.
+    end_time_simprop = time.time(  )
+
+    # Compute the simulation properties duration.
+    duration_simprop = end_time_simprop - start_time_simprop
+
+    # Print out the simulation properties.
+    print( '\n' )
+    print( f'Random Seed: {random_seed}' )
+    print( f'Device: {device} ')
+    print( '\n' )
+    
+    # Print out a message saying that we are done setting up the simulation properties.
+    print( f'Setting up simulation properties... Done. Duration = {duration_simprop}s = {duration_simprop/60}min = {duration_simprop/3600}hr' )
+    print( '\n' )
 
 
     #%% ---------------------------------------- DEFINE PINN OPTIONS ----------------------------------------
@@ -176,7 +227,7 @@ def eval_closed_roa( config: dict = BASE_CONFIG ) -> int:
     # Instead, the pinn option parameters are those that define the tasks the user would like performed and adjust quality-of-life factors, such as where and how often to save, print, and plot relevant network data before, during, and after the training process.
 
     # Print out a message saying that we are setting up the pinn options.
-    print( 'Settig up PINN options...' )
+    print( 'Setting up PINN options...' )
 
     # Retrieve the pinn options setup starting time.
     start_time_pinn_options = time.time(  )
@@ -243,6 +294,31 @@ def eval_closed_roa( config: dict = BASE_CONFIG ) -> int:
     # Compute the pinn options duration.
     pinn_options_duration = end_time_pinn_options - start_time_pinn_options
 
+    # Print out the pinn option information.
+    print( '\n' )
+    print( f'Save Path: \t\t\t\t{save_path} \t[-]' )
+    print( f'Save Frequency: \t\t\t{save_frequency} \t\t\t[#]' )
+    print( f'Save Flag: \t\t\t\t{save_flag} \t\t\t[T/F]')
+    print( f'Load Path: \t\t\t\t{load_path} \t[-]' )
+    print( f'Load Flag: \t\t\t\t{load_flag} \t\t\t[T/F]')
+    print( f'Train Flag: \t\t\t\t{train_flag} \t\t\t[T/F]' )
+    print( f'Batch Print Frequency: \t\t\t{batch_print_frequency} \t\t\t[#]' )
+    print( f'Epoch Print Frequency: \t\t\t{epoch_print_frequency} \t\t\t[#]' )
+    print( f'Print Flag: \t\t\t\t{print_flag} \t\t\t[T/F]' )
+    print( f'# of Plotting Samples: \t\t\t{num_plotting_samples} \t\t\t[#]')
+    print( f'Plot Flag: \t\t\t\t{plot_flag} \t\t\t[T/F]' )
+    print( f'Verbose Flag: \t\t\t\t{verbose_flag} \t\t\t[T/F]' )
+    print( f'Newton Tolerance: \t\t\t{newton_tolerance:.2e} \t\t[states]' )
+    print( f'Newton Max Iterations: \t\t\t{newton_max_iterations} \t\t\t[#]' )
+    print( f'Exploration Volume Ratio: \t\t{exploration_volume_percentage:.2e} \t\t[-]' )
+    print( f'# of Exploration Points: \t\t{num_exploration_points} \t\t\t[#]' )
+    print( f'Unique Volume Ratio: \t\t\t{unique_volume_percentage:.2e} \t\t[-]' )
+    print( f'# Samples Per Level Set Point: \t\t{num_noisy_samples_per_level_set_point} \t\t\t[#]' )
+    print( f'Classification Noise Ratio: \t\t{classification_noise_percentage:.2e} \t\t[-]' )
+    print( f'Classification Time Step: \t\t{classification_dt:.2e} \t\t[s]' )
+    print( f'Classification Time Limit: \t\t{classification_tfinal} \t\t\t[s]' )
+    print( '\n' )
+
     # Print out a message saying that we are done setting up pinn options.
     print( f'Setting up PINN options... Done. Duration = {pinn_options_duration}s = {pinn_options_duration/60}min = {pinn_options_duration/3600}hr' )
     print( '\n' )
@@ -290,30 +366,6 @@ def eval_closed_roa( config: dict = BASE_CONFIG ) -> int:
     temporal_code = [ torch.tensor( [ 0 ], dtype = torch.uint8, device = device ) ]                                                                                                                                                                             # [-]    
 
     # Define the initial-boundary condition functions.
-    # f_ic = lambda s: 0.32*torch.norm( s[ :, 1:, -1 ], 2, dim = 1, keepdim = True )**2 - 0.96*torch.norm( s[ :, 1:, -1 ], 2, dim = 1, keepdim = True ) - 0.28               # [-] Initial condition function.
-    # f_bc_1 = lambda s: 0.32*torch.norm( s[ :, 1:, -1 ], 2, dim = 1, keepdim = True )**2 - 0.96*torch.norm( s[ :, 1:, -1 ], 2, dim = 1, keepdim = True ) - 0.28              # [-] Boundary condition function.
-    # f_bc_2 = lambda s: 0.32*torch.norm( s[ :, 1:, -1 ], 2, dim = 1, keepdim = True )**2 - 0.96*torch.norm( s[ :, 1:, -1 ], 2, dim = 1, keepdim = True ) - 0.28              # [-] Boundary condition function.
-    # f_bc_3 = lambda s: 0.32*torch.norm( s[ :, 1:, -1 ], 2, dim = 1, keepdim = True )**2 - 0.96*torch.norm( s[ :, 1:, -1 ], 2, dim = 1, keepdim = True ) - 0.28              # [-] Boundary condition function.
-    # f_bc_4 = lambda s: 0.32*torch.norm( s[ :, 1:, -1 ], 2, dim = 1, keepdim = True )**2 - 0.96*torch.norm( s[ :, 1:, -1 ], 2, dim = 1, keepdim = True ) - 0.28              # [-] Boundary condition function.
-
-    # f_ic = lambda s: torch.unsqueeze( 0.32*s[ :, 1, -1 ]**2 - 0.96*s[ :, 1, -1 ] - 0.28, dim = 1 )               # [-] Initial condition function.
-    # f_bc_1 = lambda s: torch.unsqueeze( 0.32*s[ :, 1, -1 ]**2 - 0.96*s[ :, 1, -1 ] - 0.28, dim = 1 )              # [-] Boundary condition function.
-    # f_bc_2 = lambda s: torch.unsqueeze( 0.32*s[ :, 1, -1 ]**2 - 0.96*s[ :, 1, -1 ] - 0.28, dim = 1 )              # [-] Boundary condition function.
-    # f_bc_3 = lambda s: torch.unsqueeze( 0.32*s[ :, 1, -1 ]**2 - 0.96*s[ :, 1, -1 ] - 0.28, dim = 1 )              # [-] Boundary condition function.
-    # f_bc_4 = lambda s: torch.unsqueeze( 0.32*s[ :, 1, -1 ]**2 - 0.96*s[ :, 1, -1 ] - 0.28, dim = 1 )              # [-] Boundary condition function.
-
-    # f_ic = lambda s: torch.unsqueeze( ( 2/5 )*s[ :, 1, -1 ] - ( 3/5 ), dim = 1 )               # [-] Initial condition function.
-    # f_bc_1 = lambda s: torch.unsqueeze( ( 2/5 )*s[ :, 1, -1 ] - ( 3/5 ), dim = 1 )              # [-] Boundary condition function.
-    # f_bc_2 = lambda s: torch.unsqueeze( ( 2/5 )*s[ :, 1, -1 ] - ( 3/5 ), dim = 1 )              # [-] Boundary condition function.
-    # f_bc_3 = lambda s: torch.unsqueeze( ( 2/5 )*s[ :, 1, -1 ] - ( 3/5 ), dim = 1 )              # [-] Boundary condition function.
-    # f_bc_4 = lambda s: torch.unsqueeze( ( 2/5 )*s[ :, 1, -1 ] - ( 3/5 ), dim = 1 )              # [-] Boundary condition function.
-
-    # f_ic = lambda s: torch.unsqueeze( ( 2/5 )*s[ :, 2, -1 ] - ( 3/5 ), dim = 1 )               # [-] Initial condition function.
-    # f_bc_1 = lambda s: torch.unsqueeze( ( 2/5 )*s[ :, 2, -1 ] - ( 3/5 ), dim = 1 )              # [-] Boundary condition function.
-    # f_bc_2 = lambda s: torch.unsqueeze( ( 2/5 )*s[ :, 2, -1 ] - ( 3/5 ), dim = 1 )              # [-] Boundary condition function.
-    # f_bc_3 = lambda s: torch.unsqueeze( ( 2/5 )*s[ :, 2, -1 ] - ( 3/5 ), dim = 1 )              # [-] Boundary condition function.
-    # f_bc_4 = lambda s: torch.unsqueeze( ( 2/5 )*s[ :, 2, -1 ] - ( 3/5 ), dim = 1 )              # [-] Boundary condition function.
-
     f_ic = lambda s: A0/( 1 + torch.exp( -S0*( torch.norm( s[ :, 1:, -1 ] - P0_shift, 2, dim = 1, keepdim = True ) - R0 ) ) ) + z0_shift                # [-] Initial condition function.
     f_bc_1 = lambda s: A0/( 1 + torch.exp( -S0*( torch.norm( s[ :, 1:, -1 ] - P0_shift, 2, dim = 1, keepdim = True ) - R0 ) ) ) + z0_shift              # [-] Boundary condition function.
     f_bc_2 = lambda s: A0/( 1 + torch.exp( -S0*( torch.norm( s[ :, 1:, -1 ] - P0_shift, 2, dim = 1, keepdim = True ) - R0 ) ) ) + z0_shift              # [-] Boundary condition function.
@@ -348,6 +400,38 @@ def eval_closed_roa( config: dict = BASE_CONFIG ) -> int:
     # Compute the pinn options duration.
     problem_specifications_duration = end_time_problem_specifications - start_time_problem_specifications
 
+    # Print the problem specifications.
+    print( '\n' )
+    print( f'# of Inputs: \t\t\t{num_inputs} \t\t\t\t\t\t\t\t\t[#]' )
+    print( f'# of Outputs:: \t\t\t{num_outputs} \t\t\t\t\t\t\t\t\t[#]' )
+    print( f'Domain Type: \t\t\t{domain_type} \t\t\t\t\t\t\t\t[-]' )
+    print( f'Temporal Domain: \t\t{temporal_domain} \t\t\t\t\t[s]' )
+    print( f'Spatial Domain:' )
+    print( f'\n{spatial_domain} \t\t\t\t\t\t\t\t\t[state]\n' )
+    print( f'R0: \t\t\t\t{R0} \t\t\t\t\t\t\t\t\t[state]' )
+    print( f'A0: \t\t\t\t{A0} \t\t\t\t\t\t\t\t\t[-]' )
+    print( f'P0_shift: \t\t\t{P0_shift} \t\t\t\t[state]')
+    print( f'z0_shift: \t\t\t{z0_shift} \t\t\t\t\t\t\t\t\t[-]' )
+    print( f'Flow function 1: \t\t{flow_function1} \t\t[-]' )
+    print( f'Flow function 2: \t\t{flow_function2} \t\t[-]' )
+    print( f'Residual Function: \t\t{residual_function} \t\t[-]' )
+    print( f'Residual Code:' )
+    print( f'\n{residual_code}\n')
+    print( f'Temporal Code: \t\t\t{temporal_code} \t\t\t[#]' )
+    print( f'IC Function: \t\t\t{f_ic} \t\t[-]' )
+    print( f'BC Function 1: \t\t\t{f_bc_1} \t\t[-]')
+    print( f'BC Function 2: \t\t\t{f_bc_2} \t\t[-]')
+    print( f'BC Function 3: \t\t\t{f_bc_3} \t\t[-]')
+    print( f'BC Function 4: \t\t\t{f_bc_4} \t\t[-]')
+    print( f'IBC Types: \t\t\t{ibc_types} \t[-]' )
+    print( f'IBC Dimensions: \t\t{ibc_dimensions} \t\t[-]' )
+    print( f'IBC Condition Functions:' )
+    print( f'\n{ibc_condition_functions}\n' )
+    print( f'IBC Placements: \t\t{ibc_placements} \t\t\t\t[lower/upper]' )
+    print( f'PDE Name: \t\t\t{pde_name} \t\t\t\t\t\t[str]' )
+    print( f'PDE Type: \t\t\t{pde_type} \t\t\t\t\t\t\t\t[str]' )
+    print( '\n' )
+
     # Print out a message saying that we are done setting up problem specifications.
     print( f'Setting up problem specifications... Done. Duration = {problem_specifications_duration}s = {problem_specifications_duration/60}min = {problem_specifications_duration/3600}hr' )
     print( '\n' )
@@ -364,6 +448,7 @@ def eval_closed_roa( config: dict = BASE_CONFIG ) -> int:
     # Retrieve the hyperparameter setup start time.
     start_time_hyperparameters = time.time(  )
     
+    # Store the neuron parameters.
     neuron_parameters = {
         'threshold': torch.tensor( float(config['hyperparameters']['neuron_threshold']), dtype = torch.float32, device = device ),
         'current_decay': torch.tensor( float(config['hyperparameters']['neuron_current_decay']), dtype = torch.float32, device = device ),
@@ -371,12 +456,11 @@ def eval_closed_roa( config: dict = BASE_CONFIG ) -> int:
         'persistent_state': bool(config['hyperparameters']['neuron_persistent_state']),
         'requires_grad': bool(config['hyperparameters']['neuron_requires_grad'])
     }
+
+    # Store the synapse parameters.
     synapse_parameters = {
         'gain': torch.tensor( float(config['hyperparameters']['synapse_gain']), dtype = torch.float32, device = device )
     }
-
-    print( f'neuron_parameters: {neuron_parameters}' )
-    print( f'synapse_parameters: {synapse_parameters}' )
 
     # Define the number of timesteps for which each input is presented to the network.
     num_timesteps = torch.tensor( int(config['hyperparameters']['num_timesteps']), dtype = torch.int16, device = device )                                 # [#] Number of timesteps for which each input is presented to the network.
@@ -386,35 +470,23 @@ def eval_closed_roa( config: dict = BASE_CONFIG ) -> int:
     num_hidden_layers = torch.tensor( int( config[ 'hyperparameters' ][ 'num_hidden_layers' ] ), dtype = torch.uint8, device = device )                 # [#] Number of hidden layers.
     hidden_layer_widths = torch.tensor( int( config[ 'hyperparameters' ][ 'hidden_layer_widths' ] ), dtype = torch.int16, device = device )             # [#] Hidden layer widths.
 
-
     # Set the quantity of training and testing data.
     num_training_data = torch.tensor( int( config[ 'hyperparameters' ][ 'num_training_data' ] ), dtype = torch.int32, device = device )                 # [#] Number of training data points.
     num_testing_data = torch.tensor( int( config[ 'hyperparameters' ][ 'num_testing_data' ] ), dtype = torch.int32, device = device )                   # [#] Number of testing data points.
-
-    # print( f'num_training_data: {num_training_data}' )
-    # print( f'num_testing_data: {num_testing_data}' )
 
     # Define the percent of training and testing data that should be sampled from the initial condition, the boundary condition, and the interior of the domain.
     p_initial = torch.tensor( 0.25, dtype = torch.float16, device = device )                                                                            # [%] Percentage of training and testing data associated with the initial condition.
     p_boundary = torch.tensor( 0.25, dtype = torch.float16, device = device )                                                                           # [%] Percentage of training and testing data associated with the boundary condition.
     p_residual = torch.tensor( 0.5, dtype = torch.float16, device = device )                                                                            # [%] Percentage of training and testing data associated with the residual.
 
-    # print( f'p_initial: {p_initial}' )
-    # print( f'p_boundary: {p_boundary}' )
-    # print( f'p_residual: {p_residual}' )
-
     # Define the number of training epochs.
     num_epochs = torch.tensor( int( config[ 'hyperparameters' ][ 'num_epochs' ] ), dtype = torch.int32, device = device )                               # [#] Number of training epochs to perform.
-
-    # print( f'num_epochs: {num_epochs}' )
 
     # Define the residual batch size.
     residual_batch_size = torch.tensor( int( 10e3 ), dtype = torch.int32, device = device )                                                             # [#] Training batch size. # This works for variational loss integration order 1.
 
     # Store the optimizer parameters.
     learning_rate = torch.tensor( float( config[ 'hyperparameters' ][ 'learning_rate' ] ), dtype = torch.float32, device = device )                     # [-] Learning rate.
-
-    # print( f'learning_rate: {learning_rate}' )
 
     # Define the element computation option.
     element_computation_option = 'precompute'                                                                                                           # [string] Determines whether to precompute the finite elements associated with the variational loss (costs more memory) or to dynamically generate these elements during training (costs more time per epoch) (e.g., 'precompute, 'dynamic', etc.).
@@ -435,12 +507,6 @@ def eval_closed_roa( config: dict = BASE_CONFIG ) -> int:
     c_variational = torch.tensor( float( config[ 'hyperparameters' ][ 'c_variational' ] ), dtype = torch.float32, device = device )                 # [-] Variational loss weight.
     c_monotonicity = torch.tensor( float( config[ 'hyperparameters' ][ 'c_monotonicity' ] ), dtype = torch.float32, device = device )               # [-] Monotonicity loss weight.
 
-    print( f'c_IC: {c_IC}' )
-    print( f'c_BC: {c_BC}' )
-    print( f'c_residual: {c_residual}' )
-    print( f'c_variational: {c_variational}' )
-    print( f'c_monotonicity: {c_monotonicity}' )
-
     # Create the hyper-parameters object.
     hyperparameters = hyperparameters_class( neuron_parameters, synapse_parameters, num_timesteps, activation_function, num_hidden_layers, hidden_layer_widths, num_training_data, num_testing_data, p_initial, p_boundary, p_residual, num_epochs, residual_batch_size, learning_rate, integration_order, element_volume_percent, element_type, element_computation_option, c_IC, c_BC, c_residual, c_variational, c_monotonicity, save_path, load_path )
 
@@ -452,6 +518,32 @@ def eval_closed_roa( config: dict = BASE_CONFIG ) -> int:
 
     # Compute the hyperparameter setup duration.
     hyperparameters_duration = end_time_hyperparameters - start_time_hyperparameters
+
+    # Print the hyperparameters.
+    print( f'Neuron Parameters: \n\n{neuron_parameters}\n' )
+    print( f'Synapse Parameters: \t\t{synapse_parameters}\n' )
+    print( f'# of Neural Timesteps: \t\t{num_timesteps} \t\t[#]' )
+    print( f'Activation Function: \t\t{activation_function} \t[-]' )
+    print( f'# of Hidden Layers: \t\t{num_hidden_layers} \t\t[#]' )
+    print( f'Hidden Layer Widths: \t\t{hidden_layer_widths} \t\t[#]' )
+    print( f'# of Training Data Points: \t{num_training_data}\t\t[#]' )
+    print( f'# of Testing Data Points: \t{num_testing_data} \t\t[#]' )
+    print( f'IC Data Portion: \t\t{p_initial} \t\t[-]' )
+    print( f'BC Data Portion: \t\t{p_boundary} \t\t[-]' )
+    print( f'Residual Data Portion: \t\t{p_residual} \t\t[-]' )
+    print( f'# of Epochs: \t\t\t{num_epochs} \t\t[#]' )
+    print( f'Residual Batch Size: \t\t{residual_batch_size} \t\t[#]' )
+    print( f'Learning Rate: \t\t\t{learning_rate:.2e}  \t[-]' )
+    print( f'Element Computation Option: \t{element_computation_option} \t[-]' )
+    print( f'Element Type: \t\t\t{element_type} \t[-]' )
+    print( f'Element Volume: \t\t{element_volume_percent:.2e} \t[-]' )
+    print( f'Element Integration Order: \t{integration_order} \t\t[#]')
+    print( f'c_IC: \t\t\t\t{c_IC} \t\t[-]' )
+    print( f'c_BC: \t\t\t\t{c_BC} \t\t[-]' )
+    print( f'c_residual: \t\t\t{c_residual} \t\t[-]' )
+    print( f'c_variational: \t\t\t{c_variational} \t\t[-]' )
+    print( f'c_monotonicity: \t\t{c_monotonicity} \t\t[-]' )
+    print( '\n' )
 
     # Print out a message saying that we are done setting up hyperparameters.
     print( f'Setting up hyperparameters... Done. Duration = {hyperparameters_duration}s = {hyperparameters_duration/60}min = {hyperparameters_duration/3600}hr' )
@@ -527,38 +619,40 @@ def eval_closed_roa( config: dict = BASE_CONFIG ) -> int:
 
     #%% ---------------------------------------- COMPUTE CLASSIFICATION LOSS ----------------------------------------
 
-    # Print out a message saying that we are computing the classification loss.
-    print( '\n' )
-    print( '------------------------------------------------------------------------------------------------------------------------' )
-    print( 'COMPUTING CLASSIFICATION LOSS...' )
-    print( '------------------------------------------------------------------------------------------------------------------------' )
-    print( '\n' )
+    # # Print out a message saying that we are computing the classification loss.
+    # print( '\n' )
+    # print( '------------------------------------------------------------------------------------------------------------------------' )
+    # print( 'COMPUTING CLASSIFICATION LOSS...' )
+    # print( '------------------------------------------------------------------------------------------------------------------------' )
+    # print( '\n' )
 
-    # Retrieve the starting classification time.
-    start_time_classification = time.time(  )
+    # # Retrieve the starting classification time.
+    # start_time_classification = time.time(  )
 
-    # Ensure that the number of noisy samples per level set point are correct.
-    pinn.pinn_options.num_noisy_samples_per_level_set_point = num_noisy_samples_per_level_set_point
+    # # Ensure that the number of noisy samples per level set point are correct.
+    # pinn.pinn_options.num_noisy_samples_per_level_set_point = num_noisy_samples_per_level_set_point
 
-    # Compute the classification loss.
-    classification_loss, num_classification_points = pinn.compute_classification_loss( pde = pinn.pde, network = pinn.network, classification_data = None, num_spatial_dimensions = pinn.domain.num_spatial_dimensions, num_timesteps = pinn.hyperparameters.num_timesteps, domain = pinn.domain, plot_time = pinn.domain.temporal_domain[ 1, : ], level = torch.tensor( 0, dtype = torch.float32, device = pinn.pinn_options.device ), level_set_guesses = None, num_guesses = torch.tensor( int( 1e2 ), dtype = torch.int64, device = pinn.pinn_options.device ), newton_tolerance = newton_tolerance, newton_max_iterations = newton_max_iterations, exploration_radius = pinn.network.exploration_radius_spatial, num_exploration_points = num_exploration_points, unique_tolerance = pinn.network.unique_tolerance_spatial, classification_noise_magnitude = pinn.network.classification_noise_magnitude_spatial, num_noisy_samples_per_level_set_point = pinn.pinn_options.num_noisy_samples_per_level_set_point, domain_subset_type = 'spatial', tspan = torch.tensor( [ 0, classification_tfinal.item(  ) ], dtype = classification_tfinal.dtype, device = classification_tfinal.device ), dt = classification_dt )
+    # # Compute the classification loss.
+    # classification_loss, num_classification_points = pinn.compute_classification_loss( pde = pinn.pde, network = pinn.network, classification_data = None, num_spatial_dimensions = pinn.domain.num_spatial_dimensions, num_timesteps = pinn.hyperparameters.num_timesteps, domain = pinn.domain, plot_time = pinn.domain.temporal_domain[ 1, : ], level = torch.tensor( 0, dtype = torch.float32, device = pinn.pinn_options.device ), level_set_guesses = None, num_guesses = torch.tensor( int( 1e2 ), dtype = torch.int64, device = pinn.pinn_options.device ), newton_tolerance = newton_tolerance, newton_max_iterations = newton_max_iterations, exploration_radius = pinn.network.exploration_radius_spatial, num_exploration_points = num_exploration_points, unique_tolerance = pinn.network.unique_tolerance_spatial, classification_noise_magnitude = pinn.network.classification_noise_magnitude_spatial, num_noisy_samples_per_level_set_point = pinn.pinn_options.num_noisy_samples_per_level_set_point, domain_subset_type = 'spatial', tspan = torch.tensor( [ 0, classification_tfinal.item(  ) ], dtype = classification_tfinal.dtype, device = classification_tfinal.device ), dt = classification_dt )
 
-    # Print the classification loss.
-    print( f'# of Classification Points: {num_classification_points}' )
-    print( f'Classification Loss: {classification_loss}' )
+    # # Retrieve the ending classification time.
+    # end_time_classification = time.time(  )
 
-    # Retrieve the ending classification time.
-    end_time_classification = time.time(  )
+    # # Compute the classification duration.
+    # classification_duration = end_time_classification - start_time_classification
 
-    # Compute the classification duration.
-    classification_duration = end_time_classification - start_time_classification
+    # # Print the classification loss.
+    # print( '\n' )
+    # print( f'# of Classification Points: \t{num_classification_points} \t[#]' )
+    # print( f'Classification Loss: \t{classification_loss} \t[-]' )
+    # print( '\n' )
 
-    # Print out a message saying that we are computing the classification loss.
-    print( '\n' )
-    print( '------------------------------------------------------------------------------------------------------------------------' )
-    print( f'COMPUTING CLASSIFICATION LOSS... DONE. Duration = {classification_duration}s = {classification_duration/60}min = {classification_duration/3600}hr' )
-    print( '------------------------------------------------------------------------------------------------------------------------' )
-    print( '\n' )
+    # # Print out a message saying that we are computing the classification loss.
+    # print( '\n' )
+    # print( '------------------------------------------------------------------------------------------------------------------------' )
+    # print( f'COMPUTING CLASSIFICATION LOSS... DONE. Duration = {classification_duration}s = {classification_duration/60}min = {classification_duration/3600}hr' )
+    # print( '------------------------------------------------------------------------------------------------------------------------' )
+    # print( '\n' )
 
 
     #%% ---------------------------------------- PLOT THE NEURAL NETWORK RESULTS ----------------------------------------
@@ -656,5 +750,3 @@ if __name__ == "__main__":
 
     # Compute the classification loss of the closed roa example.
     loss = eval_closed_roa(  )
-
-    print( f"Loss: {loss}" )

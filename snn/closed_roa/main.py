@@ -24,6 +24,7 @@ import matplotlib.pyplot as plt
 import time
 
 start_time = time.time()
+
 # Ensure that the utilities folder for this project is on the system path.
 sys.path.append( r'./snn/utilities' )
 
