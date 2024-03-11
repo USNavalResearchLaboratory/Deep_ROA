@@ -2983,7 +2983,8 @@ class neural_network_class( torch.nn.Module ):
                     for k2 in range( derivative_code[ k1 ].numel(  ) ):                                   # Iterate through each of the derivatives that are required for this residual input...
 
                         # Compute the derivatives associated with this residual input.
-                        network_derivative = self.compute_derivative( network_derivative, network_input_tuple[ derivative_code[ k1 ][ k2 ] ] )
+                        # network_derivative = self.compute_derivative( network_derivative, network_input_tuple[ derivative_code[ k1 ][ k2 ] ] )
+                        network_derivative = self.compute_derivative( network_derivative[ ..., -1 ], network_input_tuple[ derivative_code[ k1 ][ k2 ] ][ ..., -1 ] )
 
                 else:                                           # Otherwise... ( i.e., this derivative code list entry is None... )
 
