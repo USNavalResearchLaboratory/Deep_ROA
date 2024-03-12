@@ -67,9 +67,9 @@ BASE_CONFIG = {
         'c_BC': float( 1.0 ),
         'c_residual': float( 0 ),
         'c_variational': float( 0 ),
-        'c_monotonicity': float( 0 ),
+        'c_monotonicity': float( 100 ),
         'hidden_layer_widths': int( 250 ),
-        'num_epochs': int( 400 ),
+        'num_epochs': int( 10 ),
         'num_hidden_layers': int( 3 ),
         'num_training_data': int( 100e3 ),
         'num_testing_data': int( 20e3 ),
@@ -87,8 +87,8 @@ BASE_CONFIG = {
         'max_iterations': int( 1e2 ),
     },
     'paths': {
-        'save_path': r'./ann/closed_roa/save',
-        'load_path': r'./ann/closed_roa/load',
+        'save_path': r'./snn/closed_roa/save',
+        'load_path': r'./snn/closed_roa/load',
     },
     'plotting_parameters': {
         'num_plotting_samples': int( 20 ),
@@ -164,7 +164,6 @@ def eval_closed_roa( config: dict = BASE_CONFIG ) -> int:
     if config:                  # If there is a configuration to use...
 
         # Update the hyperparmaeters of the default configuration to match the user provided configuration.
-            # # new_config[ 'hyperparameters' ].update( config )
         new_config[ 'hyperparameters' ].update( config[ 'hyperparameters' ] )
 
     # Make a copy of the new configuration.
@@ -260,27 +259,16 @@ def eval_closed_roa( config: dict = BASE_CONFIG ) -> int:
     newton_tolerance = torch.tensor( float( config[ 'newton_parameters' ][ 'tolerance' ] ), dtype = torch.float32, device = device )                                                            # [-] Convergence tolerance for the Newton's root finding method.
     newton_max_iterations = torch.tensor( int( config[ 'newton_parameters' ][ 'max_iterations' ] ), dtype = torch.int32, device = device )                                                      # [#] Maximum number of Newton's method steps to perform.
 
-    # print(f"newton_tolerance: {newton_tolerance}")
-    # print(f"newton_max_iterations: {newton_max_iterations}")
-
     # Define the exploration parameters (used for level set generation).
     exploration_volume_percentage = torch.tensor( float( config[ 'exploration_parameters' ][ 'volume_percentage' ] ), dtype = torch.float32, device = device )                                  # [%] The level set method step size represented as a percentage of the domain volume.  This parameter conveniently scales the step size of the level set method as the dimension of the problem is adjusted. # This works for both initial and final times.
     num_exploration_points = torch.tensor( int( config[ 'exploration_parameters' ][ 'num_points' ] ), dtype = torch.int16, device = device )                                                    # [#] Number of exploration points to generate at each level set method step.
     unique_volume_percentage = torch.tensor( float( config[ 'exploration_parameters' ][ 'unique_percentage' ] ), dtype = torch.float32, device = device )                                       # [%] The tolerance used to determine whether level set points are unique as a percentage of the domain volume.  This parameter conveniently scales the unique tolerance of the level set points as the dimension of the problem is adjusted.
-
-    # print(f"exploration_volume_percentage: {exploration_volume_percentage}")
-    # print(f"num_exploration_points: {num_exploration_points}")
-    # print(f"unique_volume_percentage: {unique_volume_percentage}")
 
     # Define the classification parameters.
     num_noisy_samples_per_level_set_point = torch.tensor( int( config[ 'classification_parameters' ][ 'num_noisy_samples_per_level_set_point' ] ), dtype = torch.int16, device = device )       # [#] Number of noisy samples per level set point.
     classification_noise_percentage = torch.tensor( float( config[ 'classification_parameters' ][ 'noise_percentage' ] ), dtype = torch.float32, device = device )                              # [%] The classification point noise magnitude represented as a percentage of the domain volume.  This parameter conveniently scales the noise magnitude of the classification points as the dimension of the problem is adjusted.
     classification_dt = torch.tensor( float( config[ 'classification_parameters' ][ 'dt' ] ), dtype = torch.float32, device = device )                                                          # [s] The classification simulation timestep used to forecast classification points.
     classification_tfinal = torch.tensor( float( config[ 'classification_parameters' ][ 'tfinal' ] ), dtype = torch.float32, device = device )                                                  # [s] The classification simulation duration used to forecast classification points.
-
-    # print(f"classification_noise_percentage: {classification_noise_percentage}")
-    # print(f"classification_dt: {classification_dt}")
-    # print(f"classification_tfinal: {classification_tfinal}")
 
     # Create the pinn options object.
     pinn_options = pinn_options_class( save_path, save_frequency, save_flag, load_path, load_flag, train_flag, batch_print_frequency, epoch_print_frequency, print_flag, num_plotting_samples, newton_tolerance, newton_max_iterations, exploration_volume_percentage, num_exploration_points, unique_volume_percentage, classification_noise_percentage, num_noisy_samples_per_level_set_point, classification_dt, classification_tfinal, plot_flag, device, verbose_flag )
@@ -635,6 +623,8 @@ def eval_closed_roa( config: dict = BASE_CONFIG ) -> int:
     # # Compute the classification loss.
     # classification_loss, num_classification_points = pinn.compute_classification_loss( pde = pinn.pde, network = pinn.network, classification_data = None, num_spatial_dimensions = pinn.domain.num_spatial_dimensions, num_timesteps = pinn.hyperparameters.num_timesteps, domain = pinn.domain, plot_time = pinn.domain.temporal_domain[ 1, : ], level = torch.tensor( 0, dtype = torch.float32, device = pinn.pinn_options.device ), level_set_guesses = None, num_guesses = torch.tensor( int( 1e2 ), dtype = torch.int64, device = pinn.pinn_options.device ), newton_tolerance = newton_tolerance, newton_max_iterations = newton_max_iterations, exploration_radius = pinn.network.exploration_radius_spatial, num_exploration_points = num_exploration_points, unique_tolerance = pinn.network.unique_tolerance_spatial, classification_noise_magnitude = pinn.network.classification_noise_magnitude_spatial, num_noisy_samples_per_level_set_point = pinn.pinn_options.num_noisy_samples_per_level_set_point, domain_subset_type = 'spatial', tspan = torch.tensor( [ 0, classification_tfinal.item(  ) ], dtype = classification_tfinal.dtype, device = classification_tfinal.device ), dt = classification_dt )
 
+    classification_loss = torch.tensor( 123.45, dtype = torch.float32, device = device )
+
     # # Retrieve the ending classification time.
     # end_time_classification = time.time(  )
 
@@ -669,23 +659,23 @@ def eval_closed_roa( config: dict = BASE_CONFIG ) -> int:
         # Retrieve the start time.
         start_time_plotting = time.time(  )
 
-        # Plot the network domain.
-        figs_domain, axes_domain = pinn.plot_domain( pinn.pde, projection_dimensions = None, projection_values = None, level = torch.tensor( 0, dtype = torch.float32, device = pinn.pinn_options.device ), fig = None, domain_type = 'spatiotemporal', save_directory = save_path, as_surface = True, as_stream = True, as_contour = True, show_plot = False )
+        # # Plot the network domain.
+        # figs_domain, axes_domain = pinn.plot_domain( pinn.pde, projection_dimensions = None, projection_values = None, level = torch.tensor( 0, dtype = torch.float32, device = pinn.pinn_options.device ), fig = None, domain_type = 'spatiotemporal', save_directory = save_path, as_surface = True, as_stream = True, as_contour = True, show_plot = False )
 
-        # Plot the initial-boundary conditions.
-        figs, axes = pinn.plot_initial_boundary_condition( 20*torch.ones( pinn.domain.spatiotemporal_domain.shape[ -1 ], dtype = torch.int16, device = pinn.pinn_options.device ), pinn.hyperparameters.num_timesteps, pinn.pde, projection_dimensions = None, projection_values = None, level = torch.tensor( 0, dtype = torch.float32, device = pinn.pinn_options.device ), fig = None, save_directory = save_path, as_surface = True, as_stream = True, as_contour = True, show_plot = False )
+        # # Plot the initial-boundary conditions.
+        # figs, axes = pinn.plot_initial_boundary_condition( 20*torch.ones( pinn.domain.spatiotemporal_domain.shape[ -1 ], dtype = torch.int16, device = pinn.pinn_options.device ), pinn.hyperparameters.num_timesteps, pinn.pde, projection_dimensions = None, projection_values = None, level = torch.tensor( 0, dtype = torch.float32, device = pinn.pinn_options.device ), fig = None, save_directory = save_path, as_surface = True, as_stream = True, as_contour = True, show_plot = False )
 
-        # Plot the network training data.
-        figs_training_data, axes_training_data = pinn.plot_training_data( pinn.network, projection_dimensions = None, projection_values = None, level = torch.tensor( 0, dtype = torch.float32, device = pinn.pinn_options.device ), fig = None, plot_type1 = 'all', plot_type2 = 'all', save_directory = save_path, as_surface = True, as_stream = True, as_contour = True, show_plot = False )
+        # # Plot the network training data.
+        # figs_training_data, axes_training_data = pinn.plot_training_data( pinn.network, projection_dimensions = None, projection_values = None, level = torch.tensor( 0, dtype = torch.float32, device = pinn.pinn_options.device ), fig = None, plot_type1 = 'all', plot_type2 = 'all', save_directory = save_path, as_surface = True, as_stream = True, as_contour = True, show_plot = False )
 
-        # Plot the network testing data.
-        figs_testing_data, axes_testing_data = pinn.plot_testing_data( pinn.network, projection_dimensions = None, projection_values = None, level = torch.tensor( 0, dtype = torch.float32, device = pinn.pinn_options.device ), fig = None, plot_type1 = 'all', plot_type2 = 'all', save_directory = save_path, as_surface = True, as_stream = True, as_contour = True, show_plot = False )
+        # # Plot the network testing data.
+        # figs_testing_data, axes_testing_data = pinn.plot_testing_data( pinn.network, projection_dimensions = None, projection_values = None, level = torch.tensor( 0, dtype = torch.float32, device = pinn.pinn_options.device ), fig = None, plot_type1 = 'all', plot_type2 = 'all', save_directory = save_path, as_surface = True, as_stream = True, as_contour = True, show_plot = False )
 
-        # Plot the network plotting data.
-        fig_plotting_data, ax_plotting_data = pinn.plot_plotting_data( pinn.network, projection_dimensions = None, projection_values = None, level = torch.tensor( 0, dtype = torch.float32, device = pinn.pinn_options.device ), fig = None, save_directory = save_path, as_surface = True, as_stream = True, as_contour = True, show_plot = False )
+        # # Plot the network plotting data.
+        # fig_plotting_data, ax_plotting_data = pinn.plot_plotting_data( pinn.network, projection_dimensions = None, projection_values = None, level = torch.tensor( 0, dtype = torch.float32, device = pinn.pinn_options.device ), fig = None, save_directory = save_path, as_surface = True, as_stream = True, as_contour = True, show_plot = False )
 
-        # Plot the network prediction.
-        fig_prediction, ax_prediction = pinn.plot_network_predictions( pinn.network.plotting_data, pinn.network, projection_dimensions = None, projection_values = None, level = torch.tensor( 0, dtype = torch.float32, device = pinn.pinn_options.device ), fig = None, save_directory = save_path, as_surface = True, as_stream = True, as_contour = True, show_plot = False )
+        # # Plot the network prediction.
+        # fig_prediction, ax_prediction = pinn.plot_network_predictions( pinn.network.plotting_data, pinn.network, projection_dimensions = None, projection_values = None, level = torch.tensor( 0, dtype = torch.float32, device = pinn.pinn_options.device ), fig = None, save_directory = save_path, as_surface = True, as_stream = True, as_contour = True, show_plot = False )
 
         # Plot the network initial condition prediction.
         fig_initial_prediction, ax_initial_prediction = pinn.plot_network_initial_prediction( pinn.network.plotting_data, pinn.domain, pinn.network, projection_dimensions = None, projection_values = None, level = torch.tensor( 0, dtype = torch.float32, device = pinn.pinn_options.device ), fig = None, save_directory = save_path, as_surface = True, as_stream = True, as_contour = True, show_plot = False )
@@ -696,8 +686,8 @@ def eval_closed_roa( config: dict = BASE_CONFIG ) -> int:
         # Plot the network training results.
         fig_training, ax_training = pinn.plot_training_results( pinn.network, save_directory = save_path, show_plot = False )
 
-        # Plot the flow field.
-        fig_flow_field, ax_flow_field = pinn.plot_flow_field( pinn.network.plotting_data, pinn.flow_functions, projection_dimensions = torch.tensor( [ 0 ], dtype = torch.uint8, device = device ), projection_values = torch.tensor( [ temporal_domain[ -1 ] ], dtype = torch.float32, device = device ), level = torch.tensor( 0, dtype = torch.float32, device = pinn.pinn_options.device ), fig = None, input_labels = None, title_string = 'Flow Field', save_directory = save_path, as_surface = True, as_stream = True, as_contour = True, show_plot = False )
+        # # Plot the flow field.
+        # fig_flow_field, ax_flow_field = pinn.plot_flow_field( pinn.network.plotting_data, pinn.flow_functions, projection_dimensions = torch.tensor( [ 0 ], dtype = torch.uint8, device = device ), projection_values = torch.tensor( [ temporal_domain[ -1 ] ], dtype = torch.float32, device = device ), level = torch.tensor( 0, dtype = torch.float32, device = pinn.pinn_options.device ), fig = None, input_labels = None, title_string = 'Flow Field', save_directory = save_path, as_surface = True, as_stream = True, as_contour = True, show_plot = False )
 
         # Plot the ROA boundary.
         fig_roa, ax_roa = pinn.plot_roa_boundary( pinn.network.plotting_data, pinn.domain, pinn.network, pinn.flow_functions, projection_dimensions = torch.tensor( [ 0 ], dtype = torch.uint8, device = device ), projection_values = torch.tensor( [ temporal_domain[ -1 ] ], dtype = torch.float32, device = device ), level = torch.tensor( 0, dtype = torch.float32, device = pinn.pinn_options.device ), fig = None, input_labels = None, title_string = 'ROA Boundary Prediction', save_directory = save_path, show_plot = False )
@@ -712,8 +702,8 @@ def eval_closed_roa( config: dict = BASE_CONFIG ) -> int:
         # Plot the final level set estimate.
         fig_final_level_set, ax_final_level_set = pinn.plot_network_final_level_set( domain = pinn.domain, network = pinn.network, num_timesteps = pinn.hyperparameters.num_timesteps, level = torch.tensor( 0, dtype = torch.float32, device = pinn.pinn_options.device ), level_set_guess = None, num_guesses = torch.tensor( int( 1e2 ), dtype = torch.int64, device = pinn.pinn_options.device ), newton_tolerance = newton_tolerance, newton_max_iterations = newton_max_iterations, exploration_radius = pinn.network.exploration_radius_spatial, num_exploration_points = num_exploration_points, unique_tolerance = pinn.network.unique_tolerance_spatial, projection_dimensions = None, projection_values = None, fig = fig_final_prediction, dimension_labels = pinn.domain.dimension_labels, save_directory = save_path, as_surface = False, as_stream = False, as_contour = False, show_plot = False )
 
-        # Plot the classification data.
-        fig_classification, ax_classification = pinn.plot_network_classifications( network = pinn.network, fig = fig_roa, dimension_labels = pinn.domain.dimension_labels, save_directory = save_path, show_plot = False )
+        # # Plot the classification data.
+        # fig_classification, ax_classification = pinn.plot_network_classifications( network = pinn.network, fig = fig_roa, dimension_labels = pinn.domain.dimension_labels, save_directory = save_path, show_plot = False )
 
         # Retrieve the end time.
         end_time_plotting = time.time(  )
