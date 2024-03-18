@@ -1723,10 +1723,10 @@ class pinn_class(  ):
         network, save_directory = self.setup_network_plotting( network, save_directory )
 
         # Plot the plotting data.
-        fig, ax = network.plot_training_results( network.training_losses, network.testing_epochs, network.testing_losses, save_directory, show_plot )
+        figs, axes = network.plot_training_results( network.training_epochs, network.training_losses, network.ic_training_losses, network.bc_training_losses, network.residual_training_losses, network.variational_training_losses, network.monotonicity_training_losses, network.testing_epochs, network.testing_losses, network.ic_testing_losses, network.bc_testing_losses, network.residual_testing_losses, network.variational_testing_losses, network.monotonicity_testing_losses, network.c_IC, network.c_BC, network.c_residual, network.c_variational, network.c_monotonicity, save_directory, show_plot )
 
-        # Return the figure and axis.
-        return fig, ax
+        # Return the figures and axes.
+        return figs, axes
 
 
     # Implement a function to plot the flow field.

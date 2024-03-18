@@ -48,6 +48,71 @@ plt.rcParams.update( { 'figure.max_open_warning': 0 } )                     # Di
 
 #%% ---------------------------------------- DEFINE DEFAULT CONFIGURATION ----------------------------------------
 
+# # Define the default configuration.
+# BASE_CONFIG = {
+#     'classification_parameters': {
+#         'num_noisy_samples_per_level_set_point': int( 5 ),
+#         'noise_percentage': float( 1e-3 ),
+#         'dt': float( 1e-2 ),
+#         'tfinal': float( 10 ),
+#     },
+#     'exploration_parameters': {
+#         'volume_percentage': float( 1e-2 ),
+#         'num_points': int( 50 ),
+#         'unique_percentage': float( 1e-4 ),
+#     },
+#     'hyperparameters': {
+#         'activation_function': 'sigmoid',
+#         'c_IC': float( 1.0 ),
+#         'c_BC': float( 1.0 ),
+#         'c_residual': float( 0 ),
+#         'c_variational': float( 0 ),
+#         'c_monotonicity': float( 0 ),
+#         'hidden_layer_widths': int( 250 ),
+#         'num_epochs': int( 400 ),
+#         'num_hidden_layers': int( 3 ),
+#         'num_training_data': int( 100e3 ),
+#         'num_testing_data': int( 20e3 ),
+#         'learning_rate': float( 5e-3 ),
+#         "neuron_threshold": float( 1.0 ),
+#         "neuron_current_decay": float( 0.5 ),
+#         "neuron_voltage_decay": float( 0.5 ),
+#         "neuron_persistent_state": bool( True ),
+#         "neuron_requires_grad": bool( False ),
+#         "synapse_gain": float( 1.0 ),
+#         'num_timesteps': int( 1 ),
+#     },
+#     'newton_parameters': {
+#         'tolerance': float( 1e-4 ),
+#         'max_iterations': int( 1e2 ),
+#     },
+#     'paths': {
+#         'save_path': r'./snn/closed_roa/save',
+#         'load_path': r'./snn/closed_roa/load',
+#     },
+#     'plotting_parameters': {
+#         'num_plotting_samples': int( 20 ),
+#         'plot_flag': bool( True ),
+#     },
+#     'printing_parameters': {
+#         'batch_print_frequency': int( 10 ),
+#         'epoch_print_frequency': int( 10 ),
+#         'print_flag': bool( True ),
+#     },
+#     'runtime': {
+#         'device': 'cuda:1' if torch.cuda.is_available(  ) else 'cpu',
+#         'seed': int( 0 ),
+#         'load_flag': bool( False ),
+#         'train_flag': bool( True ),
+#         'verbose_flag': bool( True ),
+#     },
+#     'saving_parameters': {
+#         'save_flag': bool( True ),
+#         'save_frequency': int( 10 ),
+#     }
+# }
+
+
 # Define the default configuration.
 BASE_CONFIG = {
     'classification_parameters': {
@@ -67,9 +132,9 @@ BASE_CONFIG = {
         'c_BC': float( 1.0 ),
         'c_residual': float( 0 ),
         'c_variational': float( 0 ),
-        'c_monotonicity': float( 100 ),
+        'c_monotonicity': float( 1e19 ),
         'hidden_layer_widths': int( 250 ),
-        'num_epochs': int( 10 ),
+        'num_epochs': int( 400 ),
         'num_hidden_layers': int( 3 ),
         'num_training_data': int( 100e3 ),
         'num_testing_data': int( 20e3 ),
@@ -366,11 +431,28 @@ def eval_closed_roa( config: dict = BASE_CONFIG ) -> int:
     # f_bc_3 = lambda s: A0/( 1 + torch.exp( -S0*( torch.norm( s[ :, 1:, : ] - torch.unsqueeze( torch.unsqueeze( P0_shift, dim = 0 ), dim = 2 ), 2, dim = 1, keepdim = True ) - R0 ) ) ) + z0_shift              # [-] Boundary condition function.
     # f_bc_4 = lambda s: A0/( 1 + torch.exp( -S0*( torch.norm( s[ :, 1:, : ] - torch.unsqueeze( torch.unsqueeze( P0_shift, dim = 0 ), dim = 2 ), 2, dim = 1, keepdim = True ) - R0 ) ) ) + z0_shift              # [-] Boundary condition function.
 
+    # f_ic = lambda s: torch.zeros_like( s[ :, -1, : ] )                # [-] Initial condition function.
+    # f_bc_1 = lambda s: torch.zeros_like( s[ :, -1, : ] )              # [-] Boundary condition function.
+    # f_bc_2 = lambda s: torch.zeros_like( s[ :, -1, : ] )              # [-] Boundary condition function.
+    # f_bc_3 = lambda s: torch.zeros_like( s[ :, -1, : ] )              # [-] Boundary condition function.
+    # f_bc_4 = lambda s: torch.zeros_like( s[ :, -1, : ] )              # [-] Boundary condition function.
+
+    # f_ic = lambda s: torch.ones_like( s[ :, -1, : ] )                # [-] Initial condition function.
+    # f_bc_1 = lambda s: torch.ones_like( s[ :, -1, : ] )              # [-] Boundary condition function.
+    # f_bc_2 = lambda s: torch.ones_like( s[ :, -1, : ] )              # [-] Boundary condition function.
+    # f_bc_3 = lambda s: torch.ones_like( s[ :, -1, : ] )              # [-] Boundary condition function.
+    # f_bc_4 = lambda s: torch.ones_like( s[ :, -1, : ] )              # [-] Boundary condition function.
+
     # Define the initial-boundary condition information.
     ibc_types = [ 'dirichlet', 'dirichlet', 'dirichlet', 'dirichlet', 'dirichlet' ]                                                                     # [-] Initial-Boundary condition types (e.g., dirichlet, neumann, etc.).
     ibc_dimensions = torch.tensor( [ 0, 1, 1, 2, 2 ], dtype = torch.uint8, device = device )                                                            # [-] Dimensions associated with each initial-boundary condition.
     ibc_condition_functions = [ f_ic, f_bc_1, f_bc_2, f_bc_3, f_bc_4 ]                                                                                  # [-] List of initial-boundary conditions.
     ibc_placements = [ 'lower', 'lower', 'upper', 'lower', 'upper' ]                                                                                    # [Lower/Upper] Initial-Boundary condition placement.
+
+    # ibc_types = [ 'neumann', 'neumann', 'neumann', 'neumann', 'neumann' ]                                                                     # [-] Initial-Boundary condition types (e.g., dirichlet, neumann, etc.).
+    # ibc_dimensions = torch.tensor( [ 0, 1, 1, 2, 2 ], dtype = torch.uint8, device = device )                                                            # [-] Dimensions associated with each initial-boundary condition.
+    # ibc_condition_functions = [ f_ic, f_bc_1, f_bc_2, f_bc_3, f_bc_4 ]                                                                                  # [-] List of initial-boundary conditions.
+    # ibc_placements = [ 'lower', 'lower', 'upper', 'lower', 'upper' ]     
 
     # Define the PDE name and type.
     pde_name = 'Yuan-Li PDE: Closed ROA'                                                                                                            # [-] PDE name.
@@ -684,7 +766,7 @@ def eval_closed_roa( config: dict = BASE_CONFIG ) -> int:
         fig_final_prediction, ax_final_prediction = pinn.plot_network_final_prediction( pinn.network.plotting_data, pinn.domain, pinn.network, projection_dimensions = None, projection_values = None, level = torch.tensor( 0, dtype = torch.float32, device = pinn.pinn_options.device ), fig = None, save_directory = save_path, as_surface = True, as_stream = True, as_contour = True, show_plot = False )
 
         # Plot the network training results.
-        fig_training, ax_training = pinn.plot_training_results( pinn.network, save_directory = save_path, show_plot = False )
+        figs_training, axes_training = pinn.plot_training_results( pinn.network, save_directory = save_path, show_plot = False )
 
         # # Plot the flow field.
         # fig_flow_field, ax_flow_field = pinn.plot_flow_field( pinn.network.plotting_data, pinn.flow_functions, projection_dimensions = torch.tensor( [ 0 ], dtype = torch.uint8, device = device ), projection_values = torch.tensor( [ temporal_domain[ -1 ] ], dtype = torch.float32, device = device ), level = torch.tensor( 0, dtype = torch.float32, device = pinn.pinn_options.device ), fig = None, input_labels = None, title_string = 'Flow Field', save_directory = save_path, as_surface = True, as_stream = True, as_contour = True, show_plot = False )

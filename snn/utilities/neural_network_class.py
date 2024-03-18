@@ -635,6 +635,71 @@ class neural_network_class( torch.nn.Module ):
         return training_losses
 
 
+    # Implement a function to preprocess initial condition training losses.
+    def preprocess_ic_training_losses( self, ic_training_losses = None ):
+
+        # Determine whether to use the stored initial condition training losses.
+        if ic_training_losses is None:                 # If the initial condition training losses were not provided...
+
+            # Set the initial condition training losses to be the stored value.
+            ic_training_losses = self.ic_training_losses
+
+        # Return the initial condition training losses.
+        return ic_training_losses
+    
+
+    # Implement a function to preprocess boundary condition training losses.
+    def preprocess_bc_training_losses( self, bc_training_losses = None ):
+
+        # Determine whether to use the stored boundary condition training losses.
+        if bc_training_losses is None:                 # If the boundary condition training losses were not provided...
+
+            # Set the boundary condition training losses to be the stored value.
+            bc_training_losses = self.bc_training_losses
+
+        # Return the boundary condition training losses.
+        return bc_training_losses
+    
+
+    # Implement a function to preprocess residual condition training losses.
+    def preprocess_residual_training_losses( self, residual_training_losses = None ):
+
+        # Determine whether to use the stored residual condition training losses.
+        if residual_training_losses is None:                 # If the residual condition training losses were not provided...
+
+            # Set the residual condition training losses to be the stored value.
+            residual_training_losses = self.residual_training_losses
+
+        # Return the residual condition training losses.
+        return residual_training_losses
+
+
+    # Implement a function to preprocess variational condition training losses.
+    def preprocess_variational_training_losses( self, variational_training_losses = None ):
+
+        # Determine whether to use the stored variational condition training losses.
+        if variational_training_losses is None:                 # If the variational condition training losses were not provided...
+
+            # Set the variational condition training losses to be the stored value.
+            variational_training_losses = self.variational_training_losses
+
+        # Return the variational condition training losses.
+        return variational_training_losses
+    
+
+    # Implement a function to preprocess monotonicity condition training losses.
+    def preprocess_monotonicity_training_losses( self, monotonicity_training_losses = None ):
+
+        # Determine whether to use the stored monotonicity condition training losses.
+        if monotonicity_training_losses is None:                 # If the monotonicity condition training losses were not provided...
+
+            # Set the monotonicity condition training losses to be the stored value.
+            monotonicity_training_losses = self.monotonicity_training_losses
+
+        # Return the monotonicity condition training losses.
+        return monotonicity_training_losses
+
+
     # Implement a function to preprocess testing epochs.
     def preprocess_testing_epochs( self, testing_epochs = None ):
 
@@ -660,6 +725,136 @@ class neural_network_class( torch.nn.Module ):
         # Return the testing losses.
         return testing_losses
 
+
+    # Implement a function to preprocess initial condition testing losses.
+    def preprocess_ic_testing_losses( self, ic_testing_losses = None ):
+
+        # Determine whether to use the stored initial condition testing losses.
+        if ic_testing_losses is None:                 # If the initial condition testing losses were not provided...
+
+            # Set the initial condition testing losses to be the stored value.
+            ic_testing_losses = self.ic_testing_losses
+
+        # Return the initial condition testing losses.
+        return ic_testing_losses
+    
+
+    # Implement a function to preprocess boundary condition testing losses.
+    def preprocess_bc_testing_losses( self, bc_testing_losses = None ):
+
+        # Determine whether to use the stored boundary condition testing losses.
+        if bc_testing_losses is None:                 # If the boundary condition testing losses were not provided...
+
+            # Set the boundary condition testing losses to be the stored value.
+            bc_testing_losses = self.bc_testing_losses
+
+        # Return the boundary condition testing losses.
+        return bc_testing_losses
+    
+
+    # Implement a function to preprocess residual condition testing losses.
+    def preprocess_residual_testing_losses( self, residual_testing_losses = None ):
+
+        # Determine whether to use the stored residual condition testing losses.
+        if residual_testing_losses is None:                 # If the residual condition testing losses were not provided...
+
+            # Set the residual condition testing losses to be the stored value.
+            residual_testing_losses = self.residual_testing_losses
+
+        # Return the residual condition testing losses.
+        return residual_testing_losses
+
+
+    # Implement a function to preprocess variational condition testing losses.
+    def preprocess_variational_testing_losses( self, variational_testing_losses = None ):
+
+        # Determine whether to use the stored variational condition testing losses.
+        if variational_testing_losses is None:                 # If the variational condition testing losses were not provided...
+
+            # Set the variational condition testing losses to be the stored value.
+            variational_testing_losses = self.variational_testing_losses
+
+        # Return the variational condition testing losses.
+        return variational_testing_losses
+    
+
+    # Implement a function to preprocess monotonicity condition testing losses.
+    def preprocess_monotonicity_testing_losses( self, monotonicity_testing_losses = None ):
+
+        # Determine whether to use the stored monotonicity condition testing losses.
+        if monotonicity_testing_losses is None:                 # If the monotonicity condition testing losses were not provided...
+
+            # Set the monotonicity condition testing losses to be the stored value.
+            monotonicity_testing_losses = self.monotonicity_testing_losses
+
+        # Return the monotonicity condition testing losses.
+        return monotonicity_testing_losses
+    
+
+    # Implement a function to preprocess the initial condition loss weight.
+    def preprocess_c_ic( self, c_IC = None ):
+
+        # Determine whether to use the stored initial condition loss weight.
+        if c_IC is None:                 # If the initial condition loss weight was not provided...
+
+            # Set the initial condition loss weight to be the stored value.
+            c_IC = self.c_IC
+
+        # Return the initial condition loss weight.
+        return c_IC
+    
+
+    # Implement a function to preprocess the boundary condition loss weight.
+    def preprocess_c_bc( self, c_BC = None ):
+
+        # Determine whether to use the stored boundary condition loss weight.
+        if c_BC is None:                 # If the boundary condition loss weight was not provided...
+
+            # Set the boundary condition loss weight to be the stored value.
+            c_BC = self.c_BC
+
+        # Return the boundary condition loss weight.
+        return c_BC
+
+
+    # Implement a function to preprocess the residual loss weight.
+    def preprocess_c_residual( self, c_residual = None ):
+
+        # Determine whether to use the stored residual loss weight.
+        if c_residual is None:                 # If the residual loss weight was not provided...
+
+            # Set the residual loss weight to be the stored value.
+            c_residual = self.c_residual
+
+        # Return the residual loss weight.
+        return c_residual
+
+
+    # Implement a function to preprocess the variational loss weight.
+    def preprocess_c_variational( self, c_variational = None ):
+
+        # Determine whether to use the stored variational loss weight.
+        if c_variational is None:                 # If the variational loss weight was not provided...
+
+            # Set the variational loss weight to be the stored value.
+            c_variational = self.c_variational
+
+        # Return the variational loss weight.
+        return c_variational
+
+
+    # Implement a function to preprocess the monotonicity loss weight.
+    def preprocess_c_monotonicity( self, c_monotonicity = None ):
+
+        # Determine whether to use the stored monotonicity loss weight.
+        if c_monotonicity is None:                 # If the monotonicity loss weight was not provided...
+
+            # Set the monotonicity loss weight to be the stored value.
+            c_monotonicity = self.c_monotonicity
+
+        # Return the monotonicity loss weight.
+        return c_monotonicity
+    
 
     # Implement a function to preprocess the level.
     def preprocess_level( self, level = None ):
@@ -1659,19 +1854,35 @@ class neural_network_class( torch.nn.Module ):
 
 
     # Implement a function to setup for plotting the training / testing losses.
-    def setup_training_testing_losses( self, training_losses = None, testing_epochs = None, testing_losses = None ):
+    def setup_training_testing_losses( self, training_epochs = None, training_losses = None, ic_training_losses = None, bc_training_losses = None, residual_training_losses = None, variational_training_losses = None, monotonicity_training_losses = None, testing_epochs = None, testing_losses = None, ic_testing_losses = None, bc_testing_losses = None, residual_testing_losses = None, variational_testing_losses = None, monotonicity_testing_losses = None, c_IC = None, c_BC = None, c_residual = None, c_variational = None, c_monotonicity = None ):
 
-        # Preprocess the training losses.
+        # Preprocess the training data.
+        training_epochs = self.preprocess_training_epochs( training_epochs )
         training_losses = self.preprocess_training_losses( training_losses )
-        
-        # Preprocess the testing epochs.
-        testing_epochs = self.preprocess_testing_epochs( testing_epochs )
+        ic_training_losses = self.preprocess_ic_training_losses( ic_training_losses )
+        bc_training_losses = self.preprocess_bc_training_losses( bc_training_losses )
+        residual_training_losses = self.preprocess_residual_training_losses( residual_training_losses )
+        variational_training_losses = self.preprocess_variational_training_losses( variational_training_losses )
+        monotonicity_training_losses = self.preprocess_monotonicity_training_losses( monotonicity_training_losses )
 
-        # Preprocess the testing losses.
+        # Preprocess the testing data.
+        testing_epochs = self.preprocess_testing_epochs( testing_epochs )
         testing_losses = self.preprocess_testing_losses( testing_losses )
+        ic_testing_losses = self.preprocess_ic_testing_losses( ic_testing_losses )
+        bc_testing_losses = self.preprocess_bc_testing_losses( bc_testing_losses )
+        residual_testing_losses = self.preprocess_residual_testing_losses( residual_testing_losses )
+        variational_testing_losses = self.preprocess_variational_testing_losses( variational_testing_losses )
+        monotonicity_testing_losses = self.preprocess_monotonicity_testing_losses( monotonicity_testing_losses )
+
+        # Preprocess the loss weights.
+        c_IC = self.preprocess_c_ic( c_IC )
+        c_BC = self.preprocess_c_bc( c_BC )
+        c_residual = self.preprocess_c_residual( c_residual )
+        c_variational = self.preprocess_c_variational( c_variational )
+        c_monotonicity = self.preprocess_c_monotonicity( c_monotonicity )
 
         # Return the training / testing losses.
-        return training_losses, testing_epochs, testing_losses
+        return training_epochs, training_losses, ic_training_losses, bc_training_losses, residual_training_losses, variational_training_losses, monotonicity_training_losses, testing_epochs, testing_losses, ic_testing_losses, bc_testing_losses, residual_testing_losses, variational_testing_losses, monotonicity_testing_losses, c_IC, c_BC, c_residual, c_variational, c_monotonicity
 
 
     # Implement a function to setup for level set computation and plotting.
@@ -2560,6 +2771,15 @@ class neural_network_class( torch.nn.Module ):
         # Initialize the percent completion.
         percent_complete = torch.tensor( 0.0, dtype = torch.float32, device = self.device )
 
+        # Preallocate arrays to store the batch loss information for this epoch.
+        batch_losses = torch.empty( num_batches, dtype = torch.float32, device = self.device )
+        batch_losses_ic = torch.empty( num_batches, dtype = torch.float32, device = self.device )
+        batch_losses_bc = torch.empty( num_batches, dtype = torch.float32, device = self.device )
+        batch_losses_residual = torch.empty( num_batches, dtype = torch.float32, device = self.device )
+        batch_losses_variational = torch.empty( num_batches, dtype = torch.float32, device = self.device )
+        batch_losses_monotonicity = torch.empty( num_batches, dtype = torch.float32, device = self.device )
+        batch_durations = torch.empty( num_batches, dtype = torch.float32, device = self.device )
+
         # Train over all of the batches.
         for k in range( num_batches ):                  # Iterate through each of the batches...
 
@@ -2574,7 +2794,8 @@ class neural_network_class( torch.nn.Module ):
 
             # Train over this batch.
             # batch_loss, batch_duration = self.train_batch( training_data, derivative_required_for_residual, residual_code )
-            batch_loss, batch_loss_ic, batch_loss_bc, batch_loss_residual, batch_loss_variational, batch_loss_monotonicity, batch_duration = self.train_batch( training_data, derivative_required_for_residual, residual_code )
+            # batch_loss, batch_loss_ic, batch_loss_bc, batch_loss_residual, batch_loss_variational, batch_loss_monotonicity, batch_duration = self.train_batch( training_data, derivative_required_for_residual, residual_code )
+            batch_losses[ k ], batch_losses_ic[ k ], batch_losses_bc[ k ], batch_losses_residual[ k ], batch_losses_variational[ k ], batch_losses_monotonicity[ k ], batch_durations[ k ] = self.train_batch( training_data, derivative_required_for_residual, residual_code )
 
             # Determine whether to delete the batch of elements.
             if self.element_computation_option.lower(  ) in ( 'dynamic', 'during', 'during training', 'during_training', 'duringtraining' ):
@@ -2583,7 +2804,15 @@ class neural_network_class( torch.nn.Module ):
                 training_data = self.delete_elements( None, training_data, batch_option = 'delete', batch_number = torch.tensor( 0, dtype = torch.int64, device = self.device ), batch_size = training_data.variational_data.batch_size )
 
             # Print the batch status (if required).
-            percent_complete = self.print_batch_status( k, batch_loss, percent_complete, batch_duration, print_batch_info_flag )
+            percent_complete = self.print_batch_status( k, batch_losses[ k ], percent_complete, batch_durations[ k ], print_batch_info_flag )
+
+        # Compute the epoch loss information.
+        epoch_loss = torch.mean( batch_losses )
+        epoch_loss_ic = torch.mean( batch_losses_ic )
+        epoch_loss_bc = torch.mean( batch_losses_bc )
+        epoch_loss_residual = torch.mean( batch_losses_residual )
+        epoch_loss_variational = torch.mean( batch_losses_variational )
+        epoch_loss_monotonicity = torch.mean( batch_losses_monotonicity )
 
         # Retrieve the end time.
         end_time = torch.tensor( time.time(  ), dtype = torch.float64, device = self.device ) 
@@ -2593,7 +2822,8 @@ class neural_network_class( torch.nn.Module ):
 
         # Return the final batch loss.
         # return batch_loss, epoch_duration
-        return batch_loss, batch_loss_ic, batch_loss_bc, batch_loss_residual, batch_loss_variational, batch_loss_monotonicity, epoch_duration
+        # return batch_loss, batch_loss_ic, batch_loss_bc, batch_loss_residual, batch_loss_variational, batch_loss_monotonicity, epoch_duration
+        return epoch_loss, epoch_loss_ic, epoch_loss_bc, epoch_loss_residual, epoch_loss_variational, epoch_loss_monotonicity, epoch_duration
 
 
     # Implement a function to perform the steps to fully train a network for the specified number of epochs.
@@ -3706,36 +3936,225 @@ class neural_network_class( torch.nn.Module ):
 
 
     # Implement a function to plot the training results.
-    def plot_training_results( self, training_losses = None, testing_epochs = None, testing_losses = None, save_directory = r'.', show_plot = False ):
+    def plot_training_results( self, training_epochs = None, training_losses = None, ic_training_losses = None, bc_training_losses = None, residual_training_losses = None, variational_training_losses = None, monotonicity_training_losses = None, testing_epochs = None, testing_losses = None, ic_testing_losses = None, bc_testing_losses = None, residual_testing_losses = None, variational_testing_losses = None, monotonicity_testing_losses = None, c_IC = None, c_BC = None, c_residual = None, c_variational = None, c_monotonicity = None, save_directory = r'.', show_plot = False ):
 
-        # Setup for plotting training results
-        training_losses, testing_epochs, testing_losses = self.setup_training_testing_losses( training_losses, testing_epochs, testing_losses )
+        # Setup for plotting training results.
+        training_epochs, training_losses, ic_training_losses, bc_training_losses, residual_training_losses, variational_training_losses, monotonicity_training_losses, testing_epochs, testing_losses, ic_testing_losses, bc_testing_losses, residual_testing_losses, variational_testing_losses, monotonicity_testing_losses, c_IC, c_BC, c_residual, c_variational, c_monotonicity = self.setup_training_testing_losses( training_epochs, training_losses, ic_training_losses, bc_training_losses, residual_training_losses, variational_training_losses, monotonicity_training_losses, testing_epochs, testing_losses, ic_testing_losses, bc_testing_losses, residual_testing_losses, variational_testing_losses, monotonicity_testing_losses, c_IC, c_BC, c_residual, c_variational, c_monotonicity )
 
-        # Convert the given tensors to numpy arrays.
+        # Convert the training data tensors to numpy arrays.
+        training_epochs = self.plotting_utilities.plot_process( torch.squeeze( training_epochs ) )
         training_losses = self.plotting_utilities.plot_process( torch.squeeze( training_losses ) )
+        ic_training_losses = self.plotting_utilities.plot_process( torch.squeeze( ic_training_losses ) )
+        bc_training_losses = self.plotting_utilities.plot_process( torch.squeeze( bc_training_losses ) )
+        residual_training_losses = self.plotting_utilities.plot_process( torch.squeeze( residual_training_losses ) )
+        variational_training_losses = self.plotting_utilities.plot_process( torch.squeeze( variational_training_losses ) )
+        monotonicity_training_losses = self.plotting_utilities.plot_process( torch.squeeze( monotonicity_training_losses ) )
+
+        # Convert the testing data tensors to numpy arrays.
         testing_epochs = self.plotting_utilities.plot_process( torch.squeeze( testing_epochs ) )
         testing_losses = self.plotting_utilities.plot_process( torch.squeeze( testing_losses ) )
+        ic_testing_losses = self.plotting_utilities.plot_process( torch.squeeze( ic_testing_losses ) )
+        bc_testing_losses = self.plotting_utilities.plot_process( torch.squeeze( bc_testing_losses ) )
+        residual_testing_losses = self.plotting_utilities.plot_process( torch.squeeze( residual_testing_losses ) )
+        variational_testing_losses = self.plotting_utilities.plot_process( torch.squeeze( variational_testing_losses ) )
+        monotonicity_testing_losses = self.plotting_utilities.plot_process( torch.squeeze( monotonicity_testing_losses ) )
 
-        # Create a plot to store the training and testing losses.
-        fig = plt.figure(  ); plt.xlabel( 'Epoch [#]' ), plt.ylabel( 'Loss [-]' ), plt.title('Training & Testing Losses vs Epoch Number')
-        plt.plot( training_losses, '*-', label = 'Training Losses' )
-        plt.plot( testing_epochs, testing_losses, '*-', label = 'Testing Losses' )
+        # Convert the loss weights from tensors to numpy arrays.
+        c_IC = self.plotting_utilities.plot_process( c_IC )
+        c_BC = self.plotting_utilities.plot_process( c_BC )
+        c_residual = self.plotting_utilities.plot_process( c_residual )
+        c_variational = self.plotting_utilities.plot_process( c_variational )
+        c_monotonicity = self.plotting_utilities.plot_process( c_monotonicity )
+
+        # Define the marker size.
+        markersize = 5
+
+        # Initialize lists to store the figures and axes.
+        figs = [  ]; axes = [  ]
+
+        # Create a plot to store the training and testing losses (linear).
+        fig = plt.figure(  ); ax = plt.gca(  ); plt.xlabel( 'Epoch [#]' ), plt.ylabel( 'Total Loss [-]' ), plt.title('Total Loss vs Epoch Number (Linear)')
+        plt.plot( training_epochs, training_losses, 'D-', color = 'k', markersize = markersize, label = 'Training' )
+        plt.plot( testing_epochs, testing_losses, 'o-', color = 'k', markersize = markersize, label = 'Testing' )
         plt.legend(  )
-
-        # Retrieve the current axes.
-        ax = plt.gca(  )
-
-        # Save the figure.
         plt.savefig( save_directory + r'/' + f'Figure_{plt.gcf(  ).number}.png' )
+        figs.append( fig ); axes.append( ax )
 
-        # Determine whether to show the plot.
-        if show_plot:               # If we want to show the plot...
+        # Create a plot to store the training and testing losses (logarithmic).
+        fig = plt.figure(  ); ax = plt.gca(  ); plt.xlabel( 'Epoch [#]' ), plt.ylabel( 'Total Loss [-]' ), plt.title('Total Loss vs Epoch Number (Logarithmic)')
+        plt.plot( training_epochs, training_losses, 'D-', color = 'k', markersize = markersize, label = 'Training' )
+        plt.plot( testing_epochs, testing_losses, 'o-', color = 'k', markersize = markersize, label = 'Testing' )
+        plt.legend(  )
+        ax.set_yscale( 'log' )
+        plt.savefig( save_directory + r'/' + f'Figure_{plt.gcf(  ).number}.png' )
+        figs.append( fig ); axes.append( ax )
+
+        # Create a plot to store the raw training loss components (linear).
+        fig = plt.figure(  ); ax = plt.gca(  ); plt.xlabel( 'Epoch [#]' ), plt.ylabel( 'Raw Loss [-]' ), plt.title('Raw Training Loss Components vs Epoch Number (Linear)')
+        plt.plot( training_epochs, ic_training_losses, 'D-', color = 'b', markersize = markersize, label = 'IC (Train)' )
+        plt.plot( training_epochs, bc_training_losses, 'D-', color = 'g', markersize = markersize, label = 'BC (Train)' )
+        plt.plot( training_epochs, residual_training_losses, 'D-', color = 'r', markersize = markersize, label = 'Residual (Train)' )
+        plt.plot( training_epochs, variational_training_losses, 'D-', color = 'c', markersize = markersize, label = 'Variational (Train)' )
+        plt.plot( training_epochs, monotonicity_training_losses, 'D-', color = 'm', markersize = markersize, label = 'Monotonicity (Train)' )
+        plt.legend(  )
+        plt.savefig( save_directory + r'/' + f'Figure_{plt.gcf(  ).number}.png' )
+        figs.append( fig ); axes.append( ax )
+
+        # Create a plot to store the raw testing loss components (linear).
+        fig = plt.figure(  ); ax = plt.gca(  ); plt.xlabel( 'Epoch [#]' ), plt.ylabel( 'Raw Loss [-]' ), plt.title('Raw Testing Loss Components vs Epoch Number (Linear)')
+        plt.plot( testing_epochs, ic_testing_losses, 'o-', color = 'b', markersize = markersize, label = 'IC (Test)' )
+        plt.plot( testing_epochs, bc_testing_losses, 'o-', color = 'g', markersize = markersize, label = 'BC (Test)' )
+        plt.plot( testing_epochs, residual_testing_losses, 'o-', color = 'r', markersize = markersize, label = 'Residual (Test)' )
+        plt.plot( testing_epochs, variational_testing_losses, 'o-', color = 'c', markersize = markersize, label = 'Variational (Test)' )
+        plt.plot( testing_epochs, monotonicity_testing_losses, 'o-', color = 'm', markersize = markersize, label = 'Monotonicity (Test)' )
+        plt.legend(  )
+        plt.savefig( save_directory + r'/' + f'Figure_{plt.gcf(  ).number}.png' )
+        figs.append( fig ); axes.append( ax )
+
+        # Create a plot to store the raw training and testing loss components (linear).
+        fig = plt.figure(  ); ax = plt.gca(  ); plt.xlabel( 'Epoch [#]' ), plt.ylabel( 'Raw Loss [-]' ), plt.title('Raw Training & Testing Loss Components vs Epoch Number (Linear)')
+        plt.plot( training_epochs, ic_training_losses, 'D-', color = 'b', markersize = markersize, label = 'IC (Train)' )
+        plt.plot( testing_epochs, ic_testing_losses, 'o-', color = 'b', markersize = markersize, label = 'IC (Test)' )
+        plt.plot( training_epochs, bc_training_losses, 'D-', color = 'g', markersize = markersize, label = 'BC (Train)' )
+        plt.plot( testing_epochs, bc_testing_losses, 'o-', color = 'g', markersize = markersize, label = 'BC (Test)' )
+        plt.plot( training_epochs, residual_training_losses, 'D-', color = 'r', markersize = markersize, label = 'Residual (Train)' )
+        plt.plot( testing_epochs, residual_testing_losses, 'o-', color = 'r', markersize = markersize, label = 'Residual (Test)' )
+        plt.plot( training_epochs, variational_training_losses, 'D-', color = 'c', markersize = markersize, label = 'Variational (Train)' )
+        plt.plot( testing_epochs, variational_testing_losses, 'o-', color = 'c', markersize = markersize, label = 'Variational (Test)' )
+        plt.plot( training_epochs, monotonicity_training_losses, 'D-', color = 'm', markersize = markersize, label = 'Monotonicity (Train)' )
+        plt.plot( testing_epochs, monotonicity_testing_losses, 'o-', color = 'm', markersize = markersize, label = 'Monotonicity (Test)' )
+        plt.legend(  )
+        plt.savefig( save_directory + r'/' + f'Figure_{plt.gcf(  ).number}.png' )
+        figs.append( fig ); axes.append( ax )
+
+        # Create a plot to store the raw training loss components (logarithmic).
+        fig = plt.figure(  ); ax = plt.gca(  ); plt.xlabel( 'Epoch [#]' ), plt.ylabel( 'Raw Loss [-]' ), plt.title('Raw Training Loss Components vs Epoch Number (Logarithmic)')
+        plt.plot( training_epochs, ic_training_losses, 'D-', color = 'b', markersize = markersize, label = 'IC (Train)' )
+        plt.plot( training_epochs, bc_training_losses, 'D-', color = 'g', markersize = markersize, label = 'BC (Train)' )
+        plt.plot( training_epochs, residual_training_losses, 'D-', color = 'r', markersize = markersize, label = 'Residual (Train)' )
+        plt.plot( training_epochs, variational_training_losses, 'D-', color = 'c', markersize = markersize, label = 'Variational (Train)' )
+        plt.plot( training_epochs, monotonicity_training_losses, 'D-', color = 'm', markersize = markersize, label = 'Monotonicity (Train)' )
+        plt.legend(  )
+        ax.set_yscale( 'log' )
+        plt.savefig( save_directory + r'/' + f'Figure_{plt.gcf(  ).number}.png' )
+        figs.append( fig ); axes.append( ax )
+
+        # Create a plot to store the raw testing loss components (logarithmic).
+        fig = plt.figure(  ); ax = plt.gca(  ); plt.xlabel( 'Epoch [#]' ), plt.ylabel( 'Raw Loss [-]' ), plt.title('Raw Testing Loss Components vs Epoch Number (Logarithmic)')
+        plt.plot( testing_epochs, ic_testing_losses, 'o-', color = 'b', markersize = markersize, label = 'IC (Test)' )
+        plt.plot( testing_epochs, bc_testing_losses, 'o-', color = 'g', markersize = markersize, label = 'BC (Test)' )
+        plt.plot( testing_epochs, residual_testing_losses, 'o-', color = 'r', markersize = markersize, label = 'Residual (Test)' )
+        plt.plot( testing_epochs, variational_testing_losses, 'o-', color = 'c', markersize = markersize, label = 'Variational (Test)' )
+        plt.plot( testing_epochs, monotonicity_testing_losses, 'o-', color = 'm', markersize = markersize, label = 'Monotonicity (Test)' )
+        plt.legend(  )
+        ax.set_yscale( 'log' )
+        plt.savefig( save_directory + r'/' + f'Figure_{plt.gcf(  ).number}.png' )
+        figs.append( fig ); axes.append( ax )
+
+        # Create a plot to store the raw training and testing loss components (logarithmic).
+        fig = plt.figure(  ); ax = plt.gca(  ); plt.xlabel( 'Epoch [#]' ), plt.ylabel( 'Raw Loss [-]' ), plt.title('Raw Training & Testing Loss Components vs Epoch Number (Logarithmic)')
+        plt.plot( training_epochs, ic_training_losses, 'D-', color = 'b', markersize = markersize, label = 'IC (Train)' )
+        plt.plot( testing_epochs, ic_testing_losses, 'o-', color = 'b', markersize = markersize, label = 'IC (Test)' )
+        plt.plot( training_epochs, bc_training_losses, 'D-', color = 'g', markersize = markersize, label = 'BC (Train)' )
+        plt.plot( testing_epochs, bc_testing_losses, 'o-', color = 'g', markersize = markersize, label = 'BC (Test)' )
+        plt.plot( training_epochs, residual_training_losses, 'D-', color = 'r', markersize = markersize, label = 'Residual (Train)' )
+        plt.plot( testing_epochs, residual_testing_losses, 'o-', color = 'r', markersize = markersize, label = 'Residual (Test)' )
+        plt.plot( training_epochs, variational_training_losses, 'D-', color = 'c', markersize = markersize, label = 'Variational (Train)' )
+        plt.plot( testing_epochs, variational_testing_losses, 'o-', color = 'c', markersize = markersize, label = 'Variational (Test)' )
+        plt.plot( training_epochs, monotonicity_training_losses, 'D-', color = 'm', markersize = markersize, label = 'Monotonicity (Train)' )
+        plt.plot( testing_epochs, monotonicity_testing_losses, 'o-', color = 'm', markersize = markersize, label = 'Monotonicity (Test)' )
+        plt.legend(  )
+        ax.set_yscale( 'log' )
+        plt.savefig( save_directory + r'/' + f'Figure_{plt.gcf(  ).number}.png' )
+        figs.append( fig ); axes.append( ax )
+
+        # Create a plot to store the weighted training loss components (linear).
+        fig = plt.figure(  ); ax = plt.gca(  ); plt.xlabel( 'Epoch [#]' ), plt.ylabel( 'Weighted Loss [-]' ), plt.title('Weighted Training Loss Components vs Epoch Number (Linear)')
+        plt.plot( training_epochs, c_IC*ic_training_losses, 'D-', color = 'b', markersize = markersize, label = 'IC (Train)' )
+        plt.plot( training_epochs, c_BC*bc_training_losses, 'D-', color = 'g', markersize = markersize, label = 'BC (Train)' )
+        plt.plot( training_epochs, c_residual*residual_training_losses, 'D-', color = 'r', markersize = markersize, label = 'Residual (Train)' )
+        plt.plot( training_epochs, c_variational*variational_training_losses, 'D-', color = 'c', markersize = markersize, label = 'Variational (Train)' )
+        plt.plot( training_epochs, c_monotonicity*monotonicity_training_losses, 'D-', color = 'm', markersize = markersize, label = 'Monotonicity (Train)' )
+        plt.legend(  )
+        plt.savefig( save_directory + r'/' + f'Figure_{plt.gcf(  ).number}.png' )
+        figs.append( fig ); axes.append( ax )
+
+        # Create a plot to store the weighted testing loss components (linear).
+        fig = plt.figure(  ); ax = plt.gca(  ); plt.xlabel( 'Epoch [#]' ), plt.ylabel( 'Weighted Loss [-]' ), plt.title('Weighted Testing Loss Components vs Epoch Number (Linear)')
+        plt.plot( testing_epochs, c_IC*ic_testing_losses, 'o-', color = 'b', markersize = markersize, label = 'IC (Test)' )
+        plt.plot( testing_epochs, c_BC*bc_testing_losses, 'o-', color = 'g', markersize = markersize, label = 'BC (Test)' )
+        plt.plot( testing_epochs, c_residual*residual_testing_losses, 'o-', color = 'r', markersize = markersize, label = 'Residual (Test)' )
+        plt.plot( testing_epochs, c_variational*variational_testing_losses, 'o-', color = 'c', markersize = markersize, label = 'Variational (Test)' )
+        plt.plot( testing_epochs, c_monotonicity*monotonicity_testing_losses, 'o-', color = 'm', markersize = markersize, label = 'Monotonicity (Test)' )
+        plt.legend(  )
+        plt.savefig( save_directory + r'/' + f'Figure_{plt.gcf(  ).number}.png' )
+        figs.append( fig ); axes.append( ax )
+
+        # Create a plot to store the weighted training and testing loss components (linear).
+        fig = plt.figure(  ); ax = plt.gca(  ); plt.xlabel( 'Epoch [#]' ), plt.ylabel( 'Weighted Loss [-]' ), plt.title('Weighted Training & Testing Loss Components vs Epoch Number (Linear)')
+        plt.plot( training_epochs, c_IC*ic_training_losses, 'D-', color = 'b', markersize = markersize, label = 'IC (Train)' )
+        plt.plot( testing_epochs, c_IC*ic_testing_losses, 'o-', color = 'b', markersize = markersize, label = 'IC (Test)' )
+        plt.plot( training_epochs, c_BC*bc_training_losses, 'D-', color = 'g', markersize = markersize, label = 'BC (Train)' )
+        plt.plot( testing_epochs, c_BC*bc_testing_losses, 'o-', color = 'g', markersize = markersize, label = 'BC (Test)' )
+        plt.plot( training_epochs, c_residual*residual_training_losses, 'D-', markersize = markersize, color = 'r', label = 'Residual (Train)' )
+        plt.plot( testing_epochs, c_residual*residual_testing_losses, 'o-', markersize = markersize, color = 'r', label = 'Residual (Test)' )
+        plt.plot( training_epochs, c_variational*variational_training_losses, 'D-', color = 'c', markersize = markersize, label = 'Variational (Train)' )
+        plt.plot( testing_epochs, c_variational*variational_testing_losses, 'o-', color = 'c', markersize = markersize, label = 'Variational (Test)' )
+        plt.plot( training_epochs, c_monotonicity*monotonicity_training_losses, 'D-', color = 'm', markersize = markersize, label = 'Monotonicity (Train)' )
+        plt.plot( testing_epochs, c_monotonicity*monotonicity_testing_losses, 'o-', color = 'm', markersize = markersize, label = 'Monotonicity (Test)' )
+        plt.legend(  )
+        plt.savefig( save_directory + r'/' + f'Figure_{plt.gcf(  ).number}.png' )
+        figs.append( fig ); axes.append( ax )
+
+        # Create a plot to store the weighted training loss components.
+        fig = plt.figure(  ); ax = plt.gca(  ); plt.xlabel( 'Epoch [#]' ), plt.ylabel( 'Weighted Loss [-]' ), plt.title('Weighted Training Loss Components vs Epoch Number (Logarithmic)')
+        plt.plot( training_epochs, c_IC*ic_training_losses, 'D-', color = 'b', markersize = markersize, label = 'IC (Train)' )
+        plt.plot( training_epochs, c_BC*bc_training_losses, 'D-', color = 'g', markersize = markersize, label = 'BC (Train)' )
+        plt.plot( training_epochs, c_residual*residual_training_losses, 'D-', color = 'r', markersize = markersize, label = 'Residual (Train)' )
+        plt.plot( training_epochs, c_variational*variational_training_losses, 'D-', color = 'c', markersize = markersize, label = 'Variational (Train)' )
+        plt.plot( training_epochs, c_monotonicity*monotonicity_training_losses, 'D-', color = 'm', markersize = markersize, label = 'Monotonicity (Train)' )
+        plt.legend(  )
+        ax.set_yscale( 'log' )
+        plt.savefig( save_directory + r'/' + f'Figure_{plt.gcf(  ).number}.png' )
+        figs.append( fig ); axes.append( ax )
+
+        # Create a plot to store the weighted testing loss components.
+        fig = plt.figure(  ); ax = plt.gca(  ); plt.xlabel( 'Epoch [#]' ), plt.ylabel( 'Weighted Loss [-]' ), plt.title('Weighted Testing Loss Components vs Epoch Number (Logarithmic)')
+        plt.plot( testing_epochs, c_IC*ic_testing_losses, 'o-', color = 'b', markersize = markersize, label = 'IC (Test)' )
+        plt.plot( testing_epochs, c_BC*bc_testing_losses, 'o-', color = 'g', markersize = markersize, label = 'BC (Test)' )
+        plt.plot( testing_epochs, c_residual*residual_testing_losses, 'o-', color = 'r', markersize = markersize, label = 'Residual (Test)' )
+        plt.plot( testing_epochs, c_variational*variational_testing_losses, 'o-', color = 'c', markersize = markersize, label = 'Variational (Test)' )
+        plt.plot( testing_epochs, c_monotonicity*monotonicity_testing_losses, 'o-', color = 'm', markersize = markersize, label = 'Monotonicity (Test)' )
+        plt.legend(  )
+        ax.set_yscale( 'log' )
+        plt.savefig( save_directory + r'/' + f'Figure_{plt.gcf(  ).number}.png' )
+        figs.append( fig ); axes.append( ax )
+
+        # Create a plot to store the weighted training and testing loss components.
+        fig = plt.figure(  ); ax = plt.gca(  ); plt.xlabel( 'Epoch [#]' ), plt.ylabel( 'Weighted Loss [-]' ), plt.title('Weighted Training & Testing Loss Components vs Epoch Number (Logarithmic)')
+        plt.plot( training_epochs, c_IC*ic_training_losses, 'D-', color = 'b', markersize = markersize, label = 'IC (Train)' )
+        plt.plot( testing_epochs, c_IC*ic_testing_losses, 'o-', color = 'b', markersize = markersize, label = 'IC (Test)' )
+        plt.plot( training_epochs, c_BC*bc_training_losses, 'D-', color = 'g', markersize = markersize, label = 'BC (Train)' )
+        plt.plot( testing_epochs, c_BC*bc_testing_losses, 'o-', color = 'g', markersize = markersize, label = 'BC (Test)' )
+        plt.plot( training_epochs, c_residual*residual_training_losses, 'D-', color = 'r', markersize = markersize, label = 'Residual (Train)' )
+        plt.plot( testing_epochs, c_residual*residual_testing_losses, 'o-', color = 'r', markersize = markersize, label = 'Residual (Test)' )
+        plt.plot( training_epochs, c_variational*variational_training_losses, 'D-', color = 'c', markersize = markersize, label = 'Variational (Train)' )
+        plt.plot( testing_epochs, c_variational*variational_testing_losses, 'o-', color = 'c', markersize = markersize, label = 'Variational (Test)' )
+        plt.plot( training_epochs, c_monotonicity*monotonicity_training_losses, 'D-', color = 'm', markersize = markersize, label = 'Monotonicity (Train)' )
+        plt.plot( testing_epochs, c_monotonicity*monotonicity_testing_losses, 'o-', color = 'm', markersize = markersize, label = 'Monotonicity (Test)' )
+        plt.legend(  )
+        ax.set_yscale( 'log' )
+        plt.savefig( save_directory + r'/' + f'Figure_{plt.gcf(  ).number}.png' )
+        figs.append( fig ); axes.append( ax )
+
+        # Determine whether to show the plots.
+        if show_plot:               # If we want to show the plots...
 
             # Show the figure.
             plt.show( block = False )
 
         # Return the figure.
-        return fig, ax
+        return figs, axes
 
 
     # Implement a function to plot a level set of the network.
