@@ -2175,24 +2175,23 @@ class neural_network_class( torch.nn.Module ):
         num_epochs = self.preprocess_num_epochs( num_epochs )
 
         # Empty training losses.
-        training_losses = torch.empty( num_epochs, dtype = torch.float32, device = self.device )
-        ic_training_losses = torch.empty( num_epochs, dtype = torch.float32, device = self.device )
-        bc_training_losses = torch.empty( num_epochs, dtype = torch.float32, device = self.device )
-        residual_training_losses = torch.empty( num_epochs, dtype = torch.float32, device = self.device )
-        variational_training_losses = torch.empty( num_epochs, dtype = torch.float32, device = self.device )
-        monotonicity_training_losses = torch.empty( num_epochs, dtype = torch.float32, device = self.device )
+        training_losses = torch.empty( num_epochs + 1, dtype = torch.float32, device = self.device )
+        ic_training_losses = torch.empty( num_epochs + 1, dtype = torch.float32, device = self.device )
+        bc_training_losses = torch.empty( num_epochs + 1, dtype = torch.float32, device = self.device )
+        residual_training_losses = torch.empty( num_epochs + 1, dtype = torch.float32, device = self.device )
+        variational_training_losses = torch.empty( num_epochs + 1, dtype = torch.float32, device = self.device )
+        monotonicity_training_losses = torch.empty( num_epochs + 1, dtype = torch.float32, device = self.device )
 
         # Empty testing losses.
-        testing_epochs = torch.empty( num_epochs, dtype = torch.int64, device = self.device )
-        testing_losses = torch.empty( num_epochs, dtype = torch.float32, device = self.device )
-        ic_testing_losses = torch.empty( num_epochs, dtype = torch.float32, device = self.device )
-        bc_testing_losses = torch.empty( num_epochs, dtype = torch.float32, device = self.device )
-        residual_testing_losses = torch.empty( num_epochs, dtype = torch.float32, device = self.device )
-        variational_testing_losses = torch.empty( num_epochs, dtype = torch.float32, device = self.device )
-        monotonicity_testing_losses = torch.empty( num_epochs, dtype = torch.float32, device = self.device )
+        testing_epochs = torch.empty( num_epochs + 1, dtype = torch.int64, device = self.device )
+        testing_losses = torch.empty( num_epochs + 1, dtype = torch.float32, device = self.device )
+        ic_testing_losses = torch.empty( num_epochs + 1, dtype = torch.float32, device = self.device )
+        bc_testing_losses = torch.empty( num_epochs + 1, dtype = torch.float32, device = self.device )
+        residual_testing_losses = torch.empty( num_epochs + 1, dtype = torch.float32, device = self.device )
+        variational_testing_losses = torch.empty( num_epochs + 1, dtype = torch.float32, device = self.device )
+        monotonicity_testing_losses = torch.empty( num_epochs + 1, dtype = torch.float32, device = self.device )
 
         # Return the training losses.
-        # return training_losses, testing_epochs, testing_losses
         return training_losses, ic_training_losses, bc_training_losses, residual_training_losses, variational_training_losses, monotonicity_training_losses, testing_epochs, testing_losses, ic_testing_losses, bc_testing_losses, residual_testing_losses, variational_testing_losses, monotonicity_testing_losses
 
     
@@ -2650,6 +2649,8 @@ class neural_network_class( torch.nn.Module ):
         # Compute the temporal derivative.
         temporal_derivative = self.compute_temporal_derivative( residual_data, derivative_required_for_temporal_gradient, temporal_code )
 
+        print( f'{torch.max( temporal_derivative )}' )
+
         # Rectify the temporal derivative.
         rectified_temporal_derivative = torch.maximum( temporal_derivative, torch.zeros_like( temporal_derivative ) )
 
@@ -2704,7 +2705,7 @@ class neural_network_class( torch.nn.Module ):
     #%% ------------------------------------------------------------ TRAINING FUNCTIONS ------------------------------------------------------------
 
     # Implement a function to perform the steps necessary to train on a single batch.
-    def train_batch( self, training_data = None, derivative_required_for_residual = None, residual_code = None ):
+    def train_batch( self, training_data = None, derivative_required_for_residual = None, residual_code = None, update_network_flag = True ):
 
         # Preprocess the residual code.
         residual_code = self.preprocess_residual_code( residual_code )
@@ -2724,12 +2725,15 @@ class neural_network_class( torch.nn.Module ):
         # Compute the loss associated with this batch element.
         batch_loss, batch_loss_ic, batch_loss_bc, batch_loss_residual, batch_loss_variational, batch_loss_monotonicity = self.loss( training_data.initial_condition_data, training_data.boundary_condition_data, training_data.residual_data, training_data.variational_data, derivative_required_for_residual, residual_code )
 
-        # Compute the gradients associated with the loss.
-        batch_loss.backward(  )
-        # batch_loss.backward( retain_graph = True )
+        # Determine whether we want to update the network parameters.
+        if update_network_flag:                  # If we want to update the network parameters...
 
-        # Perform an optimizer step on this batch.
-        self.optimizer.step(  )
+            # Compute the gradients associated with the loss.
+            batch_loss.backward(  )
+            # batch_loss.backward( retain_graph = True )
+
+            # Perform an optimizer step on this batch.
+            self.optimizer.step(  )
 
         # Detach the batch loss.
         batch_loss = batch_loss.detach(  )
@@ -2746,12 +2750,11 @@ class neural_network_class( torch.nn.Module ):
         batch_duration = end_time - start_time
 
         # Return the batch loss.
-        # return batch_loss, batch_duration
         return batch_loss, batch_loss_ic, batch_loss_bc, batch_loss_residual, batch_loss_variational, batch_loss_monotonicity, batch_duration
 
 
     # Implement a function to perform the steps necessary to train for an epoch.
-    def train_epoch( self, training_data = None, num_batches = None, derivative_required_for_residual = None, residual_code = None, print_batch_info_flag = True ):
+    def train_epoch( self, training_data = None, num_batches = None, derivative_required_for_residual = None, residual_code = None, update_network_flag = True, print_batch_info_flag = True ):
 
         # Preprocess the residual code.
         residual_code = self.preprocess_residual_code( residual_code )
@@ -2793,9 +2796,7 @@ class neural_network_class( torch.nn.Module ):
                 training_data = self.generate_element_batch( training_data, replace_flag = False, batch_option = 'compute', batch_number = torch.tensor( 0, dtype = torch.int64, device = self.device ), batch_size = training_data.variational_data.batch_size )
 
             # Train over this batch.
-            # batch_loss, batch_duration = self.train_batch( training_data, derivative_required_for_residual, residual_code )
-            # batch_loss, batch_loss_ic, batch_loss_bc, batch_loss_residual, batch_loss_variational, batch_loss_monotonicity, batch_duration = self.train_batch( training_data, derivative_required_for_residual, residual_code )
-            batch_losses[ k ], batch_losses_ic[ k ], batch_losses_bc[ k ], batch_losses_residual[ k ], batch_losses_variational[ k ], batch_losses_monotonicity[ k ], batch_durations[ k ] = self.train_batch( training_data, derivative_required_for_residual, residual_code )
+            batch_losses[ k ], batch_losses_ic[ k ], batch_losses_bc[ k ], batch_losses_residual[ k ], batch_losses_variational[ k ], batch_losses_monotonicity[ k ], batch_durations[ k ] = self.train_batch( training_data, derivative_required_for_residual, residual_code, update_network_flag )
 
             # Determine whether to delete the batch of elements.
             if self.element_computation_option.lower(  ) in ( 'dynamic', 'during', 'during training', 'during_training', 'duringtraining' ):
@@ -2821,8 +2822,6 @@ class neural_network_class( torch.nn.Module ):
         epoch_duration = end_time - start_time
 
         # Return the final batch loss.
-        # return batch_loss, epoch_duration
-        # return batch_loss, batch_loss_ic, batch_loss_bc, batch_loss_residual, batch_loss_variational, batch_loss_monotonicity, epoch_duration
         return epoch_loss, epoch_loss_ic, epoch_loss_bc, epoch_loss_residual, epoch_loss_variational, epoch_loss_monotonicity, epoch_duration
 
 
@@ -2855,11 +2854,22 @@ class neural_network_class( torch.nn.Module ):
         old_percent_complete = torch.tensor( 0.0, dtype = torch.float32, device = self.device )
 
         # Empty the training and testing losses.
-        # training_losses, testing_epochs, testing_losses = self.initialize_training_testing_losses( num_epochs )
         training_losses, ic_training_losses, bc_training_losses, residual_training_losses, variational_training_losses, monotonicity_training_losses, testing_epochs, testing_losses, ic_testing_losses, bc_testing_losses, residual_testing_losses, variational_testing_losses, monotonicity_testing_losses = self.initialize_training_testing_losses( num_epochs )
 
+        # Compute the starting training losses.
+        training_losses[ k1 ], ic_training_losses[ k1 ], bc_training_losses[ k1 ], residual_training_losses[ k1 ], variational_training_losses[ k1 ], monotonicity_training_losses[ k1 ], epoch_duration = self.train_epoch( training_data, num_batches, derivative_required_for_residual, residual_code, update_network_flag = True, print_batch_info_flag = False )
+        
+        # Compute the starting testing losses.
+        testing_epochs[ k2 ] = k1
+        testing_losses[ k2 ], ic_testing_losses[ k2 ], bc_testing_losses[ k2 ], residual_testing_losses[ k2 ], variational_testing_losses[ k2 ], monotonicity_testing_losses[ k2 ] = self.test_epoch( testing_data, derivative_required_for_residual, residual_code )
+
+        # Advance the loop counters.
+        k1 += 1
+        k2 += 1
+
         # Train the network for the specified number of epochs.
-        while ( not stop_early_flag ) and ( k1 < num_epochs ) :                                             # While we have not met early stopping criteria and have not yet performed all of the training epochs...
+        # while ( not stop_early_flag ) and ( k1 < num_epochs ) :                                             # While we have not met early stopping criteria and have not yet performed all of the training epochs...
+        while ( not stop_early_flag ) and ( k1 < ( num_epochs + 1 ) ) :                                             # While we have not met early stopping criteria and have not yet performed all of the training epochs...
 
             # Compute the percent completion.
             new_percent_complete = self.compute_percent_completion( k1, num_epochs )
@@ -2882,17 +2892,16 @@ class neural_network_class( torch.nn.Module ):
             self.print_starting_epoch_status( k1, old_percent_complete, test_network_flag )
 
             # Perform a training epoch.
-            # training_losses[ k1 ], epoch_duration = self.train_epoch( training_data, num_batches, derivative_required_for_residual, residual_code, test_network_flag )
-            training_losses[ k1 ], ic_training_losses[ k1 ], bc_training_losses[ k1 ], residual_training_losses[ k1 ], variational_training_losses[ k1 ], monotonicity_training_losses[ k1 ], epoch_duration = self.train_epoch( training_data, num_batches, derivative_required_for_residual, residual_code, test_network_flag )
+            training_losses[ k1 ], ic_training_losses[ k1 ], bc_training_losses[ k1 ], residual_training_losses[ k1 ], variational_training_losses[ k1 ], monotonicity_training_losses[ k1 ], epoch_duration = self.train_epoch( training_data, num_batches, derivative_required_for_residual, residual_code, update_network_flag = True, print_batch_info_flag = test_network_flag )
 
             # Determine whether to perform a testing epoch.
             if test_network_flag:                                                                           # Determine whether to test the network...
 
                 # Store this testing epoch.
-                testing_epochs[ k2 ] = k1 + 1
+                testing_epochs[ k2 ] = k1
+                # testing_epochs[ k2 ] = k1 + 1
 
                 # Perform a testing epoch.
-                # testing_losses[ k2 ] = self.test_epoch( testing_data, derivative_required_for_residual, residual_code )
                 testing_losses[ k2 ], ic_testing_losses[ k2 ], bc_testing_losses[ k2 ], residual_testing_losses[ k2 ], variational_testing_losses[ k2 ], monotonicity_testing_losses[ k2 ] = self.test_epoch( testing_data, derivative_required_for_residual, residual_code )
 
             # Print ending epoch information.
@@ -2928,7 +2937,7 @@ class neural_network_class( torch.nn.Module ):
         monotonicity_testing_losses = monotonicity_testing_losses[ :k2 ]
 
         # Create a tensor of training epochs.
-        training_epochs = torch.arange( k1.item(  ) ) + 1
+        training_epochs = torch.arange( k1.item(  ) )
 
         # Initialize the training end time.
         end_time = torch.tensor( time.time(  ), dtype = torch.float64, device = self.device ) 
@@ -2939,36 +2948,7 @@ class neural_network_class( torch.nn.Module ):
         # Print the ending training status.
         self.print_ending_training_status( training_duration, verbose_flag )
 
-        # # Compute the network's classification loss.
-        # classification_loss = self.classification_loss( pde )
-
-        # classification_loss = self.compute_classification_loss( pde, classification_data, num_spatial_dimensions, domain, plot_time, level, level_set_guesses, num_guesses, newton_tolerance, newton_max_iterations, exploration_radius, num_exploration_points, unique_tolerance, classification_noise_magnitude, domain_subset_type, tspan, dt )
-
-        # # Set the training losses.
-        # self.training_losses = training_losses
-        # self.ic_training_losses = ic_training_losses
-        # self.bc_training_losses = bc_training_losses
-        # self.residual_training_losses = residual_training_losses
-        # self.variational_training_losses = variational_training_losses
-        # self.monotonicity_training_losses = monotonicity_training_losses
-
-        # # Set the testing losses.
-        # self.testing_epochs = testing_epochs
-        # self.testing_losses = testing_losses
-        # self.ic_testing_losses = ic_testing_losses
-        # self.bc_testing_losses = bc_testing_losses
-        # self.residual_testing_losses = residual_testing_losses
-        # self.variational_testing_losses = variational_testing_losses
-        # self.monotonicity_testing_losses = monotonicity_testing_losses
-
-        # # Set the classification loss (as required).
-        # self.set_classification_loss( classification_loss, set_flag )
-
-        # classification_loss = self.classification_loss
-
         # Return the training and testing losses.
-        # return training_epochs, training_losses, testing_epochs, testing_losses
-        # return training_epochs, training_losses, testing_epochs, testing_losses, classification_loss
         return training_epochs, training_losses, ic_training_losses, bc_training_losses, residual_training_losses, variational_training_losses, monotonicity_training_losses, testing_epochs, testing_losses, ic_testing_losses, bc_testing_losses, residual_testing_losses, variational_testing_losses, monotonicity_testing_losses
 
 
@@ -2999,7 +2979,6 @@ class neural_network_class( torch.nn.Module ):
         test_loss_monotonicity = test_loss_monotonicity.detach(  )
 
         # Return the testing loss.
-        # return test_loss
         return test_loss, test_loss_ic, test_test_loss_bc, test_loss_residual, test_loss_variational, test_loss_monotonicity
 
 
@@ -3297,6 +3276,9 @@ class neural_network_class( torch.nn.Module ):
 
         # Preprocess the temporal code.
         temporal_code = self.preprocess_temporal_code( temporal_code )
+
+        # network_input_tuple = ( network_input_tuple[ 0 ][ ..., -1 ], network_input_tuple[ 1 ][ ..., -1 ], network_input_tuple[ 2 ][ ..., -1 ] )
+        network_output = network_output[ ..., -1 ]
 
         # Compute the temporal derivative.
         temporal_derivative = self.compute_network_derivatives( network_input_tuple, network_output, temporal_code )
@@ -3967,23 +3949,23 @@ class neural_network_class( torch.nn.Module ):
         c_monotonicity = self.plotting_utilities.plot_process( c_monotonicity )
 
         # Define the marker size.
-        markersize = 5
+        markersize = 3
 
         # Initialize lists to store the figures and axes.
         figs = [  ]; axes = [  ]
 
         # Create a plot to store the training and testing losses (linear).
         fig = plt.figure(  ); ax = plt.gca(  ); plt.xlabel( 'Epoch [#]' ), plt.ylabel( 'Total Loss [-]' ), plt.title('Total Loss vs Epoch Number (Linear)')
-        plt.plot( training_epochs, training_losses, 'D-', color = 'k', markersize = markersize, label = 'Training' )
-        plt.plot( testing_epochs, testing_losses, 'o-', color = 'k', markersize = markersize, label = 'Testing' )
+        plt.plot( training_epochs, training_losses, 'D-', color = 'b', markersize = markersize, label = 'Training' )
+        plt.plot( testing_epochs, testing_losses, 'o-', color = 'r', markersize = markersize, label = 'Testing' )
         plt.legend(  )
         plt.savefig( save_directory + r'/' + f'Figure_{plt.gcf(  ).number}.png' )
         figs.append( fig ); axes.append( ax )
 
         # Create a plot to store the training and testing losses (logarithmic).
         fig = plt.figure(  ); ax = plt.gca(  ); plt.xlabel( 'Epoch [#]' ), plt.ylabel( 'Total Loss [-]' ), plt.title('Total Loss vs Epoch Number (Logarithmic)')
-        plt.plot( training_epochs, training_losses, 'D-', color = 'k', markersize = markersize, label = 'Training' )
-        plt.plot( testing_epochs, testing_losses, 'o-', color = 'k', markersize = markersize, label = 'Testing' )
+        plt.plot( training_epochs, training_losses, 'D-', color = 'b', markersize = markersize, label = 'Training' )
+        plt.plot( testing_epochs, testing_losses, 'o-', color = 'r', markersize = markersize, label = 'Testing' )
         plt.legend(  )
         ax.set_yscale( 'log' )
         plt.savefig( save_directory + r'/' + f'Figure_{plt.gcf(  ).number}.png' )

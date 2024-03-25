@@ -132,9 +132,9 @@ BASE_CONFIG = {
         'c_BC': float( 1.0 ),
         'c_residual': float( 0 ),
         'c_variational': float( 0 ),
-        'c_monotonicity': float( 1e19 ),
+        'c_monotonicity': float( 0 ),
         'hidden_layer_widths': int( 250 ),
-        'num_epochs': int( 400 ),
+        'num_epochs': int( 10 ),
         'num_hidden_layers': int( 3 ),
         'num_training_data': int( 100e3 ),
         'num_testing_data': int( 20e3 ),
@@ -443,6 +443,12 @@ def eval_closed_roa( config: dict = BASE_CONFIG ) -> int:
     # f_bc_3 = lambda s: torch.ones_like( s[ :, -1, : ] )              # [-] Boundary condition function.
     # f_bc_4 = lambda s: torch.ones_like( s[ :, -1, : ] )              # [-] Boundary condition function.
 
+    # f_ic = lambda s: torch.zeros_like( s[ :, -1, : ] )                # [-] Initial condition function.
+    # f_bc_1 = lambda s: torch.ones_like( s[ :, -1, : ] )              # [-] Boundary condition function.
+    # f_bc_2 = lambda s: -torch.ones_like( s[ :, -1, : ] )              # [-] Boundary condition function.
+    # f_bc_3 = lambda s: torch.ones_like( s[ :, -1, : ] )              # [-] Boundary condition function.
+    # f_bc_4 = lambda s: -torch.ones_like( s[ :, -1, : ] )              # [-] Boundary condition function.
+
     # Define the initial-boundary condition information.
     ibc_types = [ 'dirichlet', 'dirichlet', 'dirichlet', 'dirichlet', 'dirichlet' ]                                                                     # [-] Initial-Boundary condition types (e.g., dirichlet, neumann, etc.).
     ibc_dimensions = torch.tensor( [ 0, 1, 1, 2, 2 ], dtype = torch.uint8, device = device )                                                            # [-] Dimensions associated with each initial-boundary condition.
@@ -450,6 +456,11 @@ def eval_closed_roa( config: dict = BASE_CONFIG ) -> int:
     ibc_placements = [ 'lower', 'lower', 'upper', 'lower', 'upper' ]                                                                                    # [Lower/Upper] Initial-Boundary condition placement.
 
     # ibc_types = [ 'neumann', 'neumann', 'neumann', 'neumann', 'neumann' ]                                                                     # [-] Initial-Boundary condition types (e.g., dirichlet, neumann, etc.).
+    # ibc_dimensions = torch.tensor( [ 0, 1, 1, 2, 2 ], dtype = torch.uint8, device = device )                                                            # [-] Dimensions associated with each initial-boundary condition.
+    # ibc_condition_functions = [ f_ic, f_bc_1, f_bc_2, f_bc_3, f_bc_4 ]                                                                                  # [-] List of initial-boundary conditions.
+    # ibc_placements = [ 'lower', 'lower', 'upper', 'lower', 'upper' ]     
+
+    # ibc_types = [ 'dirichlet', 'neumann', 'neumann', 'neumann', 'neumann' ]                                                                     # [-] Initial-Boundary condition types (e.g., dirichlet, neumann, etc.).
     # ibc_dimensions = torch.tensor( [ 0, 1, 1, 2, 2 ], dtype = torch.uint8, device = device )                                                            # [-] Dimensions associated with each initial-boundary condition.
     # ibc_condition_functions = [ f_ic, f_bc_1, f_bc_2, f_bc_3, f_bc_4 ]                                                                                  # [-] List of initial-boundary conditions.
     # ibc_placements = [ 'lower', 'lower', 'upper', 'lower', 'upper' ]     
