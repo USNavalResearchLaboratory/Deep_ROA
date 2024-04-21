@@ -170,13 +170,11 @@ class neural_network_class( torch.nn.Module ):
         # self.training_losses, self.testing_epochs, self.testing_losses = self.initialize_training_testing_losses( self.num_epochs )
         self.training_losses, self.ic_training_losses, self.bc_training_losses, self.residual_training_losses, self.variational_training_losses, self.monotonicity_training_losses, self.testing_epochs, self.testing_losses, self.ic_testing_losses, self.bc_testing_losses, self.residual_testing_losses, self.variational_testing_losses, self.monotonicity_testing_losses = self.initialize_training_testing_losses( self.num_epochs )
 
-
         # Initialize the classification loss function.
         self.classification_loss_function = torch.nn.BCELoss(  )
 
         # Initialize the classification loss.
         self.set_classification_loss( torch.empty( 1, dtype = torch.float32, device = self.device ) )
-
 
 
     #%% ------------------------------------------------------------ PREPROCESS FUNCTIONS ------------------------------------------------------------
@@ -1132,8 +1130,23 @@ class neural_network_class( torch.nn.Module ):
             # Determine whether to generate the classification data.
             if ( num_spatial_dimensions is not None ) and ( domain is not None ) and ( plot_time is not None ):
 
+                # Print out a message stating that we are generating classification data.
+                print( 'Generating classification data...' )
+
+                # Retrieve the starting time.
+                start_time = time.time(  )
+
                 # Generate the classification data.
                 classification_data = self.generate_classification_data( num_spatial_dimensions, domain, plot_time, level, level_set_guesses, newton_tolerance, newton_max_iterations, exploration_radius, num_exploration_points, unique_tolerance, classification_noise_magnitude, num_noisy_samples_per_level_set_point, domain_subset_type, True )
+
+                # Retrieve the ending time.
+                end_time = time.time(  )
+
+                # Compute the classification duration.
+                classification_duration = end_time - start_time
+
+                # Print out a message stating that we dare done generating classification data.
+                print( f'Generating classification data... Done. Duration = {classification_duration}s = {classification_duration/60}min = {classification_duration/3600}hr' )
 
             else:
 
@@ -2063,7 +2076,7 @@ class neural_network_class( torch.nn.Module ):
             # Set the number of residual inputs to be one.
             num_required_derivatives = torch.tensor( 1, dtype = torch.uint8, device = self.device )
 
-        elif isinstance( derivative_code, list ):                     # If the  residual code is a list...
+        elif isinstance( derivative_code, list ) or isinstance( derivative_code, tuple ):                     # If the residual code is a list or tuple...
 
             # Set the number of residual inputs.
             num_required_derivatives = torch.tensor( len( derivative_code ), dtype = torch.uint8, device = self.device )
@@ -2471,6 +2484,12 @@ class neural_network_class( torch.nn.Module ):
         # Compute the number of classification points.
         num_classification_points = classification_data.shape[ 0 ]
 
+        # Print out a message stating that we are starting to compute the classification loss.
+        print( 'Computing classifications...' )
+
+        # Retrieve the starting time.
+        start_time = time.time(  )
+
         # Determine how to compute the classification loss.
         if classification_data.numel(  ) != 0:                  # If their is classification data...
 
@@ -2514,6 +2533,15 @@ class neural_network_class( torch.nn.Module ):
             self.network_classifications = network_classifications
             self.actual_classifications = actual_classifications
             self.classification_loss = classification_loss
+
+        # Retrieve the end time.
+        end_time = time.time(  )
+
+        # Compute the classification loss duration.
+        classification_loss_duration = end_time - start_time
+
+        # Print out a message stating that we are done computing classification loss.
+        print( f'Computing classifications... Done. Duration = {classification_loss_duration}s = {classification_loss_duration/60}min = {classification_loss_duration/3600}hr' )
 
         # Return the classification loss.
         return classification_loss, num_classification_points
@@ -2698,7 +2726,6 @@ class neural_network_class( torch.nn.Module ):
         loss = self.c_IC*loss_ic + self.c_BC*loss_bc + self.c_residual*loss_residual + self.c_variational*loss_variational + self.c_monotonicity*loss_monotonicity
 
         # Return the loss.
-        # return loss
         return loss, loss_ic, loss_bc, loss_residual, loss_variational, loss_monotonicity
 
 
@@ -2868,7 +2895,6 @@ class neural_network_class( torch.nn.Module ):
         k2 += 1
 
         # Train the network for the specified number of epochs.
-        # while ( not stop_early_flag ) and ( k1 < num_epochs ) :                                             # While we have not met early stopping criteria and have not yet performed all of the training epochs...
         while ( not stop_early_flag ) and ( k1 < ( num_epochs + 1 ) ) :                                             # While we have not met early stopping criteria and have not yet performed all of the training epochs...
 
             # Compute the percent completion.
@@ -2950,7 +2976,6 @@ class neural_network_class( torch.nn.Module ):
 
         # Return the training and testing losses.
         return training_epochs, training_losses, ic_training_losses, bc_training_losses, residual_training_losses, variational_training_losses, monotonicity_training_losses, testing_epochs, testing_losses, ic_testing_losses, bc_testing_losses, residual_testing_losses, variational_testing_losses, monotonicity_testing_losses
-
 
 
     #%% ------------------------------------------------------------ TESTING FUNCTIONS ------------------------------------------------------------
@@ -4159,7 +4184,6 @@ class neural_network_class( torch.nn.Module ):
 
         # Compute the values associated with the level set points.
         level_set_values = self.forward( level_set_points )
-
         level_set_values = torch.zeros_like( level_set_points )
 
         # Plot the level set.

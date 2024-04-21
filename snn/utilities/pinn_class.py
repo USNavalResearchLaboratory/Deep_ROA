@@ -19,6 +19,7 @@
 # Import standard libraries.
 import torch
 import math
+import time
 
 # Import custom libraries.
 from domain_class import domain_class as domain_class
@@ -75,7 +76,6 @@ class pinn_class(  ):
         self.flow_functions = self.problem_specifications.flow_functions
 
         # Create the pde object.
-        # self.pde = pde_class( self.problem_specifications.pde_name, self.problem_specifications.pde_type, self.domain, self.initial_boundary_conditions, self.problem_specifications.residual_function, self.problem_specifications.residual_code, self.pinn_options.device )
         self.pde = pde_class( self.problem_specifications.pde_name, self.problem_specifications.pde_type, self.domain, self.initial_boundary_conditions, self.problem_specifications.residual_function, self.problem_specifications.residual_code, self.problem_specifications.flow_functions, self.pinn_options.device )
 
         # Create the training data.
@@ -628,8 +628,23 @@ class pinn_class(  ):
             # Determine whether to generate the classification data.
             if ( num_spatial_dimensions is not None ) and ( domain is not None ) and ( plot_time is not None ):
 
+                # Print out a message stating that we are generating classification data.
+                print( 'Generating classification data...' )
+
+                # Retrieve the starting time.
+                start_time = time.time(  )
+
                 # Generate the classification data.
                 classification_data = self.network.generate_classification_data( num_spatial_dimensions, num_timesteps, domain, plot_time, level, level_set_guesses, newton_tolerance, newton_max_iterations, exploration_radius, num_exploration_points, unique_tolerance, classification_noise_magnitude, num_noisy_samples_per_level_set_point, domain_subset_type )
+
+                # Retrieve the ending time.
+                end_time = time.time(  )
+
+                # Compute the classification duration.
+                classification_duration = end_time - start_time
+
+                # Print out a message stating that we dare done generating classification data.
+                print( f'Generating classification data... Done. Duration = {classification_duration}s = {classification_duration/60}min = {classification_duration/3600}hr' )
 
             else:
 
@@ -1458,7 +1473,6 @@ class pinn_class(  ):
         if train_flag:                     # If we want to train the network...
 
             # Train the network.
-            # network.training_epochs, network.training_losses, network.testing_epochs, network.testing_losses = network.train( self.pde, network.training_data, network.testing_data, network.num_batches, network.num_epochs, network.derivative_required_for_residual, network.residual_code, network.epoch_print_frequency, network.verbose_flag )
             network.training_epochs, network.training_losses, network.ic_training_losses, network.bc_training_losses, network.residual_training_losses, network.variational_training_losses, network.monotonicity_training_losses, network.testing_epochs, network.testing_losses, network.ic_testing_losses, network.bc_testing_losses, network.residual_testing_losses, network.variational_testing_losses, network.monotonicity_testing_losses = network.train( self.pde, network.training_data, network.testing_data, network.num_batches, network.num_epochs, network.derivative_required_for_residual, network.residual_code, network.epoch_print_frequency, network.verbose_flag )
 
         # Return the network.

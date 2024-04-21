@@ -18,12 +18,12 @@
 # Import standard libraries.
 import os
 import sys
-import torch
 import math
+import torch
 import matplotlib.pyplot as plt
 import time
 
-start_time = time.time()
+start_time = time.time(  )
 
 # Ensure that the utilities folder for this project is on the system path.
 sys.path.append( r'./snn/utilities' )
@@ -75,7 +75,7 @@ epoch_print_frequency = torch.tensor( int( 1e1 ), dtype = torch.int16, device = 
 print_flag = True
 
 # Define the plotting options.
-num_plotting_samples = torch.tensor( int( 20 ), dtype = torch.int16, device = device )              # [#] Number of sample points to use per dimension when plotting network results.
+num_plotting_samples = torch.tensor( 20, dtype = torch.int16, device = device )              # [#] Number of sample points to use per dimension when plotting network results.
 plot_flag = True                                                                                    # [T/F] Flag that determines whether training and network analysis plots are created.
 
 # Define the verbosity setting.
@@ -398,5 +398,5 @@ print( 'COMPLETE' )
 print( '------------------------------------------------------------------------------------------------------------------------' )
 print( '\n' )
 
-end_time = time.time()
-print(end_time - start_time)
+end_time = time.time(  )
+print( end_time - start_time )

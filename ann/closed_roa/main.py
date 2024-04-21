@@ -24,9 +24,11 @@ import torch
 import random
 import numpy as np
 import matplotlib.pyplot as plt
+import time
+
+start_time = time.time(  )
 
 # Ensure that the utilities folder for this project is on the system path.
-sys.path.append( r'./ann/utilities' )
 sys.path.append( r'./ann/utilities' )
 
 # Import custom libraries.
@@ -55,7 +57,7 @@ torch.manual_seed( 0 )
 
 # Set the computational device.
 # device = 'cuda' if torch.cuda.is_available(  ) else 'cpu'
-device = 'cuda:8' if torch.cuda.is_available(  ) else 'cpu'
+device = 'cuda:1' if torch.cuda.is_available(  ) else 'cpu'
 # device = 'cpu'
 
 
@@ -130,9 +132,9 @@ temporal_domain = torch.tensor( [ 0, 30 ], dtype = torch.float32, device = devic
 spatial_domain = torch.tensor( [ [ -1, 4 ], [ -1, 4 ] ], dtype = torch.float32, device = device ).T                                             # [-] Spatial domain of the underlying dynamical system.
 
 # Define the initial condition parameters.
-R0 = torch.tensor( 1, dtype = torch.float32, device = device )                                                                                  # [-] Initial condition radius.
-A0 = torch.tensor( 2, dtype = torch.float32, device = device )                                                                                  # [-] Initial condition amplitude.
-S0 = torch.tensor( 20, dtype = torch.float32, device = device )                                                                                 # [-] Initial condition slope.
+R0 = torch.tensor( 1.0, dtype = torch.float32, device = device )                                                                                  # [-] Initial condition radius.
+A0 = torch.tensor( 2.0, dtype = torch.float32, device = device )                                                                                  # [-] Initial condition amplitude.
+S0 = torch.tensor( 20.0, dtype = torch.float32, device = device )                                                                                 # [-] Initial condition slope.
 P0_shift = torch.tensor( [ math.pi/2, math.pi/2 ], dtype = torch.float32, device = device )                                                     # [-] Initial condition input offset.
 z0_shift = -A0/2                                                                                                                                # [-] Initial condition output offset.
 
@@ -334,23 +336,23 @@ print( '------------------------------------------------------------------------
 
 #%% ---------------------------------------- PLOT THE NEURAL NETWORK RESULTS ----------------------------------------
 
-# Plot the network domain.
-figs_domain, axes_domain = pinn.plot_domain( pinn.pde, projection_dimensions = None, projection_values = None, level = torch.tensor( 0, dtype = torch.float32, device = pinn.pinn_options.device ), fig = None, domain_type = 'spatiotemporal', save_directory = save_path, as_surface = True, as_stream = True, as_contour = True, show_plot = False )
+# # Plot the network domain.
+# figs_domain, axes_domain = pinn.plot_domain( pinn.pde, projection_dimensions = None, projection_values = None, level = torch.tensor( 0, dtype = torch.float32, device = pinn.pinn_options.device ), fig = None, domain_type = 'spatiotemporal', save_directory = save_path, as_surface = True, as_stream = True, as_contour = True, show_plot = False )
 
-# Plot the initial-boundary conditions.
-figs, axes = pinn.plot_initial_boundary_condition( 20*torch.ones( pinn.domain.spatiotemporal_domain.shape[ -1 ], dtype = torch.int16, device = pinn.pinn_options.device ), pinn.pde, projection_dimensions = None, projection_values = None, level = torch.tensor( 0, dtype = torch.float32, device = pinn.pinn_options.device ), fig = None, save_directory = save_path, as_surface = True, as_stream = True, as_contour = True, show_plot = False )
+# # Plot the initial-boundary conditions.
+# figs, axes = pinn.plot_initial_boundary_condition( 20*torch.ones( pinn.domain.spatiotemporal_domain.shape[ -1 ], dtype = torch.int16, device = pinn.pinn_options.device ), pinn.pde, projection_dimensions = None, projection_values = None, level = torch.tensor( 0, dtype = torch.float32, device = pinn.pinn_options.device ), fig = None, save_directory = save_path, as_surface = True, as_stream = True, as_contour = True, show_plot = False )
 
-# Plot the network training data.
-figs_training_data, axes_training_data = pinn.plot_training_data( pinn.network, projection_dimensions = None, projection_values = None, level = torch.tensor( 0, dtype = torch.float32, device = pinn.pinn_options.device ), fig = None, plot_type1 = 'all', plot_type2 = 'all', save_directory = save_path, as_surface = True, as_stream = True, as_contour = True, show_plot = False )
+# # Plot the network training data.
+# figs_training_data, axes_training_data = pinn.plot_training_data( pinn.network, projection_dimensions = None, projection_values = None, level = torch.tensor( 0, dtype = torch.float32, device = pinn.pinn_options.device ), fig = None, plot_type1 = 'all', plot_type2 = 'all', save_directory = save_path, as_surface = True, as_stream = True, as_contour = True, show_plot = False )
 
-# Plot the network testing data.
-figs_testing_data, axes_testing_data = pinn.plot_testing_data( pinn.network, projection_dimensions = None, projection_values = None, level = torch.tensor( 0, dtype = torch.float32, device = pinn.pinn_options.device ), fig = None, plot_type1 = 'all', plot_type2 = 'all', save_directory = save_path, as_surface = True, as_stream = True, as_contour = True, show_plot = False )
+# # Plot the network testing data.
+# figs_testing_data, axes_testing_data = pinn.plot_testing_data( pinn.network, projection_dimensions = None, projection_values = None, level = torch.tensor( 0, dtype = torch.float32, device = pinn.pinn_options.device ), fig = None, plot_type1 = 'all', plot_type2 = 'all', save_directory = save_path, as_surface = True, as_stream = True, as_contour = True, show_plot = False )
 
-# Plot the network plotting data.
-fig_plotting_data, ax_plotting_data = pinn.plot_plotting_data( pinn.network, projection_dimensions = None, projection_values = None, level = torch.tensor( 0, dtype = torch.float32, device = pinn.pinn_options.device ), fig = None, save_directory = save_path, as_surface = True, as_stream = True, as_contour = True, show_plot = False )
+# # Plot the network plotting data.
+# fig_plotting_data, ax_plotting_data = pinn.plot_plotting_data( pinn.network, projection_dimensions = None, projection_values = None, level = torch.tensor( 0, dtype = torch.float32, device = pinn.pinn_options.device ), fig = None, save_directory = save_path, as_surface = True, as_stream = True, as_contour = True, show_plot = False )
 
-# Plot the network prediction.
-fig_prediction, ax_prediction = pinn.plot_network_predictions( pinn.network.plotting_data, pinn.network, projection_dimensions = None, projection_values = None, level = torch.tensor( 0, dtype = torch.float32, device = pinn.pinn_options.device ), fig = None, save_directory = save_path, as_surface = True, as_stream = True, as_contour = True, show_plot = False )
+# # Plot the network prediction.
+# fig_prediction, ax_prediction = pinn.plot_network_predictions( pinn.network.plotting_data, pinn.network, projection_dimensions = None, projection_values = None, level = torch.tensor( 0, dtype = torch.float32, device = pinn.pinn_options.device ), fig = None, save_directory = save_path, as_surface = True, as_stream = True, as_contour = True, show_plot = False )
 
 # Plot the network initial condition prediction.
 fig_initial_prediction, ax_initial_prediction = pinn.plot_network_initial_prediction( pinn.network.plotting_data, pinn.domain, pinn.network, projection_dimensions = None, projection_values = None, level = torch.tensor( 0, dtype = torch.float32, device = pinn.pinn_options.device ), fig = None, save_directory = save_path, as_surface = True, as_stream = True, as_contour = True, show_plot = False )
@@ -361,8 +363,8 @@ fig_final_prediction, ax_final_prediction = pinn.plot_network_final_prediction( 
 # Plot the network training results.
 fig_training, ax_training = pinn.plot_training_results( pinn.network, save_directory = save_path, show_plot = False )
 
-# Plot the flow field.
-fig_flow_field, ax_flow_field = pinn.plot_flow_field( pinn.network.plotting_data, pinn.flow_functions, projection_dimensions = torch.tensor( [ 0 ], dtype = torch.uint8, device = device ), projection_values = torch.tensor( [ temporal_domain[ -1 ] ], dtype = torch.float32, device = device ), level = torch.tensor( 0, dtype = torch.float32, device = pinn.pinn_options.device ), fig = None, input_labels = None, title_string = 'Flow Field', save_directory = save_path, as_surface = True, as_stream = True, as_contour = True, show_plot = False )
+# # Plot the flow field.
+# fig_flow_field, ax_flow_field = pinn.plot_flow_field( pinn.network.plotting_data, pinn.flow_functions, projection_dimensions = torch.tensor( [ 0 ], dtype = torch.uint8, device = device ), projection_values = torch.tensor( [ temporal_domain[ -1 ] ], dtype = torch.float32, device = device ), level = torch.tensor( 0, dtype = torch.float32, device = pinn.pinn_options.device ), fig = None, input_labels = None, title_string = 'Flow Field', save_directory = save_path, as_surface = True, as_stream = True, as_contour = True, show_plot = False )
 
 # Plot the ROA boundary.
 fig_roa, ax_roa = pinn.plot_roa_boundary( pinn.network.plotting_data, pinn.domain, pinn.network, pinn.flow_functions, projection_dimensions = torch.tensor( [ 0 ], dtype = torch.uint8, device = device ), projection_values = torch.tensor( [ temporal_domain[ -1 ] ], dtype = torch.float32, device = device ), level = torch.tensor( 0, dtype = torch.float32, device = pinn.pinn_options.device ), fig = None, input_labels = None, title_string = 'ROA Boundary Prediction', save_directory = save_path, show_plot = False )
@@ -387,3 +389,5 @@ print( 'COMPLETE' )
 print( '------------------------------------------------------------------------------------------------------------------------' )
 print( '\n' )
 
+end_time = time.time(  )
+print( end_time - start_time )
