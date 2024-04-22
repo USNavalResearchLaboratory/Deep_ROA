@@ -231,7 +231,7 @@ BASE_CONFIG = {
     'classification_parameters': {
         'num_noisy_samples_per_level_set_point': int( 5 ),
         'noise_percentage': float( 1e-3 ),
-        'dt': float( 1e-2),
+        'dt': float( 1e-2 ),
         'tfinal': float( 10 ),
     },
     'exploration_parameters': {

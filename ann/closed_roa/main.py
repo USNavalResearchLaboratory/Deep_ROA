@@ -26,8 +26,6 @@ import numpy as np
 import matplotlib.pyplot as plt
 import time
 
-start_time = time.time(  )
-
 # Ensure that the utilities folder for this project is on the system path.
 sys.path.append( r'./ann/utilities' )
 
@@ -57,9 +55,10 @@ torch.manual_seed( 0 )
 
 # Set the computational device.
 # device = 'cuda' if torch.cuda.is_available(  ) else 'cpu'
-device = 'cuda:1' if torch.cuda.is_available(  ) else 'cpu'
+device = 'cuda:9' if torch.cuda.is_available(  ) else 'cpu'
 # device = 'cpu'
 
+start_time = time.time(  )
 
 #%% ---------------------------------------- DEFINE PINN OPTIONS ----------------------------------------
 
@@ -96,7 +95,7 @@ plot_flag = True                                                                
 verbose_flag = True                                                                                 # [T/F] Flag that determines whether to print more or less information when printing.
 
 # Define the newton parameters (used for level set generation).
-newton_tolerance = torch.tensor( 1e-6, dtype = torch.float32, device = device )                     # [-] Convergence tolerance for the Newton's root finding method.
+newton_tolerance = torch.tensor( 1e-4, dtype = torch.float32, device = device )                     # [-] Convergence tolerance for the Newton's root finding method.
 newton_max_iterations = torch.tensor( int( 1e2 ), dtype = torch.int32, device = device )                   # [#] Maximum number of Newton's method steps to perform.
 
 # Define the exploration parameters (used for level set generation).
@@ -107,7 +106,7 @@ unique_volume_percentage = torch.tensor( 1e-4, dtype = torch.float32, device = d
 # Define the classification parameters.
 num_noisy_samples_per_level_set_point = torch.tensor( 5, dtype = torch.int16, device = device )   # [#] Number of noisy samples per level set point.
 classification_noise_percentage = torch.tensor( 1e-3, dtype = torch.float32, device = device )      # [%] The classification point noise magnitude represented as a percentage of the domain volume.  This parameter conveniently scales the noise magnitude of the classification points as the dimension of the problem is adjusted.
-classification_dt = torch.tensor( 1e-3, dtype = torch.float32, device = device )                    # [s] The classification simulation timestep used to forecast classification points.
+classification_dt = torch.tensor( 1e-2, dtype = torch.float32, device = device )                    # [s] The classification simulation timestep used to forecast classification points.
 classification_tfinal = torch.tensor( 10, dtype = torch.float32, device = device )                  # [s] The classification simulation duration used to forecast classification points.
 
 # Create the pinn options object.
@@ -239,8 +238,8 @@ problem_specifications.save( save_path, r'problem_specifications.pkl' )
 
 # Store the network parameters.
 activation_function = 'sigmoid'                                                                # [-] Activation function (e.g., tanh, sigmoid, etc.)
-num_hidden_layers = torch.tensor( 5, dtype = torch.uint8, device = device )                 # [#] Number of hidden layers.
-hidden_layer_widths = torch.tensor( 175, dtype = torch.int16, device = device )              # [#] Hidden layer widths.
+num_hidden_layers = torch.tensor( 3, dtype = torch.uint8, device = device )                 # [#] Number of hidden layers.
+hidden_layer_widths = torch.tensor( 50, dtype = torch.int16, device = device )              # [#] Hidden layer widths.
 
 # This set works for variational loss integration order 1.
 num_training_data = torch.tensor( int( 100e3 ), dtype = torch.int32, device = device )      # [#] Number of training data points.
@@ -254,15 +253,15 @@ p_residual = torch.tensor( 0.5, dtype = torch.float16, device = device )        
 # Define the number of training epochs.
 # num_epochs = torch.tensor( int( 100 ), dtype = torch.int32, device = device )               # [#] Number of training epochs to perform.
 # num_epochs = torch.tensor( int( 250 ), dtype = torch.int32, device = device )               # [#] Number of training epochs to perform.
-# num_epochs = torch.tensor( int( 500 ), dtype = torch.int32, device = device )               # [#] Number of training epochs to perform.
-num_epochs = torch.tensor( int( 1e3 ), dtype = torch.int32, device = device )               # [#] Number of training epochs to perform.
+num_epochs = torch.tensor( int( 400 ), dtype = torch.int32, device = device )               # [#] Number of training epochs to perform.
+# num_epochs = torch.tensor( int( 1e3 ), dtype = torch.int32, device = device )               # [#] Number of training epochs to perform.
 # num_epochs = torch.tensor( int( 5e3 ), dtype = torch.int32, device = device )               # [#] Number of training epochs to perform.
 
 # Define the residual batch size.
 residual_batch_size = torch.tensor( int( 10e3 ), dtype = torch.int32, device = device )     # [#] Training batch size. # This works for variational loss integration order 1.
 
 # Store the optimizer parameters.
-learning_rate = torch.tensor( 0.005, dtype = torch.float32, device = device )                # [-] Learning rate.
+learning_rate = torch.tensor( 5e-2, dtype = torch.float32, device = device )                # [-] Learning rate.
 
 # Define the element computation option.
 element_computation_option = 'precompute'                                                   # [string] Determines whether to precompute the finite elements associated with the variational loss (costs more memory) or to dynamically generate these elements during training (costs more time per epoch) (e.g., 'precompute, 'dynamic', etc.).
@@ -282,14 +281,30 @@ integration_order = torch.tensor( 1, dtype = torch.uint8, device = device )     
 # c_residual = torch.tensor( 69.1, dtype = torch.float32, device = device )                    # [-] Residual loss weight.
 # c_variational = torch.tensor( 39.1, dtype = torch.float32, device = device )                 # [-] Variational loss weight.
 # c_monotonicity = torch.tensor( 80.1, dtype = torch.float32, device = device )               # [-] Monotonicity loss weight.
-c_IC = torch.tensor( 0.18562092, dtype = torch.float32, device = device )                          # [-] Initial condition loss weight.
-c_BC = torch.tensor( 0.26121314, dtype = torch.float32, device = device )                          # [-] Boundary condition loss weight.
-c_residual = torch.tensor( 0.58038033, dtype = torch.float32, device = device )                    # [-] Residual loss weight.
-c_variational = torch.tensor( 0.32840624, dtype = torch.float32, device = device )                 # [-] Variational loss weight.
-c_monotonicity = torch.tensor( 0.67277083, dtype = torch.float32, device = device )               # [-] Monotonicity loss weight.
+
+# c_IC = torch.tensor( 0.18562092, dtype = torch.float32, device = device )                          # [-] Initial condition loss weight.
+# c_BC = torch.tensor( 0.26121314, dtype = torch.float32, device = device )                          # [-] Boundary condition loss weight.
+# c_residual = torch.tensor( 0.58038033, dtype = torch.float32, device = device )                    # [-] Residual loss weight.
+# c_residual_gradient = torch.tensor( 0.0, dtype = torch.float32, device = device )                   # [-] Residual gradient loss weight.
+# c_variational = torch.tensor( 0.32840624, dtype = torch.float32, device = device )                 # [-] Variational loss weight.
+# c_monotonicity = torch.tensor( 0.67277083, dtype = torch.float32, device = device )               # [-] Monotonicity loss weight.
+
+# c_IC = torch.tensor( 1.0, dtype = torch.float32, device = device )                          # [-] Initial condition loss weight.
+# c_BC = torch.tensor( 1.0, dtype = torch.float32, device = device )                          # [-] Boundary condition loss weight.
+# c_residual = torch.tensor( 1e-2, dtype = torch.float32, device = device )                    # [-] Residual loss weight.
+# c_residual_gradient = torch.tensor( 0.0, dtype = torch.float32, device = device )                   # [-] Residual gradient loss weight.
+# c_variational = torch.tensor( 1e-2, dtype = torch.float32, device = device )                 # [-] Variational loss weight.
+# c_monotonicity = torch.tensor( 1e3, dtype = torch.float32, device = device )               # [-] Monotonicity loss weight.
+
+c_IC = torch.tensor( 1.0, dtype = torch.float32, device = device )                          # [-] Initial condition loss weight.
+c_BC = torch.tensor( 1e-2, dtype = torch.float32, device = device )                          # [-] Boundary condition loss weight.
+c_residual = torch.tensor( 2e-1, dtype = torch.float32, device = device )                    # [-] Residual loss weight.
+c_residual_gradient = torch.tensor( 0.0, dtype = torch.float32, device = device )                   # [-] Residual gradient loss weight.
+c_variational = torch.tensor( 2e-1, dtype = torch.float32, device = device )                 # [-] Variational loss weight.
+c_monotonicity = torch.tensor( 1e2, dtype = torch.float32, device = device )               # [-] Monotonicity loss weight.
 
 # Create the hyper-parameters object.
-hyperparameters = hyperparameters_class( activation_function, num_hidden_layers, hidden_layer_widths, num_training_data, num_testing_data, p_initial, p_boundary, p_residual, num_epochs, residual_batch_size, learning_rate, integration_order, element_volume_percent, element_type, element_computation_option, c_IC, c_BC, c_residual, c_variational, c_monotonicity, save_path, load_path )
+hyperparameters = hyperparameters_class( activation_function, num_hidden_layers, hidden_layer_widths, num_training_data, num_testing_data, p_initial, p_boundary, p_residual, num_epochs, residual_batch_size, learning_rate, integration_order, element_volume_percent, element_type, element_computation_option, c_IC, c_BC, c_residual, c_residual_gradient, c_variational, c_monotonicity, save_path, load_path )
 
 # Save the hyperparameters.
 hyperparameters.save( save_path, r'hyperparameters.pkl' )
@@ -390,4 +405,4 @@ print( '------------------------------------------------------------------------
 print( '\n' )
 
 end_time = time.time(  )
-print( end_time - start_time )
+print( f'RUN TIME: {end_time - start_time} seconds' )
