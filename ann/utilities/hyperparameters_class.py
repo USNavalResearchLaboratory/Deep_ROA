@@ -80,7 +80,7 @@ class hyperparameters_class(  ):
 
 
     # Define the class constructor.
-    def __init__( self, activation_function, num_hidden_layers, hidden_layer_widths, num_training_data, num_testing_data, p_initial, p_boundary, p_residual, num_epochs, residual_batch_size, learning_rate, integration_order, element_volume_percent, element_type, element_computation_option, c_IC, c_BC, c_residual, c_residual_gradient, c_variational, c_monotonicity, save_path = None, load_path = None ):
+    def __init__( self, activation_function = None, num_hidden_layers = None, hidden_layer_widths = None, num_training_data = None, num_testing_data = None, p_initial = None, p_boundary = None, p_residual = None, num_epochs = None, residual_batch_size = None, learning_rate = None, integration_order = None, element_volume_percent = None, element_type = None, element_computation_option = None, c_IC = None, c_BC = None, c_residual = None, c_residual_gradient = None, c_variational = None, c_monotonicity = None, save_path = None, load_path = None ):
 
         # Create an instance of the save-load utilities class.
         self.save_load_utilities = save_load_utilities_class(  )

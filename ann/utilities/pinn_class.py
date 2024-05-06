@@ -1220,7 +1220,7 @@ class pinn_class(  ):
             # Set the output derivative order to be zero, one.
             output_derivative_order = torch.tensor( [ 0, 1 ], dtype = torch.uint8, device = self.pinn_options.device )
 
-        elif condition_type.lower(  ) == 'yuan-li':                     # IF the initial condition type is 'yuan-li'...
+        elif condition_type.lower(  ) == 'yuan-li':                     # If the initial condition type is 'yuan-li'...
 
             # Set the output derivative order to be two.
             output_derivative_order = 2*torch.ones( ( 1, 1 ), dtype = torch.uint8, device = self.pinn_options.device )

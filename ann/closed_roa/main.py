@@ -67,7 +67,6 @@ start_time = time.time(  )
 
 # Define the save options.
 save_path = r'./ann/closed_roa/save'                                                                    # [-] Relative path to the directory in which to save network data, figures, etc.
-save_path = r'./ann/closed_roa/save'                                                                    # [-] Relative path to the directory in which to save network data, figures, etc.
 save_frequency = torch.tensor( 10, dtype = torch.int16, device = device )                           # [#] Number of epochs after which to save intermediate networks during training. e.g., 1 = Save after every training epoch, 10 = Save after every ten training epochs, 100 = Save after every hundred training epochs.
 save_flag = True                                                                                    # [T/F] Flag that determines whether to save networks during and after training, as well as training and network analysis plots.
 # save_flag = False                                                                                    # [T/F] Flag that determines whether to save networks during and after training, as well as training and network analysis plots.
