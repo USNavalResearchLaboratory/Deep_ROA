@@ -62,8 +62,8 @@ save_flag = True                                                                
 
 # Define the load options.
 load_path = r'./snn/closed_roa/load'                                                                # [-] Relative path to the directory from which to load network data.
-load_flag = True                                                                                  # [T/F] Flag that determines whether to load network data from the given load directory before training.
-# load_flag = False                                                                                   # [T/F] Flag that determines whether to load network data from the given load directory before training.
+# load_flag = True                                                                                  # [T/F] Flag that determines whether to load network data from the given load directory before training.
+load_flag = False                                                                                   # [T/F] Flag that determines whether to load network data from the given load directory before training.
 
 # Define the training options.
 train_flag = True                                                                                   # [T/F] Flag that determines whether to train the network after creation or loading.
@@ -203,13 +203,11 @@ problem_specifications.save( save_path, r'problem_specifications.pkl' )
 # neuron_parameters = { 'threshold' : torch.tensor( 1.0, dtype = torch.float32, device = device ), 'current_decay' : torch.tensor( 1.0, dtype = torch.float32, device = device ), 'voltage_decay' : torch.tensor( 1.0, dtype = torch.float32, device = device ), 'persistent_state': False, 'requires_grad' : False }
 # synapse_parameters = { 'gain' : torch.tensor( 1.0, dtype = torch.float32, device = device ) }
 
-# neuron_parameters = { 'threshold' : torch.tensor( 1.0, dtype = torch.float32, device = device ), 'current_decay' : torch.tensor( 1.0, dtype = torch.float32, device = device ), 'voltage_decay' : torch.tensor( 1.0, dtype = torch.float32, device = device ), 'persistent_state': True, 'requires_grad' : False }
-# synapse_parameters = { 'gain' : torch.tensor( 1.0, dtype = torch.float32, device = device ) }
-
-neuron_parameters = { 'threshold' : torch.tensor( 1.0, dtype = torch.float32, device = device ), 'current_decay' : torch.tensor( 0.5, dtype = torch.float32, device = device ), 'voltage_decay' : torch.tensor( 0.5, dtype = torch.float32, device = device ), 'persistent_state': True, 'requires_grad' : False }
+neuron_parameters = { 'threshold' : torch.tensor( 1.0, dtype = torch.float32, device = device ), 'current_decay' : torch.tensor( 1.0, dtype = torch.float32, device = device ), 'voltage_decay' : torch.tensor( 1.0, dtype = torch.float32, device = device ), 'persistent_state': True, 'requires_grad' : False }
 synapse_parameters = { 'gain' : torch.tensor( 1.0, dtype = torch.float32, device = device ) }
 
-
+# neuron_parameters = { 'threshold' : torch.tensor( 1.0, dtype = torch.float32, device = device ), 'current_decay' : torch.tensor( 0.5, dtype = torch.float32, device = device ), 'voltage_decay' : torch.tensor( 0.5, dtype = torch.float32, device = device ), 'persistent_state': True, 'requires_grad' : False }
+# synapse_parameters = { 'gain' : torch.tensor( 1.0, dtype = torch.float32, device = device ) }
 
 # neuron_parameters = { 'threshold' : torch.tensor( 0.5, dtype = torch.float32, device = device ), 'current_decay' : torch.tensor( 1.0, dtype = torch.float32, device = device ), 'voltage_decay' : torch.tensor( 1.0, dtype = torch.float32, device = device ), 'persistent_state': False, 'requires_grad' : False }
 # synapse_parameters = { 'gain' : torch.tensor( 3.0, dtype = torch.float32, device = device ) }
@@ -225,10 +223,22 @@ num_timesteps = torch.tensor( 1, dtype = torch.int16, device = device )         
 # num_timesteps = torch.tensor( 9, dtype = torch.int16, device = device )                              # [#] Number of timesteps for which each input is presented to the network.
 # num_timesteps = torch.tensor( 15, dtype = torch.int16, device = device )                              # [#] Number of timesteps for which each input is presented to the network.
 
+
+
+
 # 5, 7, 9 all seemed to work about the same.
 # 400 vs 1000 epochs didn't seem to make much of a difference.
 # 250 vs 500 hidden units didn't seem to make much of a difference.
 # 3 vs 5 hidden layer results were about the same.
+
+# Does increasing the monotonicity loss weight such that the it has the largest weighted contribution ensure agreement with monotonicity?
+    # No.  A large monotonicity loss causes the system to not solve at all.
+
+# Does the residual loss behavior in the same way as the monotonicity loss?  i.e., is its value really small and completely ignored by the learning?
+
+
+# Does changing the current decay rate matter when the persistent state is true but there is only a single timestep?
+
 
 # Store the network parameters.
 activation_function = 'tanh'                                                                             # [-] Activation function (e.g., tanh, sigmoid, etc.)
@@ -278,9 +288,10 @@ integration_order = torch.tensor( 1, dtype = torch.uint8, device = device )     
 # Store the loss coefficients.
 c_IC = torch.tensor( 1.0, dtype = torch.float32, device = device )                      # [-] Initial condition loss weight.
 c_BC = torch.tensor( 1.0, dtype = torch.float32, device = device )                      # [-] Boundary condition loss weight.
-c_residual = torch.tensor( 0.0, dtype = torch.float32, device = device )                # [-] Residual loss weight.
-c_variational = torch.tensor( 0.0, dtype = torch.float32, device = device )             # [-] Variational loss weight.
-c_monotonicity = torch.tensor( 100.0, dtype = torch.float32, device = device )            # [-] Monotonicity loss weight.
+c_residual = torch.tensor( 1.0, dtype = torch.float32, device = device )                # [-] Residual loss weight.
+c_variational = torch.tensor( 1.0, dtype = torch.float32, device = device )             # [-] Variational loss weight.
+c_monotonicity = torch.tensor( 0.0, dtype = torch.float32, device = device )            # [-] Monotonicity loss weight.
+# c_monotonicity = torch.tensor( 1e20, dtype = torch.float32, device = device )            # [-] Monotonicity loss weight.
 
 # Create the hyperparameters object.
 hyperparameters = hyperparameters_class( neuron_parameters, synapse_parameters, num_timesteps, activation_function, num_hidden_layers, hidden_layer_widths, num_training_data, num_testing_data, p_initial, p_boundary, p_residual, num_epochs, residual_batch_size, learning_rate, integration_order, element_volume_percent, element_type, element_computation_option, c_IC, c_BC, c_residual, c_variational, c_monotonicity, save_path, load_path )

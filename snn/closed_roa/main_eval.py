@@ -48,71 +48,6 @@ plt.rcParams.update( { 'figure.max_open_warning': 0 } )                     # Di
 
 #%% ---------------------------------------- DEFINE DEFAULT CONFIGURATION ----------------------------------------
 
-# # Define the default configuration.
-# BASE_CONFIG = {
-#     'classification_parameters': {
-#         'num_noisy_samples_per_level_set_point': int( 5 ),
-#         'noise_percentage': float( 1e-3 ),
-#         'dt': float( 1e-2 ),
-#         'tfinal': float( 10 ),
-#     },
-#     'exploration_parameters': {
-#         'volume_percentage': float( 1e-2 ),
-#         'num_points': int( 50 ),
-#         'unique_percentage': float( 1e-4 ),
-#     },
-#     'hyperparameters': {
-#         'activation_function': 'sigmoid',
-#         'c_IC': float( 1.0 ),
-#         'c_BC': float( 1.0 ),
-#         'c_residual': float( 0 ),
-#         'c_variational': float( 0 ),
-#         'c_monotonicity': float( 0 ),
-#         'hidden_layer_widths': int( 250 ),
-#         'num_epochs': int( 400 ),
-#         'num_hidden_layers': int( 3 ),
-#         'num_training_data': int( 100e3 ),
-#         'num_testing_data': int( 20e3 ),
-#         'learning_rate': float( 5e-3 ),
-#         "neuron_threshold": float( 1.0 ),
-#         "neuron_current_decay": float( 0.5 ),
-#         "neuron_voltage_decay": float( 0.5 ),
-#         "neuron_persistent_state": bool( True ),
-#         "neuron_requires_grad": bool( False ),
-#         "synapse_gain": float( 1.0 ),
-#         'num_timesteps': int( 1 ),
-#     },
-#     'newton_parameters': {
-#         'tolerance': float( 1e-4 ),
-#         'max_iterations': int( 1e2 ),
-#     },
-#     'paths': {
-#         'save_path': r'./snn/closed_roa/save',
-#         'load_path': r'./snn/closed_roa/load',
-#     },
-#     'plotting_parameters': {
-#         'num_plotting_samples': int( 20 ),
-#         'plot_flag': bool( True ),
-#     },
-#     'printing_parameters': {
-#         'batch_print_frequency': int( 10 ),
-#         'epoch_print_frequency': int( 10 ),
-#         'print_flag': bool( True ),
-#     },
-#     'runtime': {
-#         'device': 'cuda:1' if torch.cuda.is_available(  ) else 'cpu',
-#         'seed': int( 0 ),
-#         'load_flag': bool( False ),
-#         'train_flag': bool( True ),
-#         'verbose_flag': bool( True ),
-#     },
-#     'saving_parameters': {
-#         'save_flag': bool( True ),
-#         'save_frequency': int( 10 ),
-#     }
-# }
-
-
 # Define the default configuration.
 BASE_CONFIG = {
     'classification_parameters': {
@@ -130,11 +65,11 @@ BASE_CONFIG = {
         'activation_function': 'sigmoid',
         'c_IC': float( 1.0 ),
         'c_BC': float( 1.0 ),
-        'c_residual': float( 0 ),
-        'c_variational': float( 0 ),
-        'c_monotonicity': float( 0 ),
-        'hidden_layer_widths': int( 250 ),
-        'num_epochs': int( 10 ),
+        'c_residual': float( 1e-2 ),
+        'c_variational': float( 1-2 ),
+        'c_monotonicity': float( 1e3 ),
+        'hidden_layer_widths': int( 50 ),
+        'num_epochs': int( 400 ),
         'num_hidden_layers': int( 3 ),
         'num_training_data': int( 100e3 ),
         'num_testing_data': int( 20e3 ),

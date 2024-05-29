@@ -3012,7 +3012,7 @@ class neural_network_class( torch.nn.Module ):
     # Implement a function to compute the derivative of a tensor with respect to a different tensor.
     def compute_derivative( self, numerator, denominator ):
 
-        # Compute the derivative
+        # Compute the derivative.
         derivative = torch.autograd.grad( outputs = numerator, inputs = denominator, grad_outputs = torch.ones_like( numerator ), create_graph = True )
 
         # Return the derivative.
@@ -3303,7 +3303,7 @@ class neural_network_class( torch.nn.Module ):
         temporal_code = self.preprocess_temporal_code( temporal_code )
 
         # network_input_tuple = ( network_input_tuple[ 0 ][ ..., -1 ], network_input_tuple[ 1 ][ ..., -1 ], network_input_tuple[ 2 ][ ..., -1 ] )
-        network_output = network_output[ ..., -1 ]
+        # network_output = network_output[ ..., -1 ]
 
         # Compute the temporal derivative.
         temporal_derivative = self.compute_network_derivatives( network_input_tuple, network_output, temporal_code )
