@@ -10,6 +10,7 @@
 *.jpg
 *.log
 *.txt
+*.csv
 
 # Ignore pycache folders.
 */ann/utilities/__pycache__

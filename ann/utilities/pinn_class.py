@@ -46,67 +46,6 @@ class pinn_class(  ):
 
     #%% ------------------------------------------------------------ CONSTRUCTOR ------------------------------------------------------------
 
-    # # Implement the class constructor.
-    # def __init__( self, pinn_options, hyperparameters, problem_specifications ):
-
-    #     # Create an instance of the plotting utilities class.
-    #     self.plotting_utilities = plotting_utilities_class(  )
-
-    #     # Create an instance of the printing utilities class.
-    #     self.printing_utilities = printing_utilities_class(  )
-
-    #     # Create an instance of the tensor utilities class.
-    #     self.tensor_utilities = tensor_utilities_class(  )
-
-    #     # Create an instance of the save-load utilities class.
-    #     self.save_load_utilities = save_load_utilities_class(  )
-
-    #     # Store the pinn options, hyper-parameters, and problem specifications.
-    #     self.pinn_options = pinn_options
-    #     self.hyperparameters = hyperparameters
-    #     self.problem_specifications = problem_specifications
-
-    #     # Create the domain object.
-    #     self.domain = domain_class( self.problem_specifications.temporal_domain, self.problem_specifications.spatial_domain, self.problem_specifications.domain_type, self.pinn_options.device )
-
-    #     # Create the initial-boundary conditions.
-    #     self.initial_boundary_conditions = self.create_initial_boundary_conditions( self.domain.dimension_labels, self.problem_specifications.ibc_types, self.problem_specifications.ibc_dimensions, self.problem_specifications.ibc_condition_functions, self.problem_specifications.ibc_placements )
-
-    #     # Create the flow functions.
-    #     self.flow_functions = self.problem_specifications.flow_functions
-
-    #     # Create the pde object.
-    #     # self.pde = pde_class( self.problem_specifications.pde_name, self.problem_specifications.pde_type, self.domain, self.initial_boundary_conditions, self.problem_specifications.residual_function, self.problem_specifications.residual_code, self.pinn_options.device )
-    #     self.pde = pde_class( self.problem_specifications.pde_name, self.problem_specifications.pde_type, self.domain, self.initial_boundary_conditions, self.problem_specifications.residual_function, self.problem_specifications.residual_code, self.problem_specifications.flow_functions, self.pinn_options.device )
-
-    #     # Create the training data.
-    #     training_data = self.generate_training_testing_data( domain = self.domain, initial_boundary_conditions = self.initial_boundary_conditions, residual_batch_size = self.hyperparameters.residual_batch_size, element_volume_percent = self.hyperparameters.element_volume_percent, element_type = self.hyperparameters.element_type, element_computation_option = self.hyperparameters.element_computation_option, integration_order = self.hyperparameters.integration_order, application = 'training' )
-
-    #     # Create the testing data.
-    #     testing_data = self.generate_training_testing_data( domain = self.domain, initial_boundary_conditions = self.initial_boundary_conditions, residual_batch_size = self.hyperparameters.residual_batch_size, element_volume_percent = self.hyperparameters.element_volume_percent, element_type = self.hyperparameters.element_type, element_computation_option = self.hyperparameters.element_computation_option, integration_order = self.hyperparameters.integration_order, application = 'testing' )
-
-    #     # Create the plotting data.
-    #     plotting_data = self.generate_plotting_data( num_plotting_samples = self.pinn_options.num_plotting_samples, domain = self.domain )
-
-    #     # Create the network layers.
-    #     layers = self.generate_layers( self.problem_specifications.num_inputs, self.problem_specifications.num_outputs, self.hyperparameters.num_hidden_layers, self.hyperparameters.hidden_layer_widths )
-
-    #     # Compute the exploration radius.
-    #     exploration_radius_spatial = self.compute_exploration_radius( self.pinn_options.exploration_volume_percentage, self.domain, 'spatial' )
-    #     exploration_radius_spatiotemporal = self.compute_exploration_radius( self.pinn_options.exploration_volume_percentage, self.domain, 'spatiotemporal' )
-
-    #     # Compute the unique tolerance.
-    #     unique_tolerance_spatial = self.compute_unique_tolerance( self.pinn_options.unique_volume_percentage, self.domain, 'spatial' )
-    #     unique_tolerance_spatiotemporal = self.compute_unique_tolerance( self.pinn_options.unique_volume_percentage, self.domain, 'spatiotemporal' )
-
-    #     # Compute the classification noise magnitude.
-    #     classification_noise_magnitude_spatial = self.compute_classification_noise_magnitude( self.pinn_options.classification_noise_percentage, self.domain, 'spatial' )
-    #     classification_noise_magnitude_spatiotemporal = self.compute_classification_noise_magnitude( self.pinn_options.classification_noise_percentage, self.domain, 'spatiotemporal' )
-
-    #     # Create the network object.
-    #     self.network = neural_network_class( layers, self.hyperparameters.activation_function, self.hyperparameters.learning_rate, self.hyperparameters.residual_batch_size, self.hyperparameters.num_epochs, self.problem_specifications.residual_function, self.problem_specifications.residual_code, self.problem_specifications.temporal_code, training_data, testing_data, plotting_data, self.domain.dimension_labels, self.hyperparameters.element_computation_option, self.pinn_options.batch_print_frequency, self.pinn_options.epoch_print_frequency, self.hyperparameters.c_IC, self.hyperparameters.c_BC, self.hyperparameters.c_residual, self.hyperparameters.c_variational, self.hyperparameters.c_monotonicity, self.pinn_options.newton_tolerance, self.pinn_options.newton_max_iterations, exploration_radius_spatial, exploration_radius_spatiotemporal, self.pinn_options.num_exploration_points, unique_tolerance_spatial, unique_tolerance_spatiotemporal, classification_noise_magnitude_spatial, classification_noise_magnitude_spatiotemporal, self.pinn_options.device, self.pinn_options.verbose_flag ).to( device = self.pinn_options.device )
-
-
     # Implement the class constructor.
     def __init__( self, pinn_options, hyperparameters, problem_specifications ):
 
@@ -165,7 +104,6 @@ class pinn_class(  ):
 
         # Create the network object.
         self.network = neural_network_class( layers, self.hyperparameters.activation_function, self.hyperparameters.learning_rate, self.hyperparameters.residual_batch_size, self.hyperparameters.num_epochs, self.problem_specifications.residual_function, self.problem_specifications.residual_code, self.problem_specifications.temporal_code, training_data, testing_data, plotting_data, self.domain.dimension_labels, self.hyperparameters.element_computation_option, self.pinn_options.batch_print_frequency, self.pinn_options.epoch_print_frequency, self.hyperparameters.c_IC, self.hyperparameters.c_BC, self.hyperparameters.c_residual, self.hyperparameters.c_residual_gradient, self.hyperparameters.c_variational, self.hyperparameters.c_monotonicity, self.pinn_options.newton_tolerance, self.pinn_options.newton_max_iterations, exploration_radius_spatial, exploration_radius_spatiotemporal, self.pinn_options.num_exploration_points, unique_tolerance_spatial, unique_tolerance_spatiotemporal, classification_noise_magnitude_spatial, classification_noise_magnitude_spatiotemporal, self.pinn_options.device, self.pinn_options.verbose_flag ).to( device = self.pinn_options.device )
-
 
 
     #%% ------------------------------------------------------------ PREPROCESS FUNCTIONS ------------------------------------------------------------
@@ -1282,7 +1220,7 @@ class pinn_class(  ):
             # Set the output derivative order to be zero, one.
             output_derivative_order = torch.tensor( [ 0, 1 ], dtype = torch.uint8, device = self.pinn_options.device )
 
-        elif condition_type.lower(  ) == 'yuan-li':                     # IF the initial condition type is 'yuan-li'...
+        elif condition_type.lower(  ) == 'yuan-li':                     # If the initial condition type is 'yuan-li'...
 
             # Set the output derivative order to be two.
             output_derivative_order = 2*torch.ones( ( 1, 1 ), dtype = torch.uint8, device = self.pinn_options.device )
@@ -1486,7 +1424,7 @@ class pinn_class(  ):
         if train_flag:                     # If we want to train the network...
 
             # Train the network.
-            network.training_epochs, network.training_losses, network.testing_epochs, network.testing_losses = network.train( self.pde, network.training_data, network.testing_data, network.num_batches, network.num_epochs, network.derivative_required_for_residual, network.residual_code, network.epoch_print_frequency, network.verbose_flag )
+            network.training_epochs, network.training_losses, network.ic_training_losses, network.bc_training_losses, network.residual_training_losses, network.variational_training_losses, network.monotonicity_training_losses, network.testing_epochs, network.testing_losses, network.ic_testing_losses, network.bc_testing_losses, network.residual_testing_losses, network.variational_testing_losses, network.monotonicity_testing_losses = network.train( self.pde, network.training_data, network.testing_data, network.num_batches, network.num_epochs, network.derivative_required_for_residual, network.residual_code, network.epoch_print_frequency, network.verbose_flag )
 
         # Return the network.
         return network
@@ -1729,10 +1667,10 @@ class pinn_class(  ):
         network, save_directory = self.setup_network_plotting( network, save_directory )
 
         # Plot the plotting data.
-        fig, ax = network.plot_training_results( network.training_losses, network.testing_epochs, network.testing_losses, save_directory, show_plot )
+        figs, axes = network.plot_training_results( network.training_epochs, network.training_losses, network.ic_training_losses, network.bc_training_losses, network.residual_training_losses, network.variational_training_losses, network.monotonicity_training_losses, network.testing_epochs, network.testing_losses, network.ic_testing_losses, network.bc_testing_losses, network.residual_testing_losses, network.variational_testing_losses, network.monotonicity_testing_losses, network.c_IC, network.c_BC, network.c_residual, network.c_variational, network.c_monotonicity, save_directory, show_plot )
 
-        # Return the figure and axis.
-        return fig, ax
+        # Return the figures and axes.
+        return figs, axes
 
 
     # Implement a function to plot the flow field.

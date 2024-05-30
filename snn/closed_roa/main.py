@@ -18,12 +18,13 @@
 # Import standard libraries.
 import os
 import sys
-import torch
 import math
+import torch
 import matplotlib.pyplot as plt
 import time
 
-start_time = time.time()
+start_time = time.time(  )
+
 # Ensure that the utilities folder for this project is on the system path.
 sys.path.append( r'./snn/utilities' )
 
@@ -46,7 +47,8 @@ plt.rcParams.update( { 'figure.max_open_warning': 0 } )                         
 torch.manual_seed( 0 )
 
 # Set the computational device.
-device = 'cuda:8' if torch.cuda.is_available(  ) else 'cpu'
+device = 'cuda:1' if torch.cuda.is_available(  ) else 'cpu'
+
 
 #%% ---------------------------------------- DEFINE PINN OPTIONS ----------------------------------------
 
@@ -73,15 +75,15 @@ epoch_print_frequency = torch.tensor( int( 1e1 ), dtype = torch.int16, device = 
 print_flag = True
 
 # Define the plotting options.
-num_plotting_samples = torch.tensor( int( 20 ), dtype = torch.int16, device = device )              # [#] Number of sample points to use per dimension when plotting network results.
+num_plotting_samples = torch.tensor( 20, dtype = torch.int16, device = device )              # [#] Number of sample points to use per dimension when plotting network results.
 plot_flag = True                                                                                    # [T/F] Flag that determines whether training and network analysis plots are created.
 
 # Define the verbosity setting.
 verbose_flag = True                                                                                 # [T/F] Flag that determines whether to print more or less information when printing.
 
 # Define the newton parameters (used for level set generation).
-newton_tolerance = torch.tensor( 1e-6, dtype = torch.float32, device = device )                     # [-] Convergence tolerance for the Newton's root finding method.
-# newton_tolerance = torch.tensor( 1e-4, dtype = torch.float32, device = device )                     # [-] Convergence tolerance for the Newton's root finding method.
+# newton_tolerance = torch.tensor( 1e-6, dtype = torch.float32, device = device )                     # [-] Convergence tolerance for the Newton's root finding method.
+newton_tolerance = torch.tensor( 1e-4, dtype = torch.float32, device = device )                     # [-] Convergence tolerance for the Newton's root finding method.
 newton_max_iterations = torch.tensor( int( 1e2 ), dtype = torch.int32, device = device )            # [#] Maximum number of Newton's method steps to perform.
 
 # Define the exploration parameters (used for level set generation).
@@ -92,8 +94,8 @@ unique_volume_percentage = torch.tensor( 1e-4, dtype = torch.float32, device = d
 # Define the classification parameters.
 num_noisy_samples_per_level_set_point = torch.tensor( 5, dtype = torch.int16, device = device )     # [#] Number of noisy samples per level set point.
 classification_noise_percentage = torch.tensor( 1e-3, dtype = torch.float32, device = device )      # [%] The classification point noise magnitude represented as a percentage of the domain volume.  This parameter conveniently scales the noise magnitude of the classification points as the dimension of the problem is adjusted.
-classification_dt = torch.tensor( 1e-3, dtype = torch.float32, device = device )                    # [s] The classification simulation timestep used to forecast classification points.
-# classification_dt = torch.tensor( 1e-2, dtype = torch.float32, device = device )                    # [s] The classification simulation timestep used to forecast classification points.
+# classification_dt = torch.tensor( 1e-3, dtype = torch.float32, device = device )                    # [s] The classification simulation timestep used to forecast classification points.
+classification_dt = torch.tensor( 1e-2, dtype = torch.float32, device = device )                    # [s] The classification simulation timestep used to forecast classification points.
 classification_tfinal = torch.tensor( 10, dtype = torch.float32, device = device )                  # [s] The classification simulation duration used to forecast classification points.
 
 # Create the pinn options object.
@@ -198,8 +200,14 @@ problem_specifications.save( save_path, r'problem_specifications.pkl' )
 # Examples of several hyperparameters include the number of network hidden layers, along with their widths and activation functions, as well as the optimizer learning rate and training data quantity.
 
 # Set the neuron & synapse parameters.
-neuron_parameters = { 'threshold' : torch.tensor( 1.0, dtype = torch.float32, device = device ), 'current_decay' : torch.tensor( 1.0, dtype = torch.float32, device = device ), 'voltage_decay' : torch.tensor( 1.0, dtype = torch.float32, device = device ), 'persistent_state': False, 'requires_grad' : False }
+# neuron_parameters = { 'threshold' : torch.tensor( 1.0, dtype = torch.float32, device = device ), 'current_decay' : torch.tensor( 1.0, dtype = torch.float32, device = device ), 'voltage_decay' : torch.tensor( 1.0, dtype = torch.float32, device = device ), 'persistent_state': False, 'requires_grad' : False }
+# synapse_parameters = { 'gain' : torch.tensor( 1.0, dtype = torch.float32, device = device ) }
+
+neuron_parameters = { 'threshold' : torch.tensor( 1.0, dtype = torch.float32, device = device ), 'current_decay' : torch.tensor( 1.0, dtype = torch.float32, device = device ), 'voltage_decay' : torch.tensor( 1.0, dtype = torch.float32, device = device ), 'persistent_state': True, 'requires_grad' : False }
 synapse_parameters = { 'gain' : torch.tensor( 1.0, dtype = torch.float32, device = device ) }
+
+# neuron_parameters = { 'threshold' : torch.tensor( 1.0, dtype = torch.float32, device = device ), 'current_decay' : torch.tensor( 0.5, dtype = torch.float32, device = device ), 'voltage_decay' : torch.tensor( 0.5, dtype = torch.float32, device = device ), 'persistent_state': True, 'requires_grad' : False }
+# synapse_parameters = { 'gain' : torch.tensor( 1.0, dtype = torch.float32, device = device ) }
 
 # neuron_parameters = { 'threshold' : torch.tensor( 0.5, dtype = torch.float32, device = device ), 'current_decay' : torch.tensor( 1.0, dtype = torch.float32, device = device ), 'voltage_decay' : torch.tensor( 1.0, dtype = torch.float32, device = device ), 'persistent_state': False, 'requires_grad' : False }
 # synapse_parameters = { 'gain' : torch.tensor( 3.0, dtype = torch.float32, device = device ) }
@@ -209,21 +217,42 @@ synapse_parameters = { 'gain' : torch.tensor( 1.0, dtype = torch.float32, device
 
 # Define the number of timesteps for which each input is presented to the network.
 num_timesteps = torch.tensor( 1, dtype = torch.int16, device = device )                                 # [#] Number of timesteps for which each input is presented to the network.
-# num_timesteps = torch.tensor( 10, dtype = torch.int16, device = device )                              # [#] Number of timesteps for which each input is presented to the network.
+# num_timesteps = torch.tensor( 3, dtype = torch.int16, device = device )                                 # [#] Number of timesteps for which each input is presented to the network.
+# num_timesteps = torch.tensor( 5, dtype = torch.int16, device = device )                              # [#] Number of timesteps for which each input is presented to the network.
+# num_timesteps = torch.tensor( 7, dtype = torch.int16, device = device )                              # [#] Number of timesteps for which each input is presented to the network.
+# num_timesteps = torch.tensor( 9, dtype = torch.int16, device = device )                              # [#] Number of timesteps for which each input is presented to the network.
+# num_timesteps = torch.tensor( 15, dtype = torch.int16, device = device )                              # [#] Number of timesteps for which each input is presented to the network.
+
+
+
+
+# 5, 7, 9 all seemed to work about the same.
+# 400 vs 1000 epochs didn't seem to make much of a difference.
+# 250 vs 500 hidden units didn't seem to make much of a difference.
+# 3 vs 5 hidden layer results were about the same.
+
+# Does increasing the monotonicity loss weight such that the it has the largest weighted contribution ensure agreement with monotonicity?
+    # No.  A large monotonicity loss causes the system to not solve at all.
+
+# Does the residual loss behavior in the same way as the monotonicity loss?  i.e., is its value really small and completely ignored by the learning?
+
+
+# Does changing the current decay rate matter when the persistent state is true but there is only a single timestep?
+
 
 # Store the network parameters.
-activation_function = 'tanh'                                                                            # [-] Activation function (e.g., tanh, sigmoid, etc.)
+activation_function = 'tanh'                                                                             # [-] Activation function (e.g., tanh, sigmoid, etc.)
 
-# num_hidden_layers = torch.tensor( 3, dtype = torch.uint8, device = device )                           # [#] Number of hidden layers.
-num_hidden_layers = torch.tensor( 4, dtype = torch.uint8, device = device )                           # [#] Number of hidden layers.
+num_hidden_layers = torch.tensor( 3, dtype = torch.uint8, device = device )                           # [#] Number of hidden layers.
+# num_hidden_layers = torch.tensor( 4, dtype = torch.uint8, device = device )                           # [#] Number of hidden layers.
 # num_hidden_layers = torch.tensor( 5, dtype = torch.uint8, device = device )                             # [#] Number of hidden layers.
 
 # hidden_layer_widths = torch.tensor( int( 5e1 ), dtype = torch.int16, device = device )                # [#] Hidden layer widths.
 # hidden_layer_widths = torch.tensor( int( 1e2 ), dtype = torch.int16, device = device )                # [#] Hidden layer widths.
 
 # # This captured the initial & boundary condition fairly well.
-# hidden_layer_widths = torch.tensor( 250, dtype = torch.int16, device = device )                         # [#] Hidden layer widths.
-hidden_layer_widths = torch.tensor( 500, dtype = torch.int16, device = device )                         # [#] Hidden layer widths.
+hidden_layer_widths = torch.tensor( 250, dtype = torch.int16, device = device )                         # [#] Hidden layer widths.
+# hidden_layer_widths = torch.tensor( 500, dtype = torch.int16, device = device )                         # [#] Hidden layer widths.
 
 # Set the quantity of training and testing data.
 num_training_data = torch.tensor( int( 100e3 ), dtype = torch.int32, device = device )                  # [#] Number of training data points.
@@ -235,9 +264,8 @@ p_boundary = torch.tensor( 0.25, dtype = torch.float16, device = device )       
 p_residual = torch.tensor( 0.5, dtype = torch.float16, device = device )                                # [%] Percentage of training and testing data associated with the residual.
 
 # Define the number of training epochs.
-# num_epochs = torch.tensor( 400, dtype = torch.int32, device = device )                                  # [#] Number of training epochs to perform.
-num_epochs = torch.tensor( 1000, dtype = torch.int32, device = device )                                  # [#] Number of training epochs to perform.
-
+num_epochs = torch.tensor( 400, dtype = torch.int32, device = device )                                  # [#] Number of training epochs to perform.
+# num_epochs = torch.tensor( 1000, dtype = torch.int32, device = device )                                  # [#] Number of training epochs to perform.
 
 # Define the residual batch size.
 residual_batch_size = torch.tensor( int( 10e3 ), dtype = torch.int32, device = device )                 # [#] Training batch size. # This works for variational loss integration order 1.
@@ -260,9 +288,10 @@ integration_order = torch.tensor( 1, dtype = torch.uint8, device = device )     
 # Store the loss coefficients.
 c_IC = torch.tensor( 1.0, dtype = torch.float32, device = device )                      # [-] Initial condition loss weight.
 c_BC = torch.tensor( 1.0, dtype = torch.float32, device = device )                      # [-] Boundary condition loss weight.
-c_residual = torch.tensor( 0.0, dtype = torch.float32, device = device )                # [-] Residual loss weight.
-c_variational = torch.tensor( 0.0, dtype = torch.float32, device = device )             # [-] Variational loss weight.
+c_residual = torch.tensor( 1.0, dtype = torch.float32, device = device )                # [-] Residual loss weight.
+c_variational = torch.tensor( 1.0, dtype = torch.float32, device = device )             # [-] Variational loss weight.
 c_monotonicity = torch.tensor( 0.0, dtype = torch.float32, device = device )            # [-] Monotonicity loss weight.
+# c_monotonicity = torch.tensor( 1e20, dtype = torch.float32, device = device )            # [-] Monotonicity loss weight.
 
 # Create the hyperparameters object.
 hyperparameters = hyperparameters_class( neuron_parameters, synapse_parameters, num_timesteps, activation_function, num_hidden_layers, hidden_layer_widths, num_training_data, num_testing_data, p_initial, p_boundary, p_residual, num_epochs, residual_batch_size, learning_rate, integration_order, element_volume_percent, element_type, element_computation_option, c_IC, c_BC, c_residual, c_variational, c_monotonicity, save_path, load_path )
@@ -308,49 +337,49 @@ pinn.network = pinn.train( pinn.network, pinn_options.train_flag )
 pinn.save( save_path, 'pinn_after_training.pkl' )
 
 
-#%% ---------------------------------------- COMPUTE CLASSIFICATION LOSS ----------------------------------------
+# #%% ---------------------------------------- COMPUTE CLASSIFICATION LOSS ----------------------------------------
 
-# pinn.pinn_options.num_noisy_samples_per_level_set_point = num_noisy_samples_per_level_set_point
+# # pinn.pinn_options.num_noisy_samples_per_level_set_point = num_noisy_samples_per_level_set_point
 
-# Print out a classification loss starting message.
-print( '\n' )
-print( '------------------------------------------------------------------------------------------------------------------------' )
-print( '------------------------------------------------------------------------------------------------------------------------' )
-print( 'CLASSIFICATION LOSS' )
-print( '------------------------------------------------------------------------------------------------------------------------' )
-print( 'Computing classification loss...' )
+# # Print out a classification loss starting message.
+# print( '\n' )
+# print( '------------------------------------------------------------------------------------------------------------------------' )
+# print( '------------------------------------------------------------------------------------------------------------------------' )
+# print( 'CLASSIFICATION LOSS' )
+# print( '------------------------------------------------------------------------------------------------------------------------' )
+# print( 'Computing classification loss...' )
 
-# Compute the classification loss.
-# classification_loss, num_classification_points = pinn.compute_classification_loss( pde = pinn.pde, network = pinn.network, classification_data = None, num_spatial_dimensions = pinn.domain.num_spatial_dimensions, domain = pinn.domain, plot_time = pinn.domain.temporal_domain[ 1, : ], level = torch.tensor( 0, dtype = torch.float32, device = pinn.pinn_options.device ), level_set_guesses = None, num_guesses = torch.tensor( int( 1e2 ), dtype = torch.int64, device = pinn.pinn_options.device ), newton_tolerance = newton_tolerance, newton_max_iterations = newton_max_iterations, exploration_radius = pinn.network.exploration_radius_spatial, num_exploration_points = num_exploration_points, unique_tolerance = pinn.network.unique_tolerance_spatial, classification_noise_magnitude = pinn.network.classification_noise_magnitude_spatial, num_noisy_samples_per_level_set_point = pinn.pinn_options.num_noisy_samples_per_level_set_point, domain_subset_type = 'spatial', tspan = torch.tensor( [ 0, classification_tfinal.item(  ) ], dtype = classification_tfinal.dtype, device = classification_tfinal.device ), dt = classification_dt )
-classification_loss, num_classification_points = pinn.compute_classification_loss( pde = pinn.pde, network = pinn.network, classification_data = None, num_spatial_dimensions = pinn.domain.num_spatial_dimensions, num_timesteps = pinn.hyperparameters.num_timesteps, domain = pinn.domain, plot_time = pinn.domain.temporal_domain[ 1, : ], level = torch.tensor( 0, dtype = torch.float32, device = pinn.pinn_options.device ), level_set_guesses = None, num_guesses = torch.tensor( int( 1e2 ), dtype = torch.int64, device = pinn.pinn_options.device ), newton_tolerance = newton_tolerance, newton_max_iterations = newton_max_iterations, exploration_radius = pinn.network.exploration_radius_spatial, num_exploration_points = num_exploration_points, unique_tolerance = pinn.network.unique_tolerance_spatial, classification_noise_magnitude = pinn.network.classification_noise_magnitude_spatial, num_noisy_samples_per_level_set_point = pinn.pinn_options.num_noisy_samples_per_level_set_point, domain_subset_type = 'spatial', tspan = torch.tensor( [ 0, classification_tfinal.item(  ) ], dtype = classification_tfinal.dtype, device = classification_tfinal.device ), dt = classification_dt )
+# # Compute the classification loss.
+# # classification_loss, num_classification_points = pinn.compute_classification_loss( pde = pinn.pde, network = pinn.network, classification_data = None, num_spatial_dimensions = pinn.domain.num_spatial_dimensions, domain = pinn.domain, plot_time = pinn.domain.temporal_domain[ 1, : ], level = torch.tensor( 0, dtype = torch.float32, device = pinn.pinn_options.device ), level_set_guesses = None, num_guesses = torch.tensor( int( 1e2 ), dtype = torch.int64, device = pinn.pinn_options.device ), newton_tolerance = newton_tolerance, newton_max_iterations = newton_max_iterations, exploration_radius = pinn.network.exploration_radius_spatial, num_exploration_points = num_exploration_points, unique_tolerance = pinn.network.unique_tolerance_spatial, classification_noise_magnitude = pinn.network.classification_noise_magnitude_spatial, num_noisy_samples_per_level_set_point = pinn.pinn_options.num_noisy_samples_per_level_set_point, domain_subset_type = 'spatial', tspan = torch.tensor( [ 0, classification_tfinal.item(  ) ], dtype = classification_tfinal.dtype, device = classification_tfinal.device ), dt = classification_dt )
+# classification_loss, num_classification_points = pinn.compute_classification_loss( pde = pinn.pde, network = pinn.network, classification_data = None, num_spatial_dimensions = pinn.domain.num_spatial_dimensions, num_timesteps = pinn.hyperparameters.num_timesteps, domain = pinn.domain, plot_time = pinn.domain.temporal_domain[ 1, : ], level = torch.tensor( 0, dtype = torch.float32, device = pinn.pinn_options.device ), level_set_guesses = None, num_guesses = torch.tensor( int( 1e2 ), dtype = torch.int64, device = pinn.pinn_options.device ), newton_tolerance = newton_tolerance, newton_max_iterations = newton_max_iterations, exploration_radius = pinn.network.exploration_radius_spatial, num_exploration_points = num_exploration_points, unique_tolerance = pinn.network.unique_tolerance_spatial, classification_noise_magnitude = pinn.network.classification_noise_magnitude_spatial, num_noisy_samples_per_level_set_point = pinn.pinn_options.num_noisy_samples_per_level_set_point, domain_subset_type = 'spatial', tspan = torch.tensor( [ 0, classification_tfinal.item(  ) ], dtype = classification_tfinal.dtype, device = classification_tfinal.device ), dt = classification_dt )
 
-# Print the classification loss.
-print( '\n' )
-print( '------------------------------------------------------------------------------------------------------------------------' )
-print( f'# OF CLASSIFICATION POINTS: {num_classification_points}' )
-print( f'CLASSIFICATION LOSS: {classification_loss}' )
-print( '------------------------------------------------------------------------------------------------------------------------' )
+# # Print the classification loss.
+# print( '\n' )
+# print( '------------------------------------------------------------------------------------------------------------------------' )
+# print( f'# OF CLASSIFICATION POINTS: {num_classification_points}' )
+# print( f'CLASSIFICATION LOSS: {classification_loss}' )
+# print( '------------------------------------------------------------------------------------------------------------------------' )
 
 
 #%% ---------------------------------------- PLOT THE NEURAL NETWORK RESULTS ----------------------------------------
 
-# Plot the network domain.
-figs_domain, axes_domain = pinn.plot_domain( pinn.pde, projection_dimensions = None, projection_values = None, level = torch.tensor( 0, dtype = torch.float32, device = pinn.pinn_options.device ), fig = None, domain_type = 'spatiotemporal', save_directory = save_path, as_surface = True, as_stream = True, as_contour = True, show_plot = False )
+# # Plot the network domain.
+# figs_domain, axes_domain = pinn.plot_domain( pinn.pde, projection_dimensions = None, projection_values = None, level = torch.tensor( 0, dtype = torch.float32, device = pinn.pinn_options.device ), fig = None, domain_type = 'spatiotemporal', save_directory = save_path, as_surface = True, as_stream = True, as_contour = True, show_plot = False )
 
-# Plot the initial-boundary conditions.
-figs, axes = pinn.plot_initial_boundary_condition( 20*torch.ones( pinn.domain.spatiotemporal_domain.shape[ -1 ], dtype = torch.int16, device = pinn.pinn_options.device ), pinn.hyperparameters.num_timesteps, pinn.pde, projection_dimensions = None, projection_values = None, level = torch.tensor( 0, dtype = torch.float32, device = pinn.pinn_options.device ), fig = None, save_directory = save_path, as_surface = True, as_stream = True, as_contour = True, show_plot = False )
+# # Plot the initial-boundary conditions.
+# figs, axes = pinn.plot_initial_boundary_condition( 20*torch.ones( pinn.domain.spatiotemporal_domain.shape[ -1 ], dtype = torch.int16, device = pinn.pinn_options.device ), pinn.hyperparameters.num_timesteps, pinn.pde, projection_dimensions = None, projection_values = None, level = torch.tensor( 0, dtype = torch.float32, device = pinn.pinn_options.device ), fig = None, save_directory = save_path, as_surface = True, as_stream = True, as_contour = True, show_plot = False )
 
-# Plot the network training data.
-figs_training_data, axes_training_data = pinn.plot_training_data( pinn.network, projection_dimensions = None, projection_values = None, level = torch.tensor( 0, dtype = torch.float32, device = pinn.pinn_options.device ), fig = None, plot_type1 = 'all', plot_type2 = 'all', save_directory = save_path, as_surface = True, as_stream = True, as_contour = True, show_plot = False )
+# # Plot the network training data.
+# figs_training_data, axes_training_data = pinn.plot_training_data( pinn.network, projection_dimensions = None, projection_values = None, level = torch.tensor( 0, dtype = torch.float32, device = pinn.pinn_options.device ), fig = None, plot_type1 = 'all', plot_type2 = 'all', save_directory = save_path, as_surface = True, as_stream = True, as_contour = True, show_plot = False )
 
-# Plot the network testing data.
-figs_testing_data, axes_testing_data = pinn.plot_testing_data( pinn.network, projection_dimensions = None, projection_values = None, level = torch.tensor( 0, dtype = torch.float32, device = pinn.pinn_options.device ), fig = None, plot_type1 = 'all', plot_type2 = 'all', save_directory = save_path, as_surface = True, as_stream = True, as_contour = True, show_plot = False )
+# # Plot the network testing data.
+# figs_testing_data, axes_testing_data = pinn.plot_testing_data( pinn.network, projection_dimensions = None, projection_values = None, level = torch.tensor( 0, dtype = torch.float32, device = pinn.pinn_options.device ), fig = None, plot_type1 = 'all', plot_type2 = 'all', save_directory = save_path, as_surface = True, as_stream = True, as_contour = True, show_plot = False )
 
-# Plot the network plotting data.
-fig_plotting_data, ax_plotting_data = pinn.plot_plotting_data( pinn.network, projection_dimensions = None, projection_values = None, level = torch.tensor( 0, dtype = torch.float32, device = pinn.pinn_options.device ), fig = None, save_directory = save_path, as_surface = True, as_stream = True, as_contour = True, show_plot = False )
+# # Plot the network plotting data.
+# fig_plotting_data, ax_plotting_data = pinn.plot_plotting_data( pinn.network, projection_dimensions = None, projection_values = None, level = torch.tensor( 0, dtype = torch.float32, device = pinn.pinn_options.device ), fig = None, save_directory = save_path, as_surface = True, as_stream = True, as_contour = True, show_plot = False )
 
-# Plot the network prediction.
-fig_prediction, ax_prediction = pinn.plot_network_predictions( pinn.network.plotting_data, pinn.network, projection_dimensions = None, projection_values = None, level = torch.tensor( 0, dtype = torch.float32, device = pinn.pinn_options.device ), fig = None, save_directory = save_path, as_surface = True, as_stream = True, as_contour = True, show_plot = False )
+# # Plot the network prediction.
+# fig_prediction, ax_prediction = pinn.plot_network_predictions( pinn.network.plotting_data, pinn.network, projection_dimensions = None, projection_values = None, level = torch.tensor( 0, dtype = torch.float32, device = pinn.pinn_options.device ), fig = None, save_directory = save_path, as_surface = True, as_stream = True, as_contour = True, show_plot = False )
 
 # Plot the network initial condition prediction.
 fig_initial_prediction, ax_initial_prediction = pinn.plot_network_initial_prediction( pinn.network.plotting_data, pinn.domain, pinn.network, projection_dimensions = None, projection_values = None, level = torch.tensor( 0, dtype = torch.float32, device = pinn.pinn_options.device ), fig = None, save_directory = save_path, as_surface = True, as_stream = True, as_contour = True, show_plot = False )
@@ -361,8 +390,8 @@ fig_final_prediction, ax_final_prediction = pinn.plot_network_final_prediction( 
 # Plot the network training results.
 fig_training, ax_training = pinn.plot_training_results( pinn.network, save_directory = save_path, show_plot = False )
 
-# Plot the flow field.
-fig_flow_field, ax_flow_field = pinn.plot_flow_field( pinn.network.plotting_data, pinn.flow_functions, projection_dimensions = torch.tensor( [ 0 ], dtype = torch.uint8, device = device ), projection_values = torch.tensor( [ temporal_domain[ -1 ] ], dtype = torch.float32, device = device ), level = torch.tensor( 0, dtype = torch.float32, device = pinn.pinn_options.device ), fig = None, input_labels = None, title_string = 'Flow Field', save_directory = save_path, as_surface = True, as_stream = True, as_contour = True, show_plot = False )
+# # Plot the flow field.
+# fig_flow_field, ax_flow_field = pinn.plot_flow_field( pinn.network.plotting_data, pinn.flow_functions, projection_dimensions = torch.tensor( [ 0 ], dtype = torch.uint8, device = device ), projection_values = torch.tensor( [ temporal_domain[ -1 ] ], dtype = torch.float32, device = device ), level = torch.tensor( 0, dtype = torch.float32, device = pinn.pinn_options.device ), fig = None, input_labels = None, title_string = 'Flow Field', save_directory = save_path, as_surface = True, as_stream = True, as_contour = True, show_plot = False )
 
 # Plot the ROA boundary.
 fig_roa, ax_roa = pinn.plot_roa_boundary( pinn.network.plotting_data, pinn.domain, pinn.network, pinn.flow_functions, projection_dimensions = torch.tensor( [ 0 ], dtype = torch.uint8, device = device ), projection_values = torch.tensor( [ temporal_domain[ -1 ] ], dtype = torch.float32, device = device ), level = torch.tensor( 0, dtype = torch.float32, device = pinn.pinn_options.device ), fig = None, input_labels = None, title_string = 'ROA Boundary Prediction', save_directory = save_path, show_plot = False )
@@ -380,5 +409,5 @@ print( 'COMPLETE' )
 print( '------------------------------------------------------------------------------------------------------------------------' )
 print( '\n' )
 
-end_time = time.time()
-print(end_time - start_time)
+end_time = time.time(  )
+print( end_time - start_time )

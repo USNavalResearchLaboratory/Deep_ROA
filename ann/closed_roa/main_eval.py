@@ -43,12 +43,12 @@ from pinn_class import pinn_class as pinn_class
 os.system( 'cls' if os.name == 'nt' else 'clear' )
 
 # Set matplotlib options.
-plt.rcParams.update( { 'figure.max_open_warning': 0 } )                     # Disable maximum open figure warning.
+plt.rcParams.update( { 'figure.max_open_warning': 0 } )             # Disable maximum open figure warning.
 
 
 #%% ---------------------------------------- DEFINE DEFAULT CONFIGURATION ----------------------------------------
 
-# Define the default configuration.
+# Best grid search.
 BASE_CONFIG = {
     'classification_parameters': {
         'num_noisy_samples_per_level_set_point': int( 5 ),
@@ -65,16 +65,16 @@ BASE_CONFIG = {
         'activation_function': 'sigmoid',
         'c_IC': float( 1.0 ),
         'c_BC': float( 1.0 ),
-        'c_residual': float( 1.0 ),
+        'c_residual': float( 1e-2 ),
         'c_residual_gradient': float( 0 ),
-        'c_variational': float( 1.0 ),
+        'c_variational': float( 1e-2 ),
         'c_monotonicity': float( 1e3 ),
-        'hidden_layer_widths': int( 175 ),
-        'num_epochs': int( 250 ),
-        'num_hidden_layers': int( 5 ),
+        'hidden_layer_widths': int( 50 ),
+        'num_epochs': int( 400 ),
+        'num_hidden_layers': int( 3 ),
         'num_training_data': int( 100e3 ),
         'num_testing_data': int( 20e3 ),
-        'learning_rate': float( 0.005 ),
+        'learning_rate': float( 5e-2 ),
     },
     'newton_parameters': {
         'tolerance': float( 1e-4 ),
@@ -86,7 +86,7 @@ BASE_CONFIG = {
     },
     'plotting_parameters': {
         'num_plotting_samples': int( 20 ),
-        'plot_flag': bool( False ),
+        'plot_flag': bool( True ),
     },
     'printing_parameters': {
         'batch_print_frequency': int( 10 ),
@@ -94,7 +94,7 @@ BASE_CONFIG = {
         'print_flag': bool( True ),
     },
     'runtime': {
-        'device': 'cuda:9' if torch.cuda.is_available(  ) else 'cpu',
+        'device': 'cuda:1' if torch.cuda.is_available(  ) else 'cpu',
         'seed': int( 0 ),
         'load_flag': bool( False ),
         'train_flag': bool( True ),
@@ -105,6 +105,65 @@ BASE_CONFIG = {
         'save_frequency': int( 10 ),
     }
 }
+
+
+# # Best BO.
+# BASE_CONFIG = {
+#     'classification_parameters': {
+#         'num_noisy_samples_per_level_set_point': int( 5 ),
+#         'noise_percentage': float( 1e-3 ),
+#         'dt': float( 1e-2 ),
+#         'tfinal': float( 10 ),
+#     },
+#     'exploration_parameters': {
+#         'volume_percentage': float( 1e-2 ),
+#         'num_points': int( 50 ),
+#         'unique_percentage': float( 1e-4 ),
+#     },
+#     'hyperparameters': {
+#         'activation_function': 'sigmoid',
+#         'c_IC': float( 1.0 ),
+#         'c_BC': float( 0.01 ),
+#         'c_residual': float( 0.2 ),
+#         'c_residual_gradient': float( 0 ),
+#         'c_variational': float( 0.2 ),
+#         'c_monotonicity': float( 1e2 ),
+#         'hidden_layer_widths': int( 50 ),
+#         'num_epochs': int( 400 ),
+#         'num_hidden_layers': int( 3 ),
+#         'num_training_data': int( 100e3 ),
+#         'num_testing_data': int( 20e3 ),
+#         'learning_rate': float( 5e-2 ),
+#     },
+#     'newton_parameters': {
+#         'tolerance': float( 1e-4 ),
+#         'max_iterations': int( 1e2 ),
+#     },
+#     'paths': {
+#         'save_path': r'./ann/closed_roa/save',
+#         'load_path': r'./ann/closed_roa/load',
+#     },
+#     'plotting_parameters': {
+#         'num_plotting_samples': int( 20 ),
+#         'plot_flag': bool( True ),
+#     },
+#     'printing_parameters': {
+#         'batch_print_frequency': int( 10 ),
+#         'epoch_print_frequency': int( 10 ),
+#         'print_flag': bool( True ),
+#     },
+#     'runtime': {
+#         'device': 'cuda:9' if torch.cuda.is_available(  ) else 'cpu',
+#         'seed': int( 0 ),
+#         'load_flag': bool( True ),
+#         'train_flag': bool( False ),
+#         'verbose_flag': bool( True ),
+#     },
+#     'saving_parameters': {
+#         'save_flag': bool( True ),
+#         'save_frequency': int( 10 ),
+#     }
+# }
 
 
 # Implement a function to evaluate the closed roa.
@@ -135,19 +194,18 @@ def eval_closed_roa( config: dict = BASE_CONFIG ) -> int:
     new_config = deepcopy( BASE_CONFIG )
 
     # Determine whether to update the configuration.
-    if config:                  # If there is a configuration to use...
+    if config:                                                  # If there is a configuration to use...
 
         # Update the hyperparmaeters of the default configuration to match the user provided configuration.
-            # # new_config[ 'hyperparameters' ].update( config )
         new_config[ 'hyperparameters' ].update( config[ 'hyperparameters' ] )
 
     # Make a copy of the new configuration.
     config = deepcopy( new_config )
 
     # Set the random seeds.
-    np.random.seed( config[ 'runtime' ]['seed' ] )
-    random.seed( config[ 'runtime' ][ 'seed' ] )
-    torch.manual_seed( config[ 'runtime' ][ 'seed' ] )
+    random.seed( config[ 'runtime' ][ 'seed' ] )                # [#] Generic random seed.
+    np.random.seed( config[ 'runtime' ]['seed' ] )              # [#] Numpy random seed.
+    torch.manual_seed( config[ 'runtime' ][ 'seed' ] )          # [#] Torch random seed.
 
     # Set the computational device.
     device = torch.device( config[ 'runtime' ][ 'device' ] )
@@ -165,43 +223,43 @@ def eval_closed_roa( config: dict = BASE_CONFIG ) -> int:
     start_time_pinn_options = time.time(  )
 
     # Define the save options.
-    save_path = str( config[ 'paths' ][ 'save_path' ] )                                                                                                             # [-] Relative path to the directory in which to save network data, figures, etc.
-    save_frequency = torch.tensor( int( config[ 'saving_parameters' ][ 'save_frequency' ] ), dtype = torch.int16, device = device )                                 # [#] Number of epochs after which to save intermediate networks during training. e.g., 1 = Save after every training epoch, 10 = Save after every ten training epochs, 100 = Save after every hundred training epochs.
-    save_flag = bool( config[ 'saving_parameters' ][ 'save_flag' ] )                                                                                                # [T/F] Flag that determines whether to save networks during and after training, as well as training and network analysis plots.
+    save_path = str( config[ 'paths' ][ 'save_path' ] )                                                                                                                                             # [-] Relative path to the directory in which to save network data, figures, etc.
+    save_frequency = torch.tensor( int( config[ 'saving_parameters' ][ 'save_frequency' ] ), dtype = torch.int16, device = device )                                                                 # [#] Number of epochs after which to save intermediate networks during training. e.g., 1 = Save after every training epoch, 10 = Save after every ten training epochs, 100 = Save after every hundred training epochs.
+    save_flag = bool( config[ 'saving_parameters' ][ 'save_flag' ] )                                                                                                                                # [T/F] Flag that determines whether to save networks during and after training, as well as training and network analysis plots.
 
     # Define the load options.
-    load_path = str( config[ 'paths' ][ 'load_path' ] )                                                                                                             # [-] Relative path to the directory from which to load network data.
-    load_flag = bool( config[ 'runtime' ][ 'load_flag' ] )                                                                                                          # [T/F] Flag that determines whether to load network data from the given load directory before training.
+    load_path = str( config[ 'paths' ][ 'load_path' ] )                                                                                                                                             # [-] Relative path to the directory from which to load network data.
+    load_flag = bool( config[ 'runtime' ][ 'load_flag' ] )                                                                                                                                          # [T/F] Flag that determines whether to load network data from the given load directory before training.
 
     # Define the training options.
-    train_flag = bool( config[ 'runtime' ][ 'train_flag' ] )                                                                                                        # [T/F] Flag that determines whether to train the network after creation or loading.
+    train_flag = bool( config[ 'runtime' ][ 'train_flag' ] )                                                                                                                                        # [T/F] Flag that determines whether to train the network after creation or loading.
 
     # Define the printing options.
-    batch_print_frequency = torch.tensor( int( config[ 'printing_parameters' ][ 'batch_print_frequency' ] ), dtype = torch.int16, device = device )             # [%] Percent of batches after which to print training information (during an epoch that has been selected for printing).
-    epoch_print_frequency = torch.tensor( int( config[ 'printing_parameters' ][ 'epoch_print_frequency' ] ), dtype = torch.int16, device = device )             # [%] Percent of epochs after which to print training information.
-    print_flag = bool( config[ 'printing_parameters' ][ 'print_flag' ] )                                                                                            # [T/F] Flag that determines whether to print more or less information when printing.
+    batch_print_frequency = torch.tensor( int( config[ 'printing_parameters' ][ 'batch_print_frequency' ] ), dtype = torch.int16, device = device )                                                 # [%] Percent of batches after which to print training information (during an epoch that has been selected for printing).
+    epoch_print_frequency = torch.tensor( int( config[ 'printing_parameters' ][ 'epoch_print_frequency' ] ), dtype = torch.int16, device = device )                                                 # [%] Percent of epochs after which to print training information.
+    print_flag = bool( config[ 'printing_parameters' ][ 'print_flag' ] )                                                                                                                            # [T/F] Flag that determines whether to print more or less information when printing.
 
     # Define the plotting options.
-    num_plotting_samples = torch.tensor( int( config[ 'plotting_parameters' ][ 'num_plotting_samples' ] ), dtype = torch.int16, device = device )                   # [#] Number of sample points to use per dimension when plotting network results.
-    plot_flag = bool( config[ 'plotting_parameters' ][ 'plot_flag' ] )                                                                                              # [T/F] Flag that determines whether training and network analysis plots are created.
+    num_plotting_samples = torch.tensor( int( config[ 'plotting_parameters' ][ 'num_plotting_samples' ] ), dtype = torch.int16, device = device )                                                   # [#] Number of sample points to use per dimension when plotting network results.
+    plot_flag = bool( config[ 'plotting_parameters' ][ 'plot_flag' ] )                                                                                                                              # [T/F] Flag that determines whether training and network analysis plots are created.
 
     # Define the verbosity setting.
-    verbose_flag = bool( config[ 'runtime' ][ 'verbose_flag' ] )                                                                                                                                # [T/F] Flag that determines whether to print more or less information when printing.
+    verbose_flag = bool( config[ 'runtime' ][ 'verbose_flag' ] )                                                                                                                                    # [T/F] Flag that determines whether to print more or less information when printing.
 
     # Define the newton parameters (used for level set generation).
-    newton_tolerance = torch.tensor( float( config[ 'newton_parameters' ][ 'tolerance' ] ), dtype = torch.float32, device = device )                                                            # [-] Convergence tolerance for the Newton's root finding method.
-    newton_max_iterations = torch.tensor( int( config[ 'newton_parameters' ][ 'max_iterations' ] ), dtype = torch.int32, device = device )                                                      # [#] Maximum number of Newton's method steps to perform.
+    newton_tolerance = torch.tensor( float( config[ 'newton_parameters' ][ 'tolerance' ] ), dtype = torch.float32, device = device )                                                                # [-] Convergence tolerance for the Newton's root finding method.
+    newton_max_iterations = torch.tensor( int( config[ 'newton_parameters' ][ 'max_iterations' ] ), dtype = torch.int32, device = device )                                                          # [#] Maximum number of Newton's method steps to perform.
 
     # Define the exploration parameters (used for level set generation).
-    exploration_volume_percentage = torch.tensor( float( config[ 'exploration_parameters' ][ 'volume_percentage' ] ), dtype = torch.float32, device = device )                                  # [%] The level set method step size represented as a percentage of the domain volume.  This parameter conveniently scales the step size of the level set method as the dimension of the problem is adjusted. # This works for both initial and final times.
-    num_exploration_points = torch.tensor( int( config[ 'exploration_parameters' ][ 'num_points' ] ), dtype = torch.int16, device = device )                                                    # [#] Number of exploration points to generate at each level set method step.
-    unique_volume_percentage = torch.tensor( float( config[ 'exploration_parameters' ][ 'unique_percentage' ] ), dtype = torch.float32, device = device )                                       # [%] The tolerance used to determine whether level set points are unique as a percentage of the domain volume.  This parameter conveniently scales the unique tolerance of the level set points as the dimension of the problem is adjusted.
+    exploration_volume_percentage = torch.tensor( float( config[ 'exploration_parameters' ][ 'volume_percentage' ] ), dtype = torch.float32, device = device )                                      # [%] The level set method step size represented as a percentage of the domain volume.  This parameter conveniently scales the step size of the level set method as the dimension of the problem is adjusted. # This works for both initial and final times.
+    num_exploration_points = torch.tensor( int( config[ 'exploration_parameters' ][ 'num_points' ] ), dtype = torch.int16, device = device )                                                        # [#] Number of exploration points to generate at each level set method step.
+    unique_volume_percentage = torch.tensor( float( config[ 'exploration_parameters' ][ 'unique_percentage' ] ), dtype = torch.float32, device = device )                                           # [%] The tolerance used to determine whether level set points are unique as a percentage of the domain volume.  This parameter conveniently scales the unique tolerance of the level set points as the dimension of the problem is adjusted.
 
     # Define the classification parameters.
-    num_noisy_samples_per_level_set_point = torch.tensor( int( config[ 'classification_parameters' ][ 'num_noisy_samples_per_level_set_point' ] ), dtype = torch.int16, device = device )       # [#] Number of noisy samples per level set point.
-    classification_noise_percentage = torch.tensor( float( config[ 'classification_parameters' ][ 'noise_percentage' ] ), dtype = torch.float32, device = device )                              # [%] The classification point noise magnitude represented as a percentage of the domain volume.  This parameter conveniently scales the noise magnitude of the classification points as the dimension of the problem is adjusted.
-    classification_dt = torch.tensor( float( config[ 'classification_parameters' ][ 'dt' ] ), dtype = torch.float32, device = device )                                                          # [s] The classification simulation timestep used to forecast classification points.
-    classification_tfinal = torch.tensor( float( config[ 'classification_parameters' ][ 'tfinal' ] ), dtype = torch.float32, device = device )                                                  # [s] The classification simulation duration used to forecast classification points.
+    num_noisy_samples_per_level_set_point = torch.tensor( int( config[ 'classification_parameters' ][ 'num_noisy_samples_per_level_set_point' ] ), dtype = torch.int16, device = device )           # [#] Number of noisy samples per level set point.
+    classification_noise_percentage = torch.tensor( float( config[ 'classification_parameters' ][ 'noise_percentage' ] ), dtype = torch.float32, device = device )                                  # [%] The classification point noise magnitude represented as a percentage of the domain volume.  This parameter conveniently scales the noise magnitude of the classification points as the dimension of the problem is adjusted.
+    classification_dt = torch.tensor( float( config[ 'classification_parameters' ][ 'dt' ] ), dtype = torch.float32, device = device )                                                              # [s] The classification simulation timestep used to forecast classification points.
+    classification_tfinal = torch.tensor( float( config[ 'classification_parameters' ][ 'tfinal' ] ), dtype = torch.float32, device = device )                                                      # [s] The classification simulation duration used to forecast classification points.
 
     # Create the pinn options object.
     pinn_options = pinn_options_class( save_path, save_frequency, save_flag, load_path, load_flag, train_flag, batch_print_frequency, epoch_print_frequency, print_flag, num_plotting_samples, newton_tolerance, newton_max_iterations, exploration_volume_percentage, num_exploration_points, unique_volume_percentage, classification_noise_percentage, num_noisy_samples_per_level_set_point, classification_dt, classification_tfinal, plot_flag, device, verbose_flag )
@@ -232,53 +290,53 @@ def eval_closed_roa( config: dict = BASE_CONFIG ) -> int:
     start_time_problem_specifications = time.time(  )
 
     # Define the number of inputs and outputs.
-    num_inputs = torch.tensor( 3, dtype = torch.uint8, device = device )                                                                            # [#] Number of network inputs.  For the Yuan-Li PDE, this is the same as the number of spatiotemporal state variables associated with the underlying dynamical system.
-    num_outputs = torch.tensor( 1, dtype = torch.uint8, device = device )                                                                           # [#] Number of network outputs.  For the Yuan-Li PDE, this is always one.
+    num_inputs = torch.tensor( 3, dtype = torch.uint8, device = device )                                                                                                                                                                                # [#] Number of network inputs.  For the Yuan-Li PDE, this is the same as the number of spatiotemporal state variables associated with the underlying dynamical system.
+    num_outputs = torch.tensor( 1, dtype = torch.uint8, device = device )                                                                                                                                                                               # [#] Number of network outputs.  For the Yuan-Li PDE, this is always one.
 
     # Define the temporal and spatial domains.
-    domain_type = 'cartesian'                                                                                                             # [-] The type of domain (cartesian, spherical, etc.).  Only cartesian domains are currently supported.
-    temporal_domain = torch.tensor( [ 0, 30 ], dtype = torch.float32, device = device )                                                             # [-] Temporal domain of the underlying dynamical system.                                                         # [-] Temporal domain of the underlying dynamical system.
-    spatial_domain = torch.tensor( [ [ -1, 4 ], [ -1, 4 ] ], dtype = torch.float32, device = device ).T                                             # [-] Spatial domain of the underlying dynamical system.
+    domain_type = 'cartesian'                                                                                                                                                                                                                           # [-] The type of domain (cartesian, spherical, etc.).  Only cartesian domains are currently supported.
+    temporal_domain = torch.tensor( [ 0, 30 ], dtype = torch.float32, device = device )                                                                                                                                                                 # [-] Temporal domain of the underlying dynamical system.
+    spatial_domain = torch.tensor( [ [ -1, 4 ], [ -1, 4 ] ], dtype = torch.float32, device = device ).T                                                                                                                                                 # [-] Spatial domain of the underlying dynamical system.
 
     # Define the initial condition parameters.
-    R0 = torch.tensor( 1.0, dtype = torch.float32, device = device )                                                                                  # [-] Initial condition radius.
-    A0 = torch.tensor( 2.0, dtype = torch.float32, device = device )                                                                                  # [-] Initial condition amplitude.
-    S0 = torch.tensor( 20.0, dtype = torch.float32, device = device )                                                                                 # [-] Initial condition slope.
-    P0_shift = torch.tensor( [ math.pi/2, math.pi/2 ], dtype = torch.float32, device = device )                                                     # [-] Initial condition input offset.
-    z0_shift = -A0/2                                                                                                                                # [-] Initial condition output offset.
+    R0 = torch.tensor( 1.0, dtype = torch.float32, device = device )                                                                                                                                                                                    # [-] Initial condition radius.
+    A0 = torch.tensor( 2.0, dtype = torch.float32, device = device )                                                                                                                                                                                    # [-] Initial condition amplitude.
+    S0 = torch.tensor( 20.0, dtype = torch.float32, device = device )                                                                                                                                                                                   # [-] Initial condition slope.
+    P0_shift = torch.tensor( [ math.pi/2, math.pi/2 ], dtype = torch.float32, device = device )                                                                                                                                                         # [-] Initial condition input offset.
+    z0_shift = -A0/2                                                                                                                                                                                                                                    # [-] Initial condition output offset.
 
     # Define the flow functions.
-    flow_function1 = lambda s: torch.unsqueeze( -torch.sin( s[ :, 1 ] )*( -0.1*torch.cos( s[ :, 1 ] ) - torch.cos( s[ :, 2 ] ) ), dim = 1 )         # [-] Flow function associated with the first state of the underlying dynamical system.
-    flow_function2 = lambda s: torch.unsqueeze( -torch.sin( s[ :, 2 ] )*( torch.cos( s[ :, 1 ] ) - 0.1*torch.cos( s[ :, 2 ] ) ), dim = 1 )          # [-] Flow function associated with the second state of the underlying dynamical system.
-    flow_functions = [ flow_function1, flow_function2 ]                                                                                             # [-] Flow functions associated with the underlying dynamical system.
+    flow_function1 = lambda s: torch.unsqueeze( -torch.sin( s[ :, 1 ] )*( -0.1*torch.cos( s[ :, 1 ] ) - torch.cos( s[ :, 2 ] ) ), dim = 1 )                                                                                                             # [-] Flow function associated with the first state of the underlying dynamical system.
+    flow_function2 = lambda s: torch.unsqueeze( -torch.sin( s[ :, 2 ] )*( torch.cos( s[ :, 1 ] ) - 0.1*torch.cos( s[ :, 2 ] ) ), dim = 1 )                                                                                                              # [-] Flow function associated with the second state of the underlying dynamical system.
+    flow_functions = [ flow_function1, flow_function2 ]                                                                                                                                                                                                 # [-] Flow functions associated with the underlying dynamical system.
 
     # Define the residual function.
-    residual_function = lambda s, dphidt, dphidx1, dphidx2: dphidt - torch.minimum( torch.zeros( size = ( s.shape[ 0 ], 1 ), dtype = torch.float32, device = device ), dphidx1*flow_functions[ 0 ]( s ) + dphidx2*flow_functions[ 1 ]( s ) )                    # [-] Residual function associated with the Yuan-Li PDE.
+    residual_function = lambda s, dphidt, dphidx1, dphidx2: dphidt - torch.minimum( torch.zeros( size = ( s.shape[ 0 ], 1 ), dtype = torch.float32, device = device ), dphidx1*flow_functions[ 0 ]( s ) + dphidx2*flow_functions[ 1 ]( s ) )            # [-] Residual function associated with the Yuan-Li PDE.
 
     # Define the residual code.
-    residual_code = [ None, torch.tensor( [ 0 ], dtype = torch.uint8, device = device ), torch.tensor( [ 1 ], dtype = torch.uint8, device = device ), torch.tensor( [ 2 ], dtype = torch.uint8, device = device ) ]                                             # [-] Residual code.  This list specifies which derivatives with respect to the network inputs are required for the residual function inputs.
+    residual_code = [ None, torch.tensor( [ 0 ], dtype = torch.uint8, device = device ), torch.tensor( [ 1 ], dtype = torch.uint8, device = device ), torch.tensor( [ 2 ], dtype = torch.uint8, device = device ) ]                                     # [-] Residual code.  This list specifies which derivatives with respect to the network inputs are required for the residual function inputs.
 
     # Define the temporal code. Determines how to compute the temporal derivative of the network output.    
-    temporal_code = [ torch.tensor( [ 0 ], dtype = torch.uint8, device = device ) ]                                                                                                                                                                             # [-]    
+    temporal_code = [ torch.tensor( [ 0 ], dtype = torch.uint8, device = device ) ]                                                                                                                                                                     # [-] Temporal code.
 
     # Define the initial-boundary condition functions.
-    f_ic = lambda s: A0/( 1 + torch.exp( -S0*( torch.norm( s[ :, 1: ] - P0_shift, 2, dim = 1, keepdim = True ) - R0 ) ) ) + z0_shift                # [-] Initial condition function.
-    f_bc_1 = lambda s: A0/( 1 + torch.exp( -S0*( torch.norm( s[ :, 1: ] - P0_shift, 2, dim = 1, keepdim = True ) - R0 ) ) ) + z0_shift              # [-] Boundary condition function.
-    f_bc_2 = lambda s: A0/( 1 + torch.exp( -S0*( torch.norm( s[ :, 1: ] - P0_shift, 2, dim = 1, keepdim = True ) - R0 ) ) ) + z0_shift              # [-] Boundary condition function.
-    f_bc_3 = lambda s: A0/( 1 + torch.exp( -S0*( torch.norm( s[ :, 1: ] - P0_shift, 2, dim = 1, keepdim = True ) - R0 ) ) ) + z0_shift              # [-] Boundary condition function.
-    f_bc_4 = lambda s: A0/( 1 + torch.exp( -S0*( torch.norm( s[ :, 1: ] - P0_shift, 2, dim = 1, keepdim = True ) - R0 ) ) ) + z0_shift              # [-] Boundary condition function.
+    f_ic = lambda s: A0/( 1 + torch.exp( -S0*( torch.norm( s[ :, 1: ] - P0_shift, 2, dim = 1, keepdim = True ) - R0 ) ) ) + z0_shift                                                                                                                    # [-] Initial condition function.
+    f_bc_1 = lambda s: A0/( 1 + torch.exp( -S0*( torch.norm( s[ :, 1: ] - P0_shift, 2, dim = 1, keepdim = True ) - R0 ) ) ) + z0_shift                                                                                                                  # [-] Boundary condition function.
+    f_bc_2 = lambda s: A0/( 1 + torch.exp( -S0*( torch.norm( s[ :, 1: ] - P0_shift, 2, dim = 1, keepdim = True ) - R0 ) ) ) + z0_shift                                                                                                                  # [-] Boundary condition function.
+    f_bc_3 = lambda s: A0/( 1 + torch.exp( -S0*( torch.norm( s[ :, 1: ] - P0_shift, 2, dim = 1, keepdim = True ) - R0 ) ) ) + z0_shift                                                                                                                  # [-] Boundary condition function.
+    f_bc_4 = lambda s: A0/( 1 + torch.exp( -S0*( torch.norm( s[ :, 1: ] - P0_shift, 2, dim = 1, keepdim = True ) - R0 ) ) ) + z0_shift                                                                                                                  # [-] Boundary condition function.
 
-    # f_ic = lambda s: A0/( 1 + torch.exp( -S0*( torch.norm( s[ :, 1: ] - P0_shift, 2, dim = 1, keepdim = True ) - R0 ) ) ) + z0_shift                # [-] Initial condition function.
-    # f_bc_1 = lambda s: torch.zeros( ( s.shape[ 0 ], 1 ), dtype = torch.float32, device = device )                                                   # [-] Boundary condition function 1.
-    # f_bc_2 = lambda s: torch.zeros( ( s.shape[ 0 ], 1 ), dtype = torch.float32, device = device )                                                   # [-] Boundary condition function 2.
-    # f_bc_3 = lambda s: torch.zeros( ( s.shape[ 0 ], 1 ), dtype = torch.float32, device = device )                                                   # [-] Boundary condition function 3.
+    # f_ic = lambda s: A0/( 1 + torch.exp( -S0*( torch.norm( s[ :, 1: ] - P0_shift, 2, dim = 1, keepdim = True ) - R0 ) ) ) + z0_shift                                                                                                                  # [-] Initial condition function.
+    # f_bc_1 = lambda s: torch.zeros( ( s.shape[ 0 ], 1 ), dtype = torch.float32, device = device )                                                                                                                                                     # [-] Boundary condition function 1.
+    # f_bc_2 = lambda s: torch.zeros( ( s.shape[ 0 ], 1 ), dtype = torch.float32, device = device )                                                                                                                                                     # [-] Boundary condition function 2.
+    # f_bc_3 = lambda s: torch.zeros( ( s.shape[ 0 ], 1 ), dtype = torch.float32, device = device )                                                                                                                                                     # [-] Boundary condition function 3.
     # f_bc_4 = lambda s: torch.zeros( ( s.shape[ 0 ], 1 ), dtype = torch.float32, device = device )     
 
     # Define the initial-boundary condition information.
-    ibc_types = [ 'dirichlet', 'dirichlet', 'dirichlet', 'dirichlet', 'dirichlet' ]                                                                                           # [-] Initial-Boundary condition types (e.g., dirichlet, neumann, etc.).
-    ibc_dimensions = torch.tensor( [ 0, 1, 1, 2, 2 ], dtype = torch.uint8, device = device )                                                              # [-] Dimensions associated with each initial-boundary condition.
-    ibc_condition_functions = [ f_ic, f_bc_1, f_bc_2, f_bc_3, f_bc_4 ]                                                                                              # [-] List of initial-boundary conditions.
-    ibc_placements = [ 'lower', 'lower', 'upper', 'lower', 'upper' ]                                                                                                  # [Lower/Upper] Initial-Boundary condition placement.
+    ibc_types = [ 'dirichlet', 'dirichlet', 'dirichlet', 'dirichlet', 'dirichlet' ]                                                                                                                                                                     # [-] Initial-Boundary condition types (e.g., dirichlet, neumann, etc.).
+    ibc_dimensions = torch.tensor( [ 0, 1, 1, 2, 2 ], dtype = torch.uint8, device = device )                                                                                                                                                            # [-] Dimensions associated with each initial-boundary condition.
+    ibc_condition_functions = [ f_ic, f_bc_1, f_bc_2, f_bc_3, f_bc_4 ]                                                                                                                                                                                  # [-] List of initial-boundary conditions.
+    ibc_placements = [ 'lower', 'lower', 'upper', 'lower', 'upper' ]                                                                                                                                                                                    # [Lower/Upper] Initial-Boundary condition placement.
 
     # ibc_types = [ 'dirichlet', 'yuan-li', 'yuan-li', 'yuan-li', 'yuan-li' ]
     # ibc_dimensions = torch.tensor( [ 0, 1, 1, 2, 2 ], dtype = torch.uint8, device = device )
@@ -286,8 +344,8 @@ def eval_closed_roa( config: dict = BASE_CONFIG ) -> int:
     # ibc_placements = [ 'lower', 'lower', 'upper', 'lower', 'upper' ]  
 
     # Define the PDE name and type.
-    pde_name = 'Yuan-Li PDE: Closed ROA'                                                                                                            # [-] PDE name.
-    pde_type = 'First Order'                                                                                                                        # [-] PDE type.
+    pde_name = 'Yuan-Li PDE: Closed ROA'                                                                                                                                                                                                                # [-] PDE name.
+    pde_type = 'First Order'                                                                                                                                                                                                                            # [-] PDE type.
 
     # Create the problem specifications object.
     problem_specifications = problem_specifications_class( num_inputs, num_outputs, temporal_domain, spatial_domain, domain_type, residual_function, residual_code, temporal_code, flow_functions, ibc_types, ibc_dimensions, ibc_condition_functions, ibc_placements, pde_name, pde_type, save_path, load_path )
@@ -318,47 +376,47 @@ def eval_closed_roa( config: dict = BASE_CONFIG ) -> int:
     start_time_hyperparameters = time.time(  )
 
     # Store the network parameters.
-    activation_function = str( config[ 'hyperparameters' ][ 'activation_function' ] )                                                                   # [-] Activation function (e.g., tanh, sigmoid, etc.)
-    num_hidden_layers = torch.tensor( int( config[ 'hyperparameters' ][ 'num_hidden_layers' ] ), dtype = torch.uint8, device = device )                 # [#] Number of hidden layers.
-    hidden_layer_widths = torch.tensor( int( config[ 'hyperparameters' ][ 'hidden_layer_widths' ] ), dtype = torch.int16, device = device )             # [#] Hidden layer widths.
+    activation_function = str( config[ 'hyperparameters' ][ 'activation_function' ] )                                                                       # [-] Activation function (e.g., tanh, sigmoid, etc.)
+    num_hidden_layers = torch.tensor( int( config[ 'hyperparameters' ][ 'num_hidden_layers' ] ), dtype = torch.uint8, device = device )                     # [#] Number of hidden layers.
+    hidden_layer_widths = torch.tensor( int( config[ 'hyperparameters' ][ 'hidden_layer_widths' ] ), dtype = torch.int16, device = device )                 # [#] Hidden layer widths.
 
     # Set the quantity of training and testing data.
-    num_training_data = torch.tensor( int( config[ 'hyperparameters' ][ 'num_training_data' ] ), dtype = torch.int32, device = device )                 # [#] Number of training data points.
-    num_testing_data = torch.tensor( int( config[ 'hyperparameters' ][ 'num_testing_data' ] ), dtype = torch.int32, device = device )                   # [#] Number of testing data points.
+    num_training_data = torch.tensor( int( config[ 'hyperparameters' ][ 'num_training_data' ] ), dtype = torch.int32, device = device )                     # [#] Number of training data points.
+    num_testing_data = torch.tensor( int( config[ 'hyperparameters' ][ 'num_testing_data' ] ), dtype = torch.int32, device = device )                       # [#] Number of testing data points.
 
     # Define the percent of training and testing data that should be sampled from the initial condition, the boundary condition, and the interior of the domain.
-    p_initial = torch.tensor( 0.25, dtype = torch.float16, device = device )                                                                            # [%] Percentage of training and testing data associated with the initial condition.
-    p_boundary = torch.tensor( 0.25, dtype = torch.float16, device = device )                                                                           # [%] Percentage of training and testing data associated with the boundary condition.
-    p_residual = torch.tensor( 0.5, dtype = torch.float16, device = device )                                                                            # [%] Percentage of training and testing data associated with the residual.
+    p_initial = torch.tensor( 0.25, dtype = torch.float16, device = device )                                                                                # [%] Percentage of training and testing data associated with the initial condition.
+    p_boundary = torch.tensor( 0.25, dtype = torch.float16, device = device )                                                                               # [%] Percentage of training and testing data associated with the boundary condition.
+    p_residual = torch.tensor( 0.5, dtype = torch.float16, device = device )                                                                                # [%] Percentage of training and testing data associated with the residual.
 
     # Define the number of training epochs.
-    num_epochs = torch.tensor( int( config[ 'hyperparameters' ][ 'num_epochs' ] ), dtype = torch.int32, device = device )                               # [#] Number of training epochs to perform.
+    num_epochs = torch.tensor( int( config[ 'hyperparameters' ][ 'num_epochs' ] ), dtype = torch.int32, device = device )                                   # [#] Number of training epochs to perform.
 
     # Define the residual batch size.
-    residual_batch_size = torch.tensor( int( 10e3 ), dtype = torch.int32, device = device )                                                             # [#] Training batch size. # This works for variational loss integration order 1.
+    residual_batch_size = torch.tensor( int( 10e3 ), dtype = torch.int32, device = device )                                                                 # [#] Training batch size. # This works for variational loss integration order 1.
 
     # Store the optimizer parameters.
-    learning_rate = torch.tensor( float( config[ 'hyperparameters' ][ 'learning_rate' ] ), dtype = torch.float32, device = device )                     # [-] Learning rate.
+    learning_rate = torch.tensor( float( config[ 'hyperparameters' ][ 'learning_rate' ] ), dtype = torch.float32, device = device )                         # [-] Learning rate.
 
     # Define the element computation option.
-    element_computation_option = 'precompute'                                                                                                           # [string] Determines whether to precompute the finite elements associated with the variational loss (costs more memory) or to dynamically generate these elements during training (costs more time per epoch) (e.g., 'precompute, 'dynamic', etc.).
+    element_computation_option = 'precompute'                                                                                                               # [string] Determines whether to precompute the finite elements associated with the variational loss (costs more memory) or to dynamically generate these elements during training (costs more time per epoch) (e.g., 'precompute, 'dynamic', etc.).
 
     # Define the element type.
-    element_type = 'rectangular'                                                                                                                        # [string] Finite element type associated with the variational loss (e.g., rectangular, spherical, etc.).  Only rectangular elements are currently supported.
+    element_type = 'rectangular'                                                                                                                            # [string] Finite element type associated with the variational loss (e.g., rectangular, spherical, etc.).  Only rectangular elements are currently supported.
 
     # Define the element volume percentage.
-    element_volume_percent = torch.tensor( 0.01, dtype = torch.float32, device = device )                                                               # [%] The finite element volume size associated with the variational loss represented as a percentage of the domain volume.  
+    element_volume_percent = torch.tensor( 0.01, dtype = torch.float32, device = device )                                                                   # [%] The finite element volume size associated with the variational loss represented as a percentage of the domain volume.  
 
     # Define the integration order.
-    integration_order = torch.tensor( 1, dtype = torch.uint8, device = device )                                                                         # [#] Gauss-Legendre integration order.
+    integration_order = torch.tensor( 1, dtype = torch.uint8, device = device )                                                                             # [#] Gauss-Legendre integration order.
 
     # Store the loss coefficients.
-    c_IC = torch.tensor( float( config[ 'hyperparameters' ][ 'c_IC' ] ), dtype = torch.float32, device = device )                                       # [-] Initial condition loss weight.
-    c_BC = torch.tensor( float( config[ 'hyperparameters' ][ 'c_BC' ] ), dtype = torch.float32, device = device )                                       # [-] Boundary condition loss weight.
-    c_residual = torch.tensor( float( config[ 'hyperparameters' ][ 'c_residual' ] ), dtype = torch.float32, device = device )                           # [-] Residual loss weight.
-    c_residual_gradient = torch.tensor( float( config[ 'hyperparameters' ][ 'c_residual_gradient' ] ), dtype = torch.float32, device = device )         # [-] Residual gradient loss weight.
-    c_variational = torch.tensor( float( config[ 'hyperparameters' ][ 'c_variational' ] ), dtype = torch.float32, device = device )                     # [-] Variational loss weight.
-    c_monotonicity = torch.tensor( float( config[ 'hyperparameters' ][ 'c_monotonicity' ] ), dtype = torch.float32, device = device )                   # [-] Monotonicity loss weight.
+    c_IC = torch.tensor( float( config[ 'hyperparameters' ][ 'c_IC' ] ), dtype = torch.float32, device = device )                                           # [-] Initial condition loss weight.
+    c_BC = torch.tensor( float( config[ 'hyperparameters' ][ 'c_BC' ] ), dtype = torch.float32, device = device )                                           # [-] Boundary condition loss weight.
+    c_residual = torch.tensor( float( config[ 'hyperparameters' ][ 'c_residual' ] ), dtype = torch.float32, device = device )                               # [-] Residual loss weight.
+    c_residual_gradient = torch.tensor( float( config[ 'hyperparameters' ][ 'c_residual_gradient' ] ), dtype = torch.float32, device = device )             # [-] Residual gradient loss weight.
+    c_variational = torch.tensor( float( config[ 'hyperparameters' ][ 'c_variational' ] ), dtype = torch.float32, device = device )                         # [-] Variational loss weight.
+    c_monotonicity = torch.tensor( float( config[ 'hyperparameters' ][ 'c_monotonicity' ] ), dtype = torch.float32, device = device )                       # [-] Monotonicity loss weight.
 
     # Create the hyperparameters object.
     hyperparameters = hyperparameters_class( activation_function, num_hidden_layers, hidden_layer_widths, num_training_data, num_testing_data, p_initial, p_boundary, p_residual, num_epochs, residual_batch_size, learning_rate, integration_order, element_volume_percent, element_type, element_computation_option, c_IC, c_BC, c_residual, c_residual_gradient, c_variational, c_monotonicity, save_path, load_path )

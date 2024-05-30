@@ -509,7 +509,8 @@ class plotting_utilities_class(  ):
             input_data, output_data = self.preprocess_input_output_data( input_data, output_data, flatten_flag = False )
 
             # Plot the given level set.
-            ax.contour( self.plot_process( input_data[ ..., 0 ] ), self.plot_process( input_data[ ..., 1 ] ), self.plot_process( output_data[ ..., 0 ] ), levels = [ self.plot_process( level ) ], colors = 'red', linewidths = 2.0 )
+            # ax.contour( self.plot_process( input_data[ ..., 0 ] ), self.plot_process( input_data[ ..., 1 ] ), self.plot_process( output_data[ ..., 0 ] ), levels = [ self.plot_process( level ) ], colors = 'red', linewidths = 2.0 )
+            ax.contour( self.plot_process( input_data[ ..., 0 ] ), self.plot_process( input_data[ ..., 1 ] ), self.plot_process( output_data[ ..., 0 ] ), levels = [ self.plot_process( level ) ], linewidths = 2.0 )
 
         else:
 
@@ -517,8 +518,8 @@ class plotting_utilities_class(  ):
             input_data, output_data = self.preprocess_input_output_data( input_data, output_data, flatten_flag = True )
 
             # Plot the input and output data.
-            # ax.scatter3D( self.plot_process( input_data[ :, 0 ] ), self.plot_process( input_data[ :, 1 ] ), self.plot_process( output_data ) )
-            ax.scatter3D( self.plot_process( input_data[ ..., 0 ] ), self.plot_process( input_data[ ..., 1 ] ), self.plot_process( output_data[ ..., 0 ] ) )
+            ax.scatter3D( self.plot_process( input_data[ :, 0 ] ), self.plot_process( input_data[ :, 1 ] ), self.plot_process( output_data ) )
+            # ax.scatter3D( self.plot_process( input_data[ ..., 0 ] ), self.plot_process( input_data[ ..., 1 ] ), self.plot_process( output_data[ ..., 0 ] ) )
 
         # Save the figure.
         plt.savefig( save_directory + '/' + f'Figure_{plt.gcf(  ).number}.png' )
@@ -563,7 +564,8 @@ class plotting_utilities_class(  ):
             input_data, output_data = self.preprocess_input_output_data( input_data, output_data, flatten_flag = False )
 
             # Create a stream plot of the input and output data.
-            ax.streamplot( self.plot_process( input_data[ ..., 0 ].T ), self.plot_process( input_data[ ..., 1 ].T ), self.plot_process( output_data[ ..., 0 ].T ), self.plot_process( output_data[ ..., 1 ].T ) )
+            # ax.streamplot( self.plot_process( input_data[ ..., 0 ].T ), self.plot_process( input_data[ ..., 1 ].T ), self.plot_process( output_data[ ..., 0 ].T ), self.plot_process( output_data[ ..., 1 ].T ) )
+            ax.streamplot( self.plot_process( input_data[ ..., 0 ].T ), self.plot_process( input_data[ ..., 1 ].T ), self.plot_process( output_data[ ..., 0 ].T ), self.plot_process( output_data[ ..., 1 ].T ), density = 1.0, linewidth = 1.0, arrowsize = 0.75 )
 
         else:                                       # Otherwise... ( i.e., if we want to create a quiver plot... )
 
