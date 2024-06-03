@@ -45,7 +45,7 @@ torch.manual_seed( 0 )
 
 # Set the computational device.
 # device = 'cuda' if torch.cuda.is_available(  ) else 'cpu'
-device = 'cuda:8' if torch.cuda.is_available(  ) else 'cpu'
+device = 'cuda:0' if torch.cuda.is_available(  ) else 'cpu'
 # device = 'cpu'
 
 #%% ---------------------------------------- DEFINE PINN OPTIONS ----------------------------------------
@@ -73,8 +73,7 @@ epoch_print_frequency = torch.tensor( int( 1e1 ), dtype = torch.int16, device = 
 print_flag = True
 
 # Define the plotting options.
-num_plotting_samples = torch.tensor( 20, dtype = torch.int16, device = device )         # [#] Number of sample points to use per dimension when plotting network results.
-# num_plotting_samples = torch.tensor( int( 1e2 ), dtype = torch.int16, device = device )         # [#] Number of sample points to use per dimension when plotting network results.
+num_plotting_samples = torch.tensor( int( 10 ), dtype = torch.int16, device = device )         # [#] Number of sample points to use per dimension when plotting network results.
 plot_flag = True                                                                        # [T/F] Flag that determines whether training and network analysis plots are created.
 
 # Define the verbosity setting.
@@ -191,7 +190,7 @@ p_residual = torch.tensor( 0.5, dtype = torch.float16, device = device )        
 
 # Define the number of training epochs.
 # num_epochs = torch.tensor( int( 1e2 ), dtype = torch.int32, device = device )                   # [#] Number of training epochs to perform.
-num_epochs = torch.tensor( int( 1e3 ), dtype = torch.int32, device = device )
+num_epochs = torch.tensor( int( 11 ), dtype = torch.int32, device = device )
 # num_epochs = torch.tensor( int( 5e3 ), dtype = torch.int32, device = device )                   # [#] Number of training epochs to perform.
 # num_epochs = torch.tensor( int( 10e3 ), dtype = torch.int32, device = device )
 
@@ -294,7 +293,8 @@ print( '------------------------------------------------------------------------
 print( 'Computing classification loss...' )
 
 # Compute the classification loss.
-classification_loss, num_classification_points = pinn.compute_classification_loss( pde = pinn.pde, network = pinn.network, classification_data = None, num_spatial_dimensions = pinn.domain.num_spatial_dimensions, domain = pinn.domain, plot_time = pinn.domain.temporal_domain[ 1, : ], level = torch.tensor( 0, dtype = torch.float32, device = pinn.pinn_options.device ), level_set_guesses = None, num_guesses = torch.tensor( int( 1e2 ), dtype = torch.int64, device = pinn.pinn_options.device ), newton_tolerance = newton_tolerance, newton_max_iterations = newton_max_iterations, exploration_radius = pinn.network.exploration_radius_spatial, num_exploration_points = num_exploration_points, unique_tolerance = pinn.network.unique_tolerance_spatial, classification_noise_magnitude = pinn.network.classification_noise_magnitude_spatial, num_noisy_samples_per_level_set_point = pinn.pinn_options.num_noisy_samples_per_level_set_point, domain_subset_type = 'spatial', tspan = torch.tensor( [ 0, classification_tfinal.item(  ) ], dtype = classification_tfinal.dtype, device = classification_tfinal.device ), dt = classification_dt )
+# classification_loss, num_classification_points = pinn.compute_classification_loss( pde = pinn.pde, network = pinn.network, classification_data = None, num_spatial_dimensions = pinn.domain.num_spatial_dimensions, domain = pinn.domain, plot_time = pinn.domain.temporal_domain[ 1, : ], level = torch.tensor( 0, dtype = torch.float32, device = pinn.pinn_options.device ), level_set_guesses = None, num_guesses = torch.tensor( int( 1e2 ), dtype = torch.int64, device = pinn.pinn_options.device ), newton_tolerance = newton_tolerance, newton_max_iterations = newton_max_iterations, exploration_radius = pinn.network.exploration_radius_spatial, num_exploration_points = num_exploration_points, unique_tolerance = pinn.network.unique_tolerance_spatial, classification_noise_magnitude = pinn.network.classification_noise_magnitude_spatial, num_noisy_samples_per_level_set_point = pinn.pinn_options.num_noisy_samples_per_level_set_point, domain_subset_type = 'spatial', tspan = torch.tensor( [ 0, classification_tfinal.item(  ) ], dtype = classification_tfinal.dtype, device = classification_tfinal.device ), dt = classification_dt )
+classification_loss, num_classification_points = pinn.compute_classification_loss( pde = pinn.pde, network = pinn.network, classification_data = None, num_spatial_dimensions = pinn.domain.num_spatial_dimensions, num_timesteps = pinn.hyperparameters.num_timesteps, domain = pinn.domain, plot_time = pinn.domain.temporal_domain[ 1, : ], level = torch.tensor( 0, dtype = torch.float32, device = pinn.pinn_options.device ), level_set_guesses = None, num_guesses = torch.tensor( int( 1e2 ), dtype = torch.int64, device = pinn.pinn_options.device ), newton_tolerance = newton_tolerance, newton_max_iterations = newton_max_iterations, exploration_radius = pinn.network.exploration_radius_spatial, num_exploration_points = num_exploration_points, unique_tolerance = pinn.network.unique_tolerance_spatial, classification_noise_magnitude = pinn.network.classification_noise_magnitude_spatial, num_noisy_samples_per_level_set_point = pinn.pinn_options.num_noisy_samples_per_level_set_point, domain_subset_type = 'spatial', tspan = torch.tensor( [ 0, classification_tfinal.item(  ) ], dtype = classification_tfinal.dtype, device = classification_tfinal.device ), dt = classification_dt )
 
 # Print the classification loss.
 print( '\n' )
@@ -351,4 +351,3 @@ print( '------------------------------------------------------------------------
 print( 'COMPLETE' )
 print( '------------------------------------------------------------------------------------------------------------------------' )
 print( '\n' )
-
