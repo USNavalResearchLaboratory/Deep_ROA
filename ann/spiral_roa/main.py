@@ -76,7 +76,6 @@ print_flag = True
 
 # Define the plotting options.
 num_plotting_samples = torch.tensor( 20, dtype = torch.int16, device = device )                     # [#] Number of sample points to use per dimension when plotting network results.
-# num_plotting_samples = torch.tensor( int( 1e2 ), dtype = torch.int16, device = device )                     # [#] Number of sample points to use per dimension when plotting network results.
 plot_flag = True                                                                                    # [T/F] Flag that determines whether training and network analysis plots are created.
 
 # Define the verbosity setting.

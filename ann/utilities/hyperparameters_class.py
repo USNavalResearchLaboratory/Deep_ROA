@@ -31,8 +31,56 @@ class hyperparameters_class(  ):
 
     #%% ------------------------------------------------------------ CONSTRUCTOR ------------------------------------------------------------
 
+    # # Define the class constructor.
+    # def __init__( self, activation_function, num_hidden_layers, hidden_layer_widths, num_training_data, num_testing_data, p_initial, p_boundary, p_residual, num_epochs, residual_batch_size, learning_rate, integration_order, element_volume_percent, element_type, element_computation_option, c_IC, c_BC, c_residual, c_variational, c_monotonicity, save_path = None, load_path = None ):
+
+    #     # Create an instance of the save-load utilities class.
+    #     self.save_load_utilities = save_load_utilities_class(  )
+
+    #     # Create an instance of the printing utilities class.
+    #     self.printing_utilities = printing_utilities_class(  )
+
+    #     # Store the network parameters.
+    #     self.activation_function = activation_function
+    #     self.num_hidden_layers = num_hidden_layers
+    #     self.hidden_layer_widths = hidden_layer_widths
+
+    #     # Store the training data information.
+    #     self.num_training_data = num_training_data
+    #     self.num_testing_data = num_testing_data
+
+    #     # Define the percent of training and testing data that should be sampled from the initial condition, the boundary condition, and the interior of the domain.
+    #     self.p_initial = p_initial
+    #     self.p_boundary = p_boundary
+    #     self.p_residual = p_residual
+
+    #     # Store the mini-batching and epoch information.
+    #     self.num_epochs = num_epochs
+    #     self.residual_batch_size = residual_batch_size
+
+    #     # Store the optimizer parameters.
+    #     self.learning_rate = learning_rate
+
+    #     # Store the variational loss parameters.
+    #     self.integration_order = integration_order
+    #     self.element_volume_percent = element_volume_percent
+    #     self.element_type = element_type
+    #     self.element_computation_option = element_computation_option
+
+    #     # Store the loss coefficients.
+    #     self.c_IC = c_IC
+    #     self.c_BC = c_BC
+    #     self.c_residual = c_residual
+    #     self.c_variational = c_variational
+    #     self.c_monotonicity = c_monotonicity
+
+    #     # Store the save and load paths.
+    #     self.save_path = save_path
+    #     self.load_path = load_path
+
+
     # Define the class constructor.
-    def __init__( self, activation_function, num_hidden_layers, hidden_layer_widths, num_training_data, num_testing_data, p_initial, p_boundary, p_residual, num_epochs, residual_batch_size, learning_rate, integration_order, element_volume_percent, element_type, element_computation_option, c_IC, c_BC, c_residual, c_variational, c_monotonicity, save_path = None, load_path = None ):
+    def __init__( self, activation_function = None, num_hidden_layers = None, hidden_layer_widths = None, num_training_data = None, num_testing_data = None, p_initial = None, p_boundary = None, p_residual = None, num_epochs = None, residual_batch_size = None, learning_rate = None, integration_order = None, element_volume_percent = None, element_type = None, element_computation_option = None, c_IC = None, c_BC = None, c_residual = None, c_residual_gradient = None, c_variational = None, c_monotonicity = None, save_path = None, load_path = None ):
 
         # Create an instance of the save-load utilities class.
         self.save_load_utilities = save_load_utilities_class(  )
@@ -71,6 +119,7 @@ class hyperparameters_class(  ):
         self.c_IC = c_IC
         self.c_BC = c_BC
         self.c_residual = c_residual
+        self.c_residual_gradient = c_residual_gradient
         self.c_variational = c_variational
         self.c_monotonicity = c_monotonicity
 
