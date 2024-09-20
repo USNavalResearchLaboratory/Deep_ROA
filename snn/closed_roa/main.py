@@ -44,9 +44,8 @@ plt.rcParams.update( { 'figure.max_open_warning': 0 } )                         
 torch.manual_seed( 0 )
 
 # Set the computational device.
-# device = 'cuda' if torch.cuda.is_available(  ) else 'cpu'
-device = 'cuda:8' if torch.cuda.is_available(  ) else 'cpu'
-# device = 'cpu'
+device = 'cuda:9' if torch.cuda.is_available(  ) else 'cpu'
+
 
 #%% ---------------------------------------- DEFINE PINN OPTIONS ----------------------------------------
 
