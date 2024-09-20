@@ -1,4 +1,3 @@
-<<<<<<< HEAD
 ####################################################################################### 
 # THIS SOURCE CODE IS PROPERTY OF THE GOVERNMENT OF THE UNITED STATES OF AMERICA. 
 # BY USING, MODIFYING, OR DISSEMINATING THIS SOURCE CODE, YOU ACCEPT THE TERMS AND 
@@ -10,8 +9,6 @@
 ####################################################################################### 
 
 
-=======
->>>>>>> 55162c78e9fb0c13d60ea20df5463b1e4d4f30fb
 #%% ------------------------------------------------------------ PINN OPTIONS CLASS ------------------------------------------------------------
 
 # This file implements a class for storing and managing pinn options information.
@@ -35,11 +32,7 @@ class pinn_options_class(  ):
     #%% ------------------------------------------------------------ CONSTRUCTOR ------------------------------------------------------------
 
     # Implement the class constructor.
-<<<<<<< HEAD
     def __init__( self, save_path, save_frequency, save_flag, load_path, load_flag, train_flag, batch_print_frequency, epoch_print_frequency, print_flag, num_plotting_samples, newton_tolerance, newton_max_iterations, exploration_volume_percentage, num_exploration_points, unique_volume_percentage, classification_noise_percentage, num_noisy_samples_per_level_set_point, classification_dt, classification_tfinal, plot_flag, device, verbose_flag ):
-=======
-    def __init__( self, save_path, save_frequency, save_flag, load_path, load_flag, train_flag, batch_print_frequency, epoch_print_frequency, print_flag, num_plotting_samples, newton_tolerance, newton_max_iterations, exploration_volume_percentage, num_exploration_points, unique_volume_percentage, classification_noise_percentage, plot_flag, device, verbose_flag ):
->>>>>>> 55162c78e9fb0c13d60ea20df5463b1e4d4f30fb
 
         # Create an instance of the save-load utilities class.
         self.save_load_utilities = save_load_utilities_class(  )
@@ -78,14 +71,10 @@ class pinn_options_class(  ):
         self.unique_volume_percentage = unique_volume_percentage
 
         # Store the classification parameters.
-<<<<<<< HEAD
         self.num_noisy_samples_per_level_set_point = num_noisy_samples_per_level_set_point
         self.classification_noise_percentage = classification_noise_percentage
         self.classification_dt = classification_dt
         self.classification_tfinal = classification_tfinal
-=======
-        self.classification_noise_percentage = classification_noise_percentage
->>>>>>> 55162c78e9fb0c13d60ea20df5463b1e4d4f30fb
 
         # Store the computational device.
         self.device = device

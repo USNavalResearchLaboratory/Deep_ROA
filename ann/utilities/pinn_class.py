@@ -19,6 +19,7 @@
 # Import standard libraries.
 import torch
 import math
+import time
 
 # Import custom libraries.
 from domain_class import domain_class as domain_class
@@ -75,7 +76,6 @@ class pinn_class(  ):
         self.flow_functions = self.problem_specifications.flow_functions
 
         # Create the pde object.
-        # self.pde = pde_class( self.problem_specifications.pde_name, self.problem_specifications.pde_type, self.domain, self.initial_boundary_conditions, self.problem_specifications.residual_function, self.problem_specifications.residual_code, self.pinn_options.device )
         self.pde = pde_class( self.problem_specifications.pde_name, self.problem_specifications.pde_type, self.domain, self.initial_boundary_conditions, self.problem_specifications.residual_function, self.problem_specifications.residual_code, self.problem_specifications.flow_functions, self.pinn_options.device )
 
         # Create the training data.
@@ -103,7 +103,7 @@ class pinn_class(  ):
         classification_noise_magnitude_spatiotemporal = self.compute_classification_noise_magnitude( self.pinn_options.classification_noise_percentage, self.domain, 'spatiotemporal' )
 
         # Create the network object.
-        self.network = neural_network_class( layers, self.hyperparameters.activation_function, self.hyperparameters.learning_rate, self.hyperparameters.residual_batch_size, self.hyperparameters.num_epochs, self.problem_specifications.residual_function, self.problem_specifications.residual_code, self.problem_specifications.temporal_code, training_data, testing_data, plotting_data, self.domain.dimension_labels, self.hyperparameters.element_computation_option, self.pinn_options.batch_print_frequency, self.pinn_options.epoch_print_frequency, self.hyperparameters.c_IC, self.hyperparameters.c_BC, self.hyperparameters.c_residual, self.hyperparameters.c_variational, self.hyperparameters.c_monotonicity, self.pinn_options.newton_tolerance, self.pinn_options.newton_max_iterations, exploration_radius_spatial, exploration_radius_spatiotemporal, self.pinn_options.num_exploration_points, unique_tolerance_spatial, unique_tolerance_spatiotemporal, classification_noise_magnitude_spatial, classification_noise_magnitude_spatiotemporal, self.pinn_options.device, self.pinn_options.verbose_flag ).to( device = self.pinn_options.device )
+        self.network = neural_network_class( layers, self.hyperparameters.activation_function, self.hyperparameters.learning_rate, self.hyperparameters.residual_batch_size, self.hyperparameters.num_epochs, self.problem_specifications.residual_function, self.problem_specifications.residual_code, self.problem_specifications.temporal_code, training_data, testing_data, plotting_data, self.domain.dimension_labels, self.hyperparameters.element_computation_option, self.pinn_options.batch_print_frequency, self.pinn_options.epoch_print_frequency, self.hyperparameters.c_IC, self.hyperparameters.c_BC, self.hyperparameters.c_residual, self.hyperparameters.c_residual_gradient, self.hyperparameters.c_variational, self.hyperparameters.c_monotonicity, self.pinn_options.newton_tolerance, self.pinn_options.newton_max_iterations, exploration_radius_spatial, exploration_radius_spatiotemporal, self.pinn_options.num_exploration_points, unique_tolerance_spatial, unique_tolerance_spatiotemporal, classification_noise_magnitude_spatial, classification_noise_magnitude_spatiotemporal, self.pinn_options.device, self.pinn_options.verbose_flag ).to( device = self.pinn_options.device )
 
 
     #%% ------------------------------------------------------------ PREPROCESS FUNCTIONS ------------------------------------------------------------
@@ -615,8 +615,23 @@ class pinn_class(  ):
             # Determine whether to generate the classification data.
             if ( num_spatial_dimensions is not None ) and ( domain is not None ) and ( plot_time is not None ):
 
+                # Print out a message stating that we are generating classification data.
+                print( 'Generating classification data...' )
+
+                # Retrieve the starting time.
+                start_time = time.time(  )
+
                 # Generate the classification data.
                 classification_data = self.network.generate_classification_data( num_spatial_dimensions, domain, plot_time, level, level_set_guesses, newton_tolerance, newton_max_iterations, exploration_radius, num_exploration_points, unique_tolerance, classification_noise_magnitude, num_noisy_samples_per_level_set_point, domain_subset_type )
+
+                # Retrieve the ending time.
+                end_time = time.time(  )
+
+                # Compute the classification duration.
+                classification_duration = end_time - start_time
+
+                # Print out a message stating that we dare done generating classification data.
+                print( f'Generating classification data... Done. Duration = {classification_duration}s = {classification_duration/60}min = {classification_duration/3600}hr' )
 
             else:
 
@@ -1205,7 +1220,7 @@ class pinn_class(  ):
             # Set the output derivative order to be zero, one.
             output_derivative_order = torch.tensor( [ 0, 1 ], dtype = torch.uint8, device = self.pinn_options.device )
 
-        elif condition_type.lower(  ) == 'yuan-li':                     # IF the initial condition type is 'yuan-li'...
+        elif condition_type.lower(  ) == 'yuan-li':                     # If the initial condition type is 'yuan-li'...
 
             # Set the output derivative order to be two.
             output_derivative_order = 2*torch.ones( ( 1, 1 ), dtype = torch.uint8, device = self.pinn_options.device )
@@ -1409,7 +1424,7 @@ class pinn_class(  ):
         if train_flag:                     # If we want to train the network...
 
             # Train the network.
-            network.training_epochs, network.training_losses, network.testing_epochs, network.testing_losses = network.train( self.pde, network.training_data, network.testing_data, network.num_batches, network.num_epochs, network.derivative_required_for_residual, network.residual_code, network.epoch_print_frequency, network.verbose_flag )
+            network.training_epochs, network.training_losses, network.ic_training_losses, network.bc_training_losses, network.residual_training_losses, network.variational_training_losses, network.monotonicity_training_losses, network.testing_epochs, network.testing_losses, network.ic_testing_losses, network.bc_testing_losses, network.residual_testing_losses, network.variational_testing_losses, network.monotonicity_testing_losses = network.train( self.pde, network.training_data, network.testing_data, network.num_batches, network.num_epochs, network.derivative_required_for_residual, network.residual_code, network.epoch_print_frequency, network.verbose_flag )
 
         # Return the network.
         return network
@@ -1652,10 +1667,10 @@ class pinn_class(  ):
         network, save_directory = self.setup_network_plotting( network, save_directory )
 
         # Plot the plotting data.
-        fig, ax = network.plot_training_results( network.training_losses, network.testing_epochs, network.testing_losses, save_directory, show_plot )
+        figs, axes = network.plot_training_results( network.training_epochs, network.training_losses, network.ic_training_losses, network.bc_training_losses, network.residual_training_losses, network.variational_training_losses, network.monotonicity_training_losses, network.testing_epochs, network.testing_losses, network.ic_testing_losses, network.bc_testing_losses, network.residual_testing_losses, network.variational_testing_losses, network.monotonicity_testing_losses, network.c_IC, network.c_BC, network.c_residual, network.c_variational, network.c_monotonicity, save_directory, show_plot )
 
-        # Return the figure and axis.
-        return fig, ax
+        # Return the figures and axes.
+        return figs, axes
 
 
     # Implement a function to plot the flow field.

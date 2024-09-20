@@ -1,4 +1,3 @@
-<<<<<<< HEAD
 ####################################################################################### 
 # THIS SOURCE CODE IS PROPERTY OF THE GOVERNMENT OF THE UNITED STATES OF AMERICA. 
 # BY USING, MODIFYING, OR DISSEMINATING THIS SOURCE CODE, YOU ACCEPT THE TERMS AND 
@@ -10,8 +9,6 @@
 ####################################################################################### 
 
 
-=======
->>>>>>> 55162c78e9fb0c13d60ea20df5463b1e4d4f30fb
 #%% ------------------------------------------------------------ PINN CLASS ------------------------------------------------------------
 
 # This file implements a class for storing and managing pinn information.
@@ -22,6 +19,7 @@
 # Import standard libraries.
 import torch
 import math
+import time
 
 # Import custom libraries.
 from domain_class import domain_class as domain_class
@@ -78,7 +76,6 @@ class pinn_class(  ):
         self.flow_functions = self.problem_specifications.flow_functions
 
         # Create the pde object.
-        # self.pde = pde_class( self.problem_specifications.pde_name, self.problem_specifications.pde_type, self.domain, self.initial_boundary_conditions, self.problem_specifications.residual_function, self.problem_specifications.residual_code, self.pinn_options.device )
         self.pde = pde_class( self.problem_specifications.pde_name, self.problem_specifications.pde_type, self.domain, self.initial_boundary_conditions, self.problem_specifications.residual_function, self.problem_specifications.residual_code, self.problem_specifications.flow_functions, self.pinn_options.device )
 
         # Create the training data.
@@ -609,7 +606,6 @@ class pinn_class(  ):
         return classification_noise_magnitude
 
 
-<<<<<<< HEAD
     # Implement a function to preprocess the number of noisy sample points per level set point.
     def preprocess_num_noisy_samples_per_level_set_point( self, num_noisy_samples_per_level_set_point = None ):
 
@@ -625,10 +621,6 @@ class pinn_class(  ):
 
     # Implement a function to preprocess the classification data.
     def preprocess_classification_data( self, classification_data, num_spatial_dimensions, num_timesteps, domain, plot_time, level, level_set_guesses, newton_tolerance, newton_max_iterations, exploration_radius, num_exploration_points, unique_tolerance, classification_noise_magnitude, num_noisy_samples_per_level_set_point, domain_subset_type ):
-=======
-    # Implement a function to preprocess the classification data.
-    def preprocess_classification_data( self, classification_data, num_spatial_dimensions, num_timesteps, domain, plot_time, level, level_set_guesses, newton_tolerance, newton_max_iterations, exploration_radius, num_exploration_points, unique_tolerance, classification_noise_magnitude, domain_subset_type ):
->>>>>>> 55162c78e9fb0c13d60ea20df5463b1e4d4f30fb
 
         # Determine whether to generate the classification data at which to compute the classification loss.
         if classification_data is None:                 # If the classification data was not provided...
@@ -636,12 +628,23 @@ class pinn_class(  ):
             # Determine whether to generate the classification data.
             if ( num_spatial_dimensions is not None ) and ( domain is not None ) and ( plot_time is not None ):
 
+                # Print out a message stating that we are generating classification data.
+                print( 'Generating classification data...' )
+
+                # Retrieve the starting time.
+                start_time = time.time(  )
+
                 # Generate the classification data.
-<<<<<<< HEAD
                 classification_data = self.network.generate_classification_data( num_spatial_dimensions, num_timesteps, domain, plot_time, level, level_set_guesses, newton_tolerance, newton_max_iterations, exploration_radius, num_exploration_points, unique_tolerance, classification_noise_magnitude, num_noisy_samples_per_level_set_point, domain_subset_type )
-=======
-                classification_data = self.network.generate_classification_data( num_spatial_dimensions, num_timesteps, domain, plot_time, level, level_set_guesses, newton_tolerance, newton_max_iterations, exploration_radius, num_exploration_points, unique_tolerance, classification_noise_magnitude, domain_subset_type )
->>>>>>> 55162c78e9fb0c13d60ea20df5463b1e4d4f30fb
+
+                # Retrieve the ending time.
+                end_time = time.time(  )
+
+                # Compute the classification duration.
+                classification_duration = end_time - start_time
+
+                # Print out a message stating that we dare done generating classification data.
+                print( f'Generating classification data... Done. Duration = {classification_duration}s = {classification_duration/60}min = {classification_duration/3600}hr' )
 
             else:
 
@@ -872,11 +875,7 @@ class pinn_class(  ):
 
 
     # Implement a function to setup for classification loss computation.
-<<<<<<< HEAD
     def setup_classification_loss( self, network = None, classification_data = None, level_set_guesses = None, classification_noise_magnitude = None, num_noisy_samples_per_level_set_point = None, unique_tolerance = None, num_exploration_points = None, exploration_radius = None, newton_max_iterations = None, newton_tolerance = None, num_guesses = None, level = None, plot_time = None, tspan = None, dt = None, num_spatial_dimensions = None, num_timesteps = None, domain = None, domain_subset_type = 'spatial' ):
-=======
-    def setup_classification_loss( self, network = None, classification_data = None, level_set_guesses = None, classification_noise_magnitude = None, unique_tolerance = None, num_exploration_points = None, exploration_radius = None, newton_max_iterations = None, newton_tolerance = None, num_guesses = None, level = None, plot_time = None, tspan = None, dt = None, num_spatial_dimensions = None, num_timesteps = None, domain = None, domain_subset_type = 'spatial' ):
->>>>>>> 55162c78e9fb0c13d60ea20df5463b1e4d4f30fb
 
         # Preprocess the integration time step size.
         dt = self.preprocess_temporal_step_size( dt )
@@ -914,31 +913,20 @@ class pinn_class(  ):
         # Preprocess the classification noise magnitude.
         classification_noise_magnitude = self.preprocess_classification_noise_magnitude( classification_noise_magnitude, domain_subset_type )
 
-<<<<<<< HEAD
         # Preprocess the number of noisy samples per level set point.
         num_noisy_samples_per_level_set_point = self.preprocess_num_noisy_samples_per_level_set_point( num_noisy_samples_per_level_set_point )
 
-=======
->>>>>>> 55162c78e9fb0c13d60ea20df5463b1e4d4f30fb
         # Preprocess the level set guesses.
         level_set_guesses = self.preprocess_level_set_guesses( level_set_guesses, num_guesses, domain, domain_subset_type )
 
         # Preprocess the classification data.
-<<<<<<< HEAD
         classification_data = self.preprocess_classification_data( classification_data, num_spatial_dimensions, num_timesteps, domain, plot_time, level, level_set_guesses, newton_tolerance, newton_max_iterations, exploration_radius, num_exploration_points, unique_tolerance, classification_noise_magnitude, num_noisy_samples_per_level_set_point, domain_subset_type )
-=======
-        classification_data = self.preprocess_classification_data( classification_data, num_spatial_dimensions, num_timesteps, domain, plot_time, level, level_set_guesses, newton_tolerance, newton_max_iterations, exploration_radius, num_exploration_points, unique_tolerance, classification_noise_magnitude, domain_subset_type )
->>>>>>> 55162c78e9fb0c13d60ea20df5463b1e4d4f30fb
 
         # Preprocess the network.
         network = self.preprocess_network( network )
 
         # Return the classification loss parameters.
-<<<<<<< HEAD
         return network, classification_data, level_set_guesses, classification_noise_magnitude, num_noisy_samples_per_level_set_point, unique_tolerance, num_exploration_points, exploration_radius, newton_max_iterations, newton_tolerance, num_guesses, level, plot_time, tspan, dt
-=======
-        return network, classification_data, level_set_guesses, classification_noise_magnitude, unique_tolerance, num_exploration_points, exploration_radius, newton_max_iterations, newton_tolerance, num_guesses, level, plot_time, tspan, dt
->>>>>>> 55162c78e9fb0c13d60ea20df5463b1e4d4f30fb
 
 
     #%% ------------------------------------------------------------ INITIAL-BOUNDARY CONDITION FUNCTIONS ------------------------------------------------------------
@@ -1461,7 +1449,6 @@ class pinn_class(  ):
     #%% ------------------------------------------------------------ LOSS FUNCTIONS ------------------------------------------------------------
 
     # Implement a function to compute the classification loss.
-<<<<<<< HEAD
     def compute_classification_loss( self, pde, network = None, classification_data = None, num_spatial_dimensions = None, num_timesteps = None, domain = None, plot_time = None, level = None, level_set_guesses = None, num_guesses = None, newton_tolerance = None, newton_max_iterations = None, exploration_radius = None, num_exploration_points = None, unique_tolerance = None, classification_noise_magnitude = None, num_noisy_samples_per_level_set_point = None, domain_subset_type = 'spatial', tspan = None, dt = None ):
 
         # Setup for the classification loss.
@@ -1472,18 +1459,6 @@ class pinn_class(  ):
 
         # Return the classification loss.
         return classification_loss, num_classification_points
-=======
-    def compute_classification_loss( self, pde, network = None, classification_data = None, num_spatial_dimensions = None, num_timesteps = None, domain = None, plot_time = None, level = None, level_set_guesses = None, num_guesses = None, newton_tolerance = None, newton_max_iterations = None, exploration_radius = None, num_exploration_points = None, unique_tolerance = None, classification_noise_magnitude = None, domain_subset_type = 'spatial', tspan = None, dt = None ):
-
-        # Setup for the classification loss.
-        network, classification_data, level_set_guesses, classification_noise_magnitude, unique_tolerance, num_exploration_points, exploration_radius, newton_max_iterations, newton_tolerance, num_guesses, level, plot_time, tspan, dt = self.setup_classification_loss( network, classification_data, level_set_guesses, classification_noise_magnitude, unique_tolerance, num_exploration_points, exploration_radius, newton_max_iterations, newton_tolerance, num_guesses, level, plot_time, tspan, dt, num_spatial_dimensions, num_timesteps, domain, domain_subset_type )
-
-        # Compute the classification loss.
-        classification_loss = network.compute_classification_loss( pde, classification_data, num_spatial_dimensions, domain, plot_time, level, level_set_guesses, num_guesses, newton_tolerance, newton_max_iterations, exploration_radius, num_exploration_points, unique_tolerance, classification_noise_magnitude, domain_subset_type, tspan, dt )
-
-        # Return the classification loss.
-        return classification_loss
->>>>>>> 55162c78e9fb0c13d60ea20df5463b1e4d4f30fb
 
 
     #%% ------------------------------------------------------------ TRAINING FUNCTIONS ------------------------------------------------------------
@@ -1498,12 +1473,7 @@ class pinn_class(  ):
         if train_flag:                     # If we want to train the network...
 
             # Train the network.
-            network.training_epochs, network.training_losses, network.testing_epochs, network.testing_losses = network.train( self.pde, network.training_data, network.testing_data, network.num_batches, network.num_epochs, network.derivative_required_for_residual, network.residual_code, network.epoch_print_frequency, network.verbose_flag )
-<<<<<<< HEAD
-=======
-            # network.training_epochs, network.training_losses, network.testing_epochs, network.testing_losses, network.classification_loss = network.train( self.pde, network.training_data, network.testing_data, network.num_batches, network.num_epochs, network.derivative_required_for_residual, network.residual_code, network.epoch_print_frequency, network.verbose_flag )
-            # network.training_epochs, network.training_losses, network.testing_epochs, network.testing_losses = network.train( self.pde, network.training_data, network.testing_data, network.num_batches, network.num_epochs, network.derivative_required_for_residual, network.residual_code, network.epoch_print_frequency, network.verbose_flag )
->>>>>>> 55162c78e9fb0c13d60ea20df5463b1e4d4f30fb
+            network.training_epochs, network.training_losses, network.ic_training_losses, network.bc_training_losses, network.residual_training_losses, network.variational_training_losses, network.monotonicity_training_losses, network.testing_epochs, network.testing_losses, network.ic_testing_losses, network.bc_testing_losses, network.residual_testing_losses, network.variational_testing_losses, network.monotonicity_testing_losses = network.train( self.pde, network.training_data, network.testing_data, network.num_batches, network.num_epochs, network.derivative_required_for_residual, network.residual_code, network.epoch_print_frequency, network.verbose_flag )
 
         # Return the network.
         return network
@@ -1767,10 +1737,10 @@ class pinn_class(  ):
         network, save_directory = self.setup_network_plotting( network, save_directory )
 
         # Plot the plotting data.
-        fig, ax = network.plot_training_results( network.training_losses, network.testing_epochs, network.testing_losses, save_directory, show_plot )
+        figs, axes = network.plot_training_results( network.training_epochs, network.training_losses, network.ic_training_losses, network.bc_training_losses, network.residual_training_losses, network.variational_training_losses, network.monotonicity_training_losses, network.testing_epochs, network.testing_losses, network.ic_testing_losses, network.bc_testing_losses, network.residual_testing_losses, network.variational_testing_losses, network.monotonicity_testing_losses, network.c_IC, network.c_BC, network.c_residual, network.c_variational, network.c_monotonicity, save_directory, show_plot )
 
-        # Return the figure and axis.
-        return fig, ax
+        # Return the figures and axes.
+        return figs, axes
 
 
     # Implement a function to plot the flow field.
@@ -1802,7 +1772,6 @@ class pinn_class(  ):
         return fig, ax
         
 
-<<<<<<< HEAD
     # Implement a function to plot the classification data.
     def plot_network_classifications( self, network = None, fig = None, dimension_labels = None, save_directory = None, show_plot = False ):
 
@@ -1816,8 +1785,6 @@ class pinn_class(  ):
         return fig, ax
 
 
-=======
->>>>>>> 55162c78e9fb0c13d60ea20df5463b1e4d4f30fb
     #%% ------------------------------------------------------------ SAVE & LOAD FUNCTIONS ------------------------------------------------------------
 
     # Implement a function to save the pinn.
@@ -1847,7 +1814,3 @@ class pinn_class(  ):
 
         # Return the pinn options.
         return self
-<<<<<<< HEAD
-=======
-
->>>>>>> 55162c78e9fb0c13d60ea20df5463b1e4d4f30fb

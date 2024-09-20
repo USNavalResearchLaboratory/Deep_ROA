@@ -32,7 +32,7 @@ class problem_specifications_class(  ):
     #%% ------------------------------------------------------------ CONSTRUCTOR ------------------------------------------------------------
 
     # Implement the class constructor.
-    def __init__( self, num_inputs, num_outputs, temporal_domain, spatial_domain, domain_type, residual_function, residual_code, temporal_code, flow_functions, ibc_types, ibc_dimensions, ibc_condition_functions, ibc_placements, pde_name = '', pde_type = '', save_path = None, load_path = None ):
+    def __init__( self, num_inputs = None, num_outputs = None, temporal_domain = None, spatial_domain = None, domain_type = None, residual_function = None, residual_code = None, temporal_code = None, flow_functions = None, ibc_types = None, ibc_dimensions = None, ibc_condition_functions = None, ibc_placements = None, pde_name = '',  pde_type = '', save_path = None, load_path = None ):
 
         # Create an instance of the save-load utilities class.
         self.save_load_utilities = save_load_utilities_class(  )

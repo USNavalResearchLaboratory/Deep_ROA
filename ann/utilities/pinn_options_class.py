@@ -32,7 +32,7 @@ class pinn_options_class(  ):
     #%% ------------------------------------------------------------ CONSTRUCTOR ------------------------------------------------------------
 
     # Implement the class constructor.
-    def __init__( self, save_path, save_frequency, save_flag, load_path, load_flag, train_flag, batch_print_frequency, epoch_print_frequency, print_flag, num_plotting_samples, newton_tolerance, newton_max_iterations, exploration_volume_percentage, num_exploration_points, unique_volume_percentage, classification_noise_percentage, num_noisy_samples_per_level_set_point, classification_dt, classification_tfinal, plot_flag, device, verbose_flag ):
+    def __init__( self, save_path = None, save_frequency = None, save_flag = None, load_path = None, load_flag = None, train_flag = None, batch_print_frequency = None, epoch_print_frequency = None, print_flag = None, num_plotting_samples = None, newton_tolerance = None, newton_max_iterations = None, exploration_volume_percentage = None, num_exploration_points = None, unique_volume_percentage = None, classification_noise_percentage = None, num_noisy_samples_per_level_set_point = None, classification_dt = None, classification_tfinal = None, plot_flag = None, device = None, verbose_flag = None ):
 
         # Create an instance of the save-load utilities class.
         self.save_load_utilities = save_load_utilities_class(  )

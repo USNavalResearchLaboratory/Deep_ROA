@@ -72,7 +72,8 @@ epoch_print_frequency = torch.tensor( int( 1e1 ), dtype = torch.int16, device = 
 print_flag = True
 
 # Define the plotting options.
-num_plotting_samples = torch.tensor( int( 1e2 ), dtype = torch.int16, device = device )         # [#] Number of sample points to use per dimension when plotting network results.
+num_plotting_samples = torch.tensor( 20, dtype = torch.int16, device = device )         # [#] Number of sample points to use per dimension when plotting network results.
+# num_plotting_samples = torch.tensor( int( 1e2 ), dtype = torch.int16, device = device )         # [#] Number of sample points to use per dimension when plotting network results.
 plot_flag = True                                                                        # [T/F] Flag that determines whether training and network analysis plots are created.
 
 # Define the verbosity setting.
@@ -222,11 +223,17 @@ integration_order = torch.tensor( 1, dtype = torch.uint8, device = device )     
 # c_variational = torch.tensor( 1.0, dtype = torch.float32, device = device )
 # c_monotonicity = torch.tensor( 1.0, dtype = torch.float32, device = device )
 
-c_IC = torch.tensor( 1.0, dtype = torch.float32, device = device )# [-] Initial condition loss weight.
-c_BC = torch.tensor( 1.0, dtype = torch.float32, device = device )# [-] Boundary condition loss weight.
-c_residual = torch.tensor( 1.0, dtype = torch.float32, device = device )# [-] Residual loss weight.
-c_variational = torch.tensor( 1.0, dtype = torch.float32, device = device )# [-] Variational loss weight.
-c_monotonicity = torch.tensor( 15.0, dtype = torch.float32, device = device )# [-] Monotonicity loss weight.
+# c_IC = torch.tensor( 1.0, dtype = torch.float32, device = device )# [-] Initial condition loss weight.
+# c_BC = torch.tensor( 1.0, dtype = torch.float32, device = device )# [-] Boundary condition loss weight.
+# c_residual = torch.tensor( 1.0, dtype = torch.float32, device = device )# [-] Residual loss weight.
+# c_variational = torch.tensor( 1.0, dtype = torch.float32, device = device )# [-] Variational loss weight.
+# c_monotonicity = torch.tensor( 15.0, dtype = torch.float32, device = device )# [-] Monotonicity loss weight.
+
+c_IC = torch.tensor( 0.4472136, dtype = torch.float32, device = device )# [-] Initial condition loss weight.
+c_BC = torch.tensor( 0.4472136, dtype = torch.float32, device = device )# [-] Boundary condition loss weight.
+c_residual = torch.tensor( 0.4472136, dtype = torch.float32, device = device )# [-] Residual loss weight.
+c_variational = torch.tensor( 0.4472136, dtype = torch.float32, device = device )# [-] Variational loss weight.
+c_monotonicity = torch.tensor( 0.4472136, dtype = torch.float32, device = device )# [-] Monotonicity loss weight.
 
 # Create the hyper-parameters object.
 hyperparameters = hyperparameters_class( neuron_parameters, synapse_parameters, num_timesteps, activation_function, num_hidden_layers, hidden_layer_widths, num_training_data, num_testing_data, p_initial, p_boundary, p_residual, num_epochs, residual_batch_size, learning_rate, integration_order, element_volume_percent, element_type, element_computation_option, c_IC, c_BC, c_residual, c_variational, c_monotonicity, save_path, load_path )
@@ -285,7 +292,8 @@ print( '------------------------------------------------------------------------
 print( 'Computing classification loss...' )
 
 # Compute the classification loss.
-classification_loss, num_classification_points = pinn.compute_classification_loss( pde = pinn.pde, network = pinn.network, classification_data = None, num_spatial_dimensions = pinn.domain.num_spatial_dimensions, domain = pinn.domain, plot_time = pinn.domain.temporal_domain[ 1, : ], level = torch.tensor( 0, dtype = torch.float32, device = pinn.pinn_options.device ), level_set_guesses = None, num_guesses = torch.tensor( int( 1e2 ), dtype = torch.int64, device = pinn.pinn_options.device ), newton_tolerance = newton_tolerance, newton_max_iterations = newton_max_iterations, exploration_radius = pinn.network.exploration_radius_spatial, num_exploration_points = num_exploration_points, unique_tolerance = pinn.network.unique_tolerance_spatial, classification_noise_magnitude = pinn.network.classification_noise_magnitude_spatial, num_noisy_samples_per_level_set_point = pinn.pinn_options.num_noisy_samples_per_level_set_point, domain_subset_type = 'spatial', tspan = torch.tensor( [ 0, classification_tfinal.item(  ) ], dtype = classification_tfinal.dtype, device = classification_tfinal.device ), dt = classification_dt )
+# classification_loss, num_classification_points = pinn.compute_classification_loss( pde = pinn.pde, network = pinn.network, classification_data = None, num_spatial_dimensions = pinn.domain.num_spatial_dimensions, domain = pinn.domain, plot_time = pinn.domain.temporal_domain[ 1, : ], level = torch.tensor( 0, dtype = torch.float32, device = pinn.pinn_options.device ), level_set_guesses = None, num_guesses = torch.tensor( int( 1e2 ), dtype = torch.int64, device = pinn.pinn_options.device ), newton_tolerance = newton_tolerance, newton_max_iterations = newton_max_iterations, exploration_radius = pinn.network.exploration_radius_spatial, num_exploration_points = num_exploration_points, unique_tolerance = pinn.network.unique_tolerance_spatial, classification_noise_magnitude = pinn.network.classification_noise_magnitude_spatial, num_noisy_samples_per_level_set_point = pinn.pinn_options.num_noisy_samples_per_level_set_point, domain_subset_type = 'spatial', tspan = torch.tensor( [ 0, classification_tfinal.item(  ) ], dtype = classification_tfinal.dtype, device = classification_tfinal.device ), dt = classification_dt )
+classification_loss, num_classification_points = pinn.compute_classification_loss( pde = pinn.pde, network = pinn.network, classification_data = None, num_spatial_dimensions = pinn.domain.num_spatial_dimensions, num_timesteps = pinn.hyperparameters.num_timesteps, domain = pinn.domain, plot_time = pinn.domain.temporal_domain[ 1, : ], level = torch.tensor( 0, dtype = torch.float32, device = pinn.pinn_options.device ), level_set_guesses = None, num_guesses = torch.tensor( int( 1e2 ), dtype = torch.int64, device = pinn.pinn_options.device ), newton_tolerance = newton_tolerance, newton_max_iterations = newton_max_iterations, exploration_radius = pinn.network.exploration_radius_spatial, num_exploration_points = num_exploration_points, unique_tolerance = pinn.network.unique_tolerance_spatial, classification_noise_magnitude = pinn.network.classification_noise_magnitude_spatial, num_noisy_samples_per_level_set_point = pinn.pinn_options.num_noisy_samples_per_level_set_point, domain_subset_type = 'spatial', tspan = torch.tensor( [ 0, classification_tfinal.item(  ) ], dtype = classification_tfinal.dtype, device = classification_tfinal.device ), dt = classification_dt )
 
 # Print the classification loss.
 print( '\n' )

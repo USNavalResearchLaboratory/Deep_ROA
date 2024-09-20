@@ -1,4 +1,3 @@
-<<<<<<< HEAD
 ####################################################################################### 
 # THIS SOURCE CODE IS PROPERTY OF THE GOVERNMENT OF THE UNITED STATES OF AMERICA. 
 # BY USING, MODIFYING, OR DISSEMINATING THIS SOURCE CODE, YOU ACCEPT THE TERMS AND 
@@ -10,8 +9,6 @@
 ####################################################################################### 
 
 
-=======
->>>>>>> 55162c78e9fb0c13d60ea20df5463b1e4d4f30fb
 #%% ------------------------------------------------------------ RESIDUAL DATA CLASS ------------------------------------------------------------
 
 # This file implements a class for storing and managing residual data information.
@@ -21,12 +18,6 @@
 
 # Import standard libraries.
 import torch
-<<<<<<< HEAD
-=======
-import numpy as np
-import matplotlib.pyplot as plt
-import warnings
->>>>>>> 55162c78e9fb0c13d60ea20df5463b1e4d4f30fb
 
 # Import custom libraries.
 from plotting_utilities_class import plotting_utilities_class as plotting_utilities_class
