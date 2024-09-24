@@ -300,12 +300,12 @@ class plotting_utilities_class(  ):
             input_labels = [ 'in1' ]
 
         # Determine whether to create a new figure.
-        if fig is None:                     # If no figure was provided...
+        if fig is None:                             # If no figure was provided...
 
             # Create a figure to store a plot of the input and output data.
             fig = plt.figure(  ); plt.xlabel( input_labels[ 0 ] ), plt.ylabel( f'Output Data [-]' ), plt.title( title_string )
 
-        else:                               # Otherwise... ( i.e., a figure was provided... )
+        else:                                       # Otherwise... ( i.e., a figure was provided... )
 
             # Set the given figure to be active.
             plt.figure( fig.number )
@@ -320,7 +320,7 @@ class plotting_utilities_class(  ):
         plt.savefig( save_directory + '/' + f'Figure_{plt.gcf(  ).number}.png' )
 
         # Determine whether to show the plot.
-        if show_plot:                      # If we want to show the figure...
+        if show_plot:                               # If we want to show the figure...
 
             # Show the figure.
             plt.show( block = False )
@@ -343,12 +343,12 @@ class plotting_utilities_class(  ):
             input_labels = [ 'in1' ]
 
         # Determine whether to create a new figure.
-        if fig is None:                     # If no figure was provided...
+        if fig is None:                             # If no figure was provided...
 
             # Create a figure to store a plot of the input and output data.
             fig = plt.figure(  ); plt.xlabel( input_labels[ 0 ] + r' | Output Data: Dim1 [-]' ), plt.ylabel( r'Output Data: Dim2 [-]' ), plt.title( title_string )
 
-        else:                               # Otherwise... ( i.e., a figure was provided... )
+        else:                                       # Otherwise... ( i.e., a figure was provided... )
 
             # Set the given figure to be active.
             plt.figure( fig.number )
@@ -363,7 +363,7 @@ class plotting_utilities_class(  ):
         plt.savefig( save_directory + '/' + f'Figure_{plt.gcf(  ).number}.png' )
 
         # Determine whether to show the plot.
-        if show_plot:                      # If we want to show the figure...
+        if show_plot:                               # If we want to show the figure...
 
             # Show the figure.
             plt.show( block = False )
@@ -386,12 +386,12 @@ class plotting_utilities_class(  ):
             input_labels = [ 'in1' ]
 
         # Determine whether to create a new figure.
-        if fig is None:                     # If no figure was provided...
+        if fig is None:                             # If no figure was provided...
 
             # Create a figure to store a plot of the input and output data.
             fig, ax = plt.subplots( subplot_kw = { 'projection': '3d' } ); ax.set_xlabel( input_labels[ 0 ] + r' | Output Data: Dim1 [-]' ), ax.set_ylabel( r'Output Data: Dim2 [-]' ), ax.set_zlabel( r'Output Data: Dim3 [-]' ), ax.set_title( title_string )
 
-        else:                               # Otherwise... ( i.e., a figure was provided... )
+        else:                                       # Otherwise... ( i.e., a figure was provided... )
 
             # Set the given figure to be active.
             plt.figure( fig.number )
@@ -406,7 +406,7 @@ class plotting_utilities_class(  ):
         plt.savefig( save_directory + '/' + f'Figure_{plt.gcf(  ).number}.png' )
 
         # Determine whether to show the plot.
-        if show_plot:                      # If we want to show the figure...
+        if show_plot:                               # If we want to show the figure...
 
             # Show the figure.
             plt.show( block = False )
@@ -428,12 +428,12 @@ class plotting_utilities_class(  ):
         input_data = self.preprocess_data( input_data )
 
         # Determine whether to create a new figure.
-        if fig is None:                     # If no figure was provided...
+        if fig is None:                             # If no figure was provided...
 
             # Create a figure to store a plot of the input data.
             fig = plt.figure(  ); plt.xlabel( input_labels[ 0 ] ), plt.ylabel( input_labels[ 1 ] ), plt.title( title_string )
 
-        else:                               # Otherwise... ( i.e., a figure was provided... )
+        else:                                       # Otherwise... ( i.e., a figure was provided... )
 
             # Set the given figure to be active.
             plt.figure( fig.number )
@@ -448,7 +448,7 @@ class plotting_utilities_class(  ):
         plt.savefig( save_directory + '/' + f'Figure_{plt.gcf(  ).number}.png' )
 
         # Determine whether to show the plot.
-        if show_plot:                      # If we want to show the figure...
+        if show_plot:                           # If we want to show the figure...
 
             # Show the figure.
             plt.show( block = False )
@@ -467,15 +467,15 @@ class plotting_utilities_class(  ):
             input_labels = [ 'in1', 'in2' ]
 
         # Determine whether to create a new figure.
-        if fig is None:                     # If no figure was provided...
+        if fig is None:                             # If no figure was provided...
 
             # Create a figure to store a plot of the input and output data.
             fig, ax = plt.subplots( subplot_kw = { 'projection': '3d' } ); ax.set_xlabel( input_labels[ 0 ] ), ax.set_ylabel( input_labels[ 1 ] ), ax.set_zlabel( 'Output Data [-]' ), ax.set_title( title_string )
 
-        else:                               # Otherwise... ( i.e., A figure was provided... )
+        else:                                       # Otherwise... ( i.e., A figure was provided... )
           
             # Determine whether the provided fig is embedded in a list.
-            if isinstance( fig, list ):                 # If the figure is embedded in a list...
+            if isinstance( fig, list ):             # If the figure is embedded in a list...
 
                 # Unembed the figure from the list.
                 fig = fig[ 0 ]
@@ -487,7 +487,7 @@ class plotting_utilities_class(  ):
             ax = plt.gca(  )
 
         # Determine how to plot the 2in 1out data.
-        if as_surface:                      # If we want to plot the data as a surface...
+        if as_surface:                              # If we want to plot the data as a surface...
 
             # Preprocess the input and output data.
             input_data, output_data = self.preprocess_input_output_data( input_data, output_data, flatten_flag = False )
@@ -496,20 +496,17 @@ class plotting_utilities_class(  ):
             ax.plot_surface( self.plot_process( input_data[ ..., 0 ] ), self.plot_process( input_data[ ..., 1 ] ), self.plot_process( output_data[ ..., 0 ] ) )
 
             # Determine whether to plot the contour.
-            if as_contour:                      # If we want to plot a contour...
-
-                # fig, ax = plt.subplots( subplot_kw = { 'projection': '3d' } )
+            if as_contour:                          # If we want to plot a contour...
 
                 # Plot the given level set.
                 ax.contour( self.plot_process( input_data[ ..., 0 ] ), self.plot_process( input_data[ ..., 1 ] ), self.plot_process( output_data[ ..., 0 ] ), levels = [ self.plot_process( level ) ], colors = 'red', linewidths = 2.0 )
 
-        elif as_contour:                    # If we want to plot a contour...
+        elif as_contour:                            # If we want to plot a contour...
 
             # Preprocess the input and output data.
             input_data, output_data = self.preprocess_input_output_data( input_data, output_data, flatten_flag = False )
 
             # Plot the given level set.
-            # ax.contour( self.plot_process( input_data[ ..., 0 ] ), self.plot_process( input_data[ ..., 1 ] ), self.plot_process( output_data[ ..., 0 ] ), levels = [ self.plot_process( level ) ], colors = 'red', linewidths = 2.0 )
             ax.contour( self.plot_process( input_data[ ..., 0 ] ), self.plot_process( input_data[ ..., 1 ] ), self.plot_process( output_data[ ..., 0 ] ), levels = [ self.plot_process( level ) ], linewidths = 2.0 )
 
         else:
@@ -519,13 +516,12 @@ class plotting_utilities_class(  ):
 
             # Plot the input and output data.
             ax.scatter3D( self.plot_process( input_data[ :, 0 ] ), self.plot_process( input_data[ :, 1 ] ), self.plot_process( output_data ) )
-            # ax.scatter3D( self.plot_process( input_data[ ..., 0 ] ), self.plot_process( input_data[ ..., 1 ] ), self.plot_process( output_data[ ..., 0 ] ) )
 
         # Save the figure.
         plt.savefig( save_directory + '/' + f'Figure_{plt.gcf(  ).number}.png' )
 
         # Determine whether to show the plot.
-        if show_plot:                      # If we want to show the figure...
+        if show_plot:                               # If we want to show the figure...
 
             # Show the figure.
             plt.show( block = False )
@@ -544,12 +540,12 @@ class plotting_utilities_class(  ):
             input_labels = [ 'in1', 'in2' ]
 
         # Determine whether to create a new figure.
-        if fig is None:                     # If no figure was provided...
+        if fig is None:                             # If no figure was provided...
 
             # Create a figure to store a plot of the input and output data.
             fig = plt.figure(  ); plt.xlabel( input_labels[ 0 ] + r' | Output Data: Dim1 [-]' ), plt.ylabel( input_labels[ 1 ] + r' | Output Data: Dim2 [-]' ), plt.title( title_string )
 
-        else:                               # Otherwise... ( i.e., A figure was provided... )
+        else:                                       # Otherwise... ( i.e., A figure was provided... )
           
             # Set the given figure to be active.
             plt.figure( fig.number )
@@ -564,7 +560,6 @@ class plotting_utilities_class(  ):
             input_data, output_data = self.preprocess_input_output_data( input_data, output_data, flatten_flag = False )
 
             # Create a stream plot of the input and output data.
-            # ax.streamplot( self.plot_process( input_data[ ..., 0 ].T ), self.plot_process( input_data[ ..., 1 ].T ), self.plot_process( output_data[ ..., 0 ].T ), self.plot_process( output_data[ ..., 1 ].T ) )
             ax.streamplot( self.plot_process( input_data[ ..., 0 ].T ), self.plot_process( input_data[ ..., 1 ].T ), self.plot_process( output_data[ ..., 0 ].T ), self.plot_process( output_data[ ..., 1 ].T ), density = 1.0, linewidth = 1.0, arrowsize = 0.75 )
 
         else:                                       # Otherwise... ( i.e., if we want to create a quiver plot... )
@@ -579,7 +574,7 @@ class plotting_utilities_class(  ):
         plt.savefig( save_directory + '/' + f'Figure_{plt.gcf(  ).number}.png' )
 
         # Determine whether to show the plot.
-        if show_plot:                      # If we want to show the figure...
+        if show_plot:                               # If we want to show the figure...
 
             # Show the figure.
             plt.show( block = False )
@@ -601,12 +596,12 @@ class plotting_utilities_class(  ):
         input_data, output_data = self.preprocess_input_output_data( input_data, output_data )
 
         # Determine whether to create a new figure.
-        if fig is None:                     # If no figure was provided...
+        if fig is None:                             # If no figure was provided...
 
             # Create a figure to store a plot of the input and output data.
             fig, ax = plt.subplots( subplot_kw = { 'projection': '3d' } ); ax.set_xlabel( input_labels[ 0 ] + r' | Output Data: Dim1 [-]' ), ax.set_ylabel( input_labels[ 1 ] + r' | Output Data: Dim2 [-]' ), ax.set_zlabel( 'Output Data: Dim3 [-]' ), ax.set_title( title_string )
 
-        else:                               # Otherwise... ( If a figure was provided... )
+        else:                                       # Otherwise... ( If a figure was provided... )
 
             # Set the given figure to be active.
             plt.figure( fig.number )
@@ -621,7 +616,7 @@ class plotting_utilities_class(  ):
         plt.savefig( save_directory + '/' + f'Figure_{plt.gcf(  ).number}.png' )
 
         # Determine whether to show the plot.
-        if show_plot:                      # If we want to show the figure...
+        if show_plot:                               # If we want to show the figure...
 
             # Show the figure.
             plt.show( block = False )
@@ -643,12 +638,12 @@ class plotting_utilities_class(  ):
         input_data = self.preprocess_data( input_data )
 
         # Determine whether to create a new figure.
-        if fig is None:                     # If no figure was provided...
+        if fig is None:                             # If no figure was provided...
 
             # Create a figure to store a plot of the input and output data.
             fig, ax = plt.subplots( subplot_kw = { 'projection': '3d' } ); ax.set_xlabel( input_labels[ 0 ] ), ax.set_ylabel( input_labels[ 1 ] ), ax.set_zlabel( input_labels[ 2 ] ), ax.set_title( title_string )
 
-        else:                               # Otherwise... ( If a figure was provided... )
+        else:                                       # Otherwise... ( If a figure was provided... )
 
             # Set the given figure to be active.
             plt.figure( fig.number )
@@ -663,7 +658,7 @@ class plotting_utilities_class(  ):
         plt.savefig( save_directory + '/' + f'Figure_{plt.gcf(  ).number}.png' )
 
         # Determine whether to show the plot.
-        if show_plot:                      # If we want to show the figure...
+        if show_plot:                               # If we want to show the figure...
 
             # Show the figure.
             plt.show( block = False )
@@ -685,12 +680,12 @@ class plotting_utilities_class(  ):
         input_data, output_data = self.preprocess_input_output_data( input_data, output_data )
 
         # Determine whether to create a new figure.
-        if fig is None:                     # If no figure was provided...
+        if fig is None:                             # If no figure was provided...
 
             # Create a figure to store a plot of the input and output data.
             fig, ax = plt.subplots( subplot_kw = { 'projection': '3d' } ); ax.set_xlabel( input_labels[ 0 ] ), ax.set_ylabel( input_labels[ 1 ] ), ax.set_zlabel( input_labels[ 2 ] ), ax.set_title( title_string )
 
-        else:                               # Otherwise... ( If a figure was provided... )
+        else:                                       # Otherwise... ( If a figure was provided... )
 
             # Set the given figure to be active.
             plt.figure( fig.number )
@@ -705,7 +700,7 @@ class plotting_utilities_class(  ):
         plt.savefig( save_directory + '/' + f'Figure_{plt.gcf(  ).number}.png' )
 
         # Determine whether to show the plot.
-        if show_plot:                      # If we want to show the figure...
+        if show_plot:                           # If we want to show the figure...
 
             # Show the figure.
             plt.show( block = False )
@@ -727,12 +722,12 @@ class plotting_utilities_class(  ):
         input_data, output_data = self.preprocess_input_output_data( input_data, output_data )
 
         # Determine whether to create a new figure.
-        if figs is None:                     # If no figure was provided...
+        if figs is None:                            # If no figure was provided...
 
             # Create a figure to store a plot of the input data and the first dimension of the output data.
             fig1, ax1 = plt.subplots( subplot_kw = { 'projection': '3d' } ); ax1.set_xlabel( input_labels[ 0 ] ), ax1.set_ylabel( input_labels[ 1 ] ), ax1.set_zlabel( input_labels[ 2 ] ), ax1.set_title( title_string + ' ( Output Dim0 )' )
 
-        else:                               # Otherwise... ( i.e., if a figure was provided... )
+        else:                                       # Otherwise... ( i.e., if a figure was provided... )
 
             # Retrieve the first provided figure.
             fig1 = figs[ 0 ]
@@ -750,12 +745,12 @@ class plotting_utilities_class(  ):
         plt.savefig( save_directory + '/' + f'Figure_{plt.gcf(  ).number}.png' )
 
         # Determine whether to create a new figure.
-        if figs is None:                     # If no figure was provided...
+        if figs is None:                            # If no figure was provided...
 
             # Create a figure to store a plot of the input data and the first dimension of the output data.
             fig2, ax2 = plt.subplots( subplot_kw = { 'projection': '3d' } ); ax2.set_xlabel( input_labels[ 0 ] ), ax2.set_ylabel( input_labels[ 1 ] ), ax2.set_zlabel( input_labels[ 2 ] ), ax2.set_title( title_string + ' ( Output Dim1 )' )
 
-        else:                               # Otherwise... ( i.e., if a figure was provided... )
+        else:                                       # Otherwise... ( i.e., if a figure was provided... )
 
             # Retrieve the second provided figure.
             fig2 = figs[ 1 ]
@@ -777,7 +772,7 @@ class plotting_utilities_class(  ):
         ax = [ ax1, ax2 ]
 
         # Determine whether to show the plot.
-        if show_plot:                      # If we want to show the figure...
+        if show_plot:                           # If we want to show the figure...
 
             # Show the figure.
             plt.show( block = False )
@@ -799,12 +794,12 @@ class plotting_utilities_class(  ):
         input_data, output_data = self.preprocess_input_output_data( input_data, output_data )
 
         # Determine whether to create a new figure.
-        if figs is None:                     # If no figure was provided...
+        if figs is None:                            # If no figure was provided...
 
             # Create a figure to store a plot of the input data and the first dimension of the output data.
             fig1, ax1 = plt.subplots( subplot_kw = { 'projection': '3d' } ); ax1.set_xlabel( input_labels[ 0 ] ), ax1.set_ylabel( input_labels[ 1 ] ), ax1.set_zlabel( input_labels[ 2 ] ), ax1.set_title( title_string + ' ( Output Dim0 )' )
 
-        else:                               # Otherwise... ( i.e., if a figure was provided... )
+        else:                                       # Otherwise... ( i.e., if a figure was provided... )
 
             # Retrieve the first provided figure.
             fig1 = figs[ 0 ]
@@ -822,12 +817,12 @@ class plotting_utilities_class(  ):
         plt.savefig( save_directory + '/' + f'Figure_{plt.gcf(  ).number}.png' )
 
         # Determine whether to create a new figure.
-        if figs is None:                     # If no figure was provided...
+        if figs is None:                            # If no figure was provided...
 
             # Create a figure to store a plot of the input data and the first dimension of the output data.
             fig2, ax2 = plt.subplots( subplot_kw = { 'projection': '3d' } ); ax2.set_xlabel( input_labels[ 0 ] ), ax2.set_ylabel( input_labels[ 1 ] ), ax2.set_zlabel( input_labels[ 2 ] ), ax2.set_title( title_string + ' ( Output Dim1 )' )
 
-        else:                               # Otherwise... ( i.e., if a figure was provided... )
+        else:                                       # Otherwise... ( i.e., if a figure was provided... )
 
             # Retrieve the second provided figure.
             fig2 = figs[ 1 ]
@@ -845,12 +840,12 @@ class plotting_utilities_class(  ):
         plt.savefig( save_directory + '/' + f'Figure_{plt.gcf(  ).number}.png' )
 
         # Determine whether to create a new figure.
-        if figs is None:                     # If no figure was provided...
+        if figs is None:                            # If no figure was provided...
 
             # Create a figure to store a plot of the input data and the first dimension of the output data.
             fig3, ax3 = plt.subplots( subplot_kw = { 'projection': '3d' } ); ax3.set_xlabel( input_labels[ 0 ] ), ax3.set_ylabel( input_labels[ 1 ] ), ax3.set_zlabel( input_labels[ 2 ] ), ax3.set_title( title_string + ' ( Output Dim2 )' )
 
-        else:                               # Otherwise... ( i.e., if a figure was provided... )
+        else:                                       # Otherwise... ( i.e., if a figure was provided... )
 
             # Retrieve the third provided figure.
             fig3 = figs[ 2 ]
@@ -872,7 +867,7 @@ class plotting_utilities_class(  ):
         ax = [ ax1, ax2, ax3 ]
 
         # Determine whether to show the plot.
-        if show_plot:                      # If we want to show the figure...
+        if show_plot:                           # If we want to show the figure...
 
             # Show the figure.
             plt.show( block = False )
@@ -898,16 +893,16 @@ class plotting_utilities_class(  ):
         num_output_sources = self.tensor_utilities.get_number_of_sources( output_data, input_data.device )
 
         # Determine whether to set the input labels to a default value.
-        if input_labels is None:                    # If the input labels variable is None...
+        if input_labels is None:                                            # If the input labels variable is None...
 
             # Set the input labels to be a default value.
             input_labels = [ f'in{k}' for k in range( num_input_dimensions ) ]
 
         # Determine which plot to create based on the number of input dimensions.
-        if ( num_input_dimensions == 1 ):                               # If the input is a scalar...
+        if ( num_input_dimensions == 1 ):                                   # If the input is a scalar...
 
             # Determine whether to set the number of output dimensions to zero.
-            if not num_output_dimensions:                                       # If the number of output dimensions is an empty list...
+            if not num_output_dimensions:                                   # If the number of output dimensions is an empty list...
 
                 # Create a plot for the single input no output data.
                 figs, axes = self.plot_1in_0out_data( input_data, fig, input_labels, title_string, save_directory, show_plot )
@@ -918,25 +913,25 @@ class plotting_utilities_class(  ):
                 axes = [  ]
 
             # Create a plot for each of the output data sources.
-            for k in range( num_output_sources ):                       # Iterate through each of the output sources...
+            for k in range( num_output_sources ):                           # Iterate through each of the output sources...
 
                 # Determine whether to set the number of output dimensions to zero.
-                if num_output_dimensions[ k ] == 1:                     # If this output source is a scalar... 
+                if num_output_dimensions[ k ] == 1:                         # If this output source is a scalar... 
 
                     # Create a plot for single input single output data.
                     fig, ax = self.plot_1in_1out_data( input_data, output_data, fig, input_labels, title_string, save_directory, show_plot, D1_style )
 
-                elif num_output_dimensions[ k ] == 2:                   # If this output source is a vector of dimension 2...
+                elif num_output_dimensions[ k ] == 2:                       # If this output source is a vector of dimension 2...
 
                     # Create a plot for single input two output data.
                     fig, ax = self.plot_1in_2out_data( input_data, output_data, fig, input_labels, title_string, save_directory, show_plot )
 
-                elif num_output_dimensions[ k ] == 3:                   # If this output source is a vector of dimension 3...
+                elif num_output_dimensions[ k ] == 3:                       # If this output source is a vector of dimension 3...
 
                     # Create a plot for single input three output data.
                     fig, ax = self.plot_1in_3out_data( input_data, output_data, fig, input_labels, title_string, save_directory, show_plot )
 
-                else:                                                   # Otherwise... (If the number of output dimensions is not one for which we have an established plotting protocol...)
+                else:                                                       # Otherwise... (If the number of output dimensions is not one for which we have an established plotting protocol...)
 
                     # Throw a warning.
                     warnings.warn( f'No plotting protocol for pinn data sets with {num_input_dimensions} inputs and {num_output_dimensions[ k ]} outputs has been established.  Setting figure and axis objects to None.' )
@@ -949,10 +944,10 @@ class plotting_utilities_class(  ):
                 figs.append( fig )
                 axes.append( ax )
 
-        elif ( num_input_dimensions == 2 ):                               # If the input is a 2D vector...
+        elif ( num_input_dimensions == 2 ):                                 # If the input is a 2D vector...
 
             # Determine whether to set the number of output dimensions to zero.
-            if not num_output_dimensions:                                       # If the number of output dimensions is an empty list...
+            if not num_output_dimensions:                                   # If the number of output dimensions is an empty list...
 
                 # Create a plot for the two input no output data.
                 figs, axes = self.plot_2in_0out_data( input_data, fig, input_labels, title_string, save_directory, show_plot )
@@ -994,7 +989,7 @@ class plotting_utilities_class(  ):
                 figs.append( fig )
                 axes.append( ax )
 
-        elif ( num_input_dimensions == 3 ):                             # If the input is a 3D vector...
+        elif ( num_input_dimensions == 3 ):                                     # If the input is a 3D vector...
 
             # Determine whether to set the number of output dimensions to zero.
             if not num_output_dimensions:                                       # If the number of output dimensions is an empty list...
@@ -1008,25 +1003,25 @@ class plotting_utilities_class(  ):
                 axes = [  ]
 
             # Create a plot for each of the output data sources.
-            for k in range( num_output_sources ):                       # Iterate through each of the output sources...
+            for k in range( num_output_sources ):                               # Iterate through each of the output sources...
 
                 # Determine which plot to create based on the number of output dimension.
-                if num_output_dimensions[ k ] == 1:                     # If this output source is a scalar... 
+                if num_output_dimensions[ k ] == 1:                             # If this output source is a scalar... 
 
                     # Create a plot for three input single output data.
                     fig, ax = self.plot_3in_1out_data( input_data, output_data, fig, input_labels, title_string, save_directory, show_plot )
 
-                elif num_output_dimensions[ k ] == 2:                   # If this output source is a vector of dimension 2...
+                elif num_output_dimensions[ k ] == 2:                           # If this output source is a vector of dimension 2...
 
                     # Create a plot for three input two output data.
                     fig, ax = self.plot_3in_2out_data( input_data, output_data, fig, input_labels, title_string, save_directory, show_plot )
 
-                elif num_output_dimensions[ k ] == 3:                   # If this output source is a vector of dimension 3...
+                elif num_output_dimensions[ k ] == 3:                           # If this output source is a vector of dimension 3...
 
                     # Create a plot for the three input three output data.
                     fig, ax = self.plot_3in_3out_data( input_data, output_data, fig, input_labels, title_string, save_directory, show_plot )
 
-                else:                                                   # Otherwise... (If the number of output dimensions is not one for which we have an established plotting protocol...)
+                else:                                                           # Otherwise... (If the number of output dimensions is not one for which we have an established plotting protocol...)
 
                     # Throw a warning.
                     warnings.warn( f'No plotting protocol for pinn data sets with {num_input_dimensions} inputs and {num_output_dimensions[ k ]} outputs has been established.  Setting figure and axis objects to None.' )
@@ -1039,7 +1034,7 @@ class plotting_utilities_class(  ):
                 figs.append( fig )
                 axes.append( ax )
 
-        else:                                                                                   # Otherwise...
+        else:                                                                   # Otherwise...
 
             # Throw a warning.
             warnings.warn( f'No plotting protocol for pinn data sets with {num_input_dimensions} inputs has been established.  Setting figure and axis objects to None.' )
@@ -1161,13 +1156,13 @@ class plotting_utilities_class(  ):
             fig = plt.figure(  ); ax = plt.axes( projection = '3d' ); ax.set_xlabel( 'x1' ); ax.set_ylabel( 'x2' ); ax.set_zlabel( 'x3' ); plt.title( 'Element Points' )
             ax.scatter( self.plot_process( xis[ :, 0 ] ), self.plot_process( xis[ :, 1 ] ), self.plot_process( xis[ :, 2 ] ) )
 
-        else:                                                               # Otherwise...
+        else:                                           # Otherwise...
 
             # State that we can't display plots for problems of this dimension.
             print( 'Need to add code to plot element points of greater than three dimensions.' )
 
         # Determine whether to show the plots.
-        if show_plot_flag:                                                  # If we want to show the plots...
+        if show_plot_flag:                              # If we want to show the plots...
 
             # Show the plot.
             plt.show(  )
@@ -1201,7 +1196,7 @@ class plotting_utilities_class(  ):
                 axes_temp = [ axes_temp ]
 
             # Ensure that the axes are double lists.
-            if not isinstance( axes_temp[ 0 ], list ):                  # If the axes object is only a single list...
+            if not isinstance( axes_temp[ 0 ], list ):              # If the axes object is only a single list...
 
                 # Embed the axes object in a list.
                 axes = [ [ axes_temp[k] ] for k in range( len( axes_temp ) ) ]
@@ -1215,11 +1210,11 @@ class plotting_utilities_class(  ):
             k3 = torch.tensor( 0, dtype = torch.int64, device = xis.device )
 
             # Plot the basis functions.
-            for k1 in range( num_rows ):              # Iterate through the subplot rows...
-                for k2 in range( num_cols ):          # Iterate through the subplot columns...
+            for k1 in range( num_rows ):                            # Iterate through the subplot rows...
+                for k2 in range( num_cols ):                        # Iterate through the subplot columns...
 
                     # Determine whether to plot this basis function.
-                    if k3 < num_basis_functions:                   # If this index corresponds to a valid basis function...
+                    if k3 < num_basis_functions:                    # If this index corresponds to a valid basis function...
 
                         # Plot the basis function.
                         axes[ k1 ][ k2 ].scatter3D( self.xis[ :, 0 ], self.xis[ :, 1 ], self.xis[ :, 2 ], c = g[ k3, : ], s = 20 )
@@ -1231,7 +1226,7 @@ class plotting_utilities_class(  ):
                     k3 += 1
 
         # Determine whether to show the plot.
-        if show_plot_flag:                   # If we want to show the plot...
+        if show_plot_flag:                                          # If we want to show the plot...
             
             # Show the plot.
             plt.show(  ) 

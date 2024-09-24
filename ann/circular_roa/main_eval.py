@@ -48,66 +48,6 @@ plt.rcParams.update( { 'figure.max_open_warning': 0 } )                     # Di
 
 #%% ---------------------------------------- DEFINE CONFIGURATION ----------------------------------------
 
-# # Define the base configuration.
-# BASE_CONFIG = {
-#     'classification_parameters': {
-#         'num_noisy_samples_per_level_set_point': int( 5 ),
-#         'noise_percentage': float( 1e-3 ),
-#         'dt': float( 1e-2 ),
-#         'tfinal': float( 10 ),
-#     },
-#     'exploration_parameters': {
-#         'volume_percentage': float( 1e-2 ),
-#         'num_points': int( 50 ),
-#         'unique_percentage': float( 1e-4 ),
-#     },
-#     'hyperparameters': {
-#         'activation_function': 'sigmoid',
-#         'c_IC': float( 1.0 ),
-#         'c_BC': float( 1.0 ),
-#         'c_residual': float( 1e-4 ),
-#         'c_residual_gradient': float( 0 ),
-#         'c_variational': float( 1e-5 ),
-#         'c_monotonicity': float( 100 ),
-#         'hidden_layer_widths': int( 175 ),
-#         'num_epochs': int( 400 ),
-#         'num_hidden_layers': int( 5 ),
-#         'num_training_data': int( 100e3 ),
-#         'num_testing_data': int( 20e3 ),
-#         'learning_rate': float( 5e-3 ),
-#     },
-#     'newton_parameters': {
-#         'tolerance': float( 1e-4 ),
-#         'max_iterations': int( 1e2 ),
-#     },
-#     'paths': {
-#         'save_path': r'./ann/circular_roa/save',
-#         'load_path': r'./ann/circular_roa/load',
-#     },
-#     'plotting_parameters': {
-#         'num_plotting_samples': int( 20 ),
-#         'plot_flag': bool( False ),
-#         # 'plot_flag': bool( True ),
-#     },
-#     'printing_parameters': {
-#         'batch_print_frequency': int( 10 ),
-#         'epoch_print_frequency': int( 10 ),
-#         'print_flag': bool( True ),
-#     },
-#     'runtime': {
-#         'device': 'cuda:6' if torch.cuda.is_available(  ) else 'cpu',
-#         'seed': int( 0 ),
-#         'load_flag': bool( False ),
-#         'train_flag': bool( True ),
-#         'verbose_flag': bool( True ),
-#     },
-#     'saving_parameters': {
-#         'save_flag': bool( True ),
-#         'save_frequency': int( 10 ),
-#     }
-# }
-
-
 # Define the base configuration.
 BASE_CONFIG = {
     'classification_parameters': {
@@ -298,23 +238,23 @@ def eval_circular_roa( config: dict = BASE_CONFIG ) -> int:
     start_time_problem_specifications = time.time(  )
 
     # Define the number of inputs and outputs.
-    num_inputs = torch.tensor( 3, dtype = torch.uint8, device = device )                                                                            # [#] Number of network inputs.  For the Yuan-Li PDE, this is the same as the number of spatiotemporal state variables associated with the underlying dynamical system.
-    num_outputs = torch.tensor( 1, dtype = torch.uint8, device = device )                                                                           # [#] Number of network outputs.  For the Yuan-Li PDE, this is always one.
+    num_inputs = torch.tensor( 3, dtype = torch.uint8, device = device )                                                                # [#] Number of network inputs.  For the Yuan-Li PDE, this is the same as the number of spatiotemporal state variables associated with the underlying dynamical system.
+    num_outputs = torch.tensor( 1, dtype = torch.uint8, device = device )                                                               # [#] Number of network outputs.  For the Yuan-Li PDE, this is always one.
 
     # Define the temporal and spatial domains.
-    domain_type = 'cartesian'                                                                                                             # [-] The type of domain (cartesian, spherical, etc.).  Only cartesian domains are currently supported.
-    temporal_domain = torch.tensor( [ 0, 10 ], dtype = torch.float32, device = device )                                                             # [-] Temporal domain of the underlying dynamical system.
-    spatial_domain = torch.tensor( [ [ -3, 3 ], [ -3, 3 ] ], dtype = torch.float32, device = device ).T                                             # [-] Spatial domain of the underlying dynamical system.
+    domain_type = 'cartesian'                                                                                                           # [-] The type of domain (cartesian, spherical, etc.).  Only cartesian domains are currently supported.
+    temporal_domain = torch.tensor( [ 0, 10 ], dtype = torch.float32, device = device )                                                 # [-] Temporal domain of the underlying dynamical system.
+    spatial_domain = torch.tensor( [ [ -3, 3 ], [ -3, 3 ] ], dtype = torch.float32, device = device ).T                                 # [-] Spatial domain of the underlying dynamical system.
 
     # Define the initial condition parameters.
-    R0 = torch.tensor( 0.5, dtype = torch.float32, device = device )                                                                                  # [-] Initial condition radius.
-    A0 = torch.tensor( 2, dtype = torch.float32, device = device )                                                                                  # [-] Initial condition amplitude.
-    S0 = torch.tensor( 20, dtype = torch.float32, device = device )                                                                                 # [-] Initial condition slope.
-    P0_shift = torch.tensor( [ 0, 0 ], dtype = torch.float32, device = device )                                                     # [-] Initial condition input offset.
-    z0_shift = -A0/2                                                                                                                            # [-] Initial condition output offset.
+    R0 = torch.tensor( 0.5, dtype = torch.float32, device = device )                                                                    # [-] Initial condition radius.
+    A0 = torch.tensor( 2.0, dtype = torch.float32, device = device )                                                                    # [-] Initial condition amplitude.
+    S0 = torch.tensor( 20.0, dtype = torch.float32, device = device )                                                                   # [-] Initial condition slope.
+    P0_shift = torch.tensor( [ 0.0, 0.0 ], dtype = torch.float32, device = device )                                                     # [-] Initial condition input offset.
+    z0_shift = -A0/2                                                                                                                    # [-] Initial condition output offset.
 
     # Define the flow field parameters.
-    mu = torch.tensor( 12, dtype = torch.float32, device = device )
+    mu = torch.tensor( 12.0, dtype = torch.float32, device = device )
     sqrsum = lambda s: s[ :, 1 ]**2 + s[ :, 2 ]**2
     comm = lambda s: mu + sqrsum( s ) - sqrsum( s )**2
 
@@ -333,41 +273,21 @@ def eval_circular_roa( config: dict = BASE_CONFIG ) -> int:
     temporal_code = [ torch.tensor( [ 0 ], dtype = torch.uint8, device = device ) ]                                                                                                                                                                             # [-] Temporal code.  Determines how to compute the temporal derivative of the network output.      
 
     # Define the initial-boundary condition functions.
-    # f_ic = lambda s: A0/( 1 + torch.exp( -S0*( torch.norm( s[ :, 1: ] - P0_shift, 2, dim = 1, keepdim = True ) - R0 ) ) ) + z0_shift                # [-] Initial condition function.
-    # f_bc_1 = lambda s: A0/( 1 + torch.exp( -S0*( torch.norm( s[ :, 1: ] - P0_shift, 2, dim = 1, keepdim = True ) - R0 ) ) ) + z0_shift              # [-] Boundary condition function.
-    # f_bc_2 = lambda s: A0/( 1 + torch.exp( -S0*( torch.norm( s[ :, 1: ] - P0_shift, 2, dim = 1, keepdim = True ) - R0 ) ) ) + z0_shift              # [-] Boundary condition function.
-
     f_ic = lambda s: A0/( 1 + torch.exp( -S0*( torch.norm( s[ :, 1: ] - P0_shift, 2, dim = 1, keepdim = True ) - R0 ) ) ) + z0_shift                # [-] Initial condition function.
     f_bc_1 = lambda s: A0/( 1 + torch.exp( -S0*( torch.norm( s[ :, 1: ] - P0_shift, 2, dim = 1, keepdim = True ) - R0 ) ) ) + z0_shift              # [-] Boundary condition function.
     f_bc_2 = lambda s: A0/( 1 + torch.exp( -S0*( torch.norm( s[ :, 1: ] - P0_shift, 2, dim = 1, keepdim = True ) - R0 ) ) ) + z0_shift              # [-] Boundary condition function.
     f_bc_3 = lambda s: A0/( 1 + torch.exp( -S0*( torch.norm( s[ :, 1: ] - P0_shift, 2, dim = 1, keepdim = True ) - R0 ) ) ) + z0_shift              # [-] Boundary condition function.
     f_bc_4 = lambda s: A0/( 1 + torch.exp( -S0*( torch.norm( s[ :, 1: ] - P0_shift, 2, dim = 1, keepdim = True ) - R0 ) ) ) + z0_shift              # [-] Boundary condition function.
 
-    # f_ic = lambda s: A0/( 1 + torch.exp( -S0*( torch.norm( s[ :, 1: ] - P0_shift, 2, dim = 1, keepdim = True ) - R0 ) ) ) + z0_shift                # [-] Initial condition function.
-    # f_bc_1 = lambda s: torch.zeros( ( s.shape[ 0 ], 1 ), dtype = torch.float32, device = device )                                                   # [-] Boundary condition function 1.
-    # f_bc_2 = lambda s: torch.zeros( ( s.shape[ 0 ], 1 ), dtype = torch.float32, device = device )                                                   # [-] Boundary condition function 2.
-    # f_bc_3 = lambda s: torch.zeros( ( s.shape[ 0 ], 1 ), dtype = torch.float32, device = device )                                                   # [-] Boundary condition function 3.
-    # f_bc_4 = lambda s: torch.zeros( ( s.shape[ 0 ], 1 ), dtype = torch.float32, device = device )                                                   # [-] Boundary condition function 4.
-
     # Define the initial-boundary condition information.
-    # ibc_types = [ 'dirichlet', 'dirichlet', 'dirichlet' ]                                                                                           # [-] Initial-Boundary condition types (e.g., dirichlet, neumann, etc.).
-    # ibc_dimensions = torch.tensor( [ 0, 1, 2 ], dtype = torch.uint8, device = device )
-    # ibc_condition_functions = [ f_ic, f_bc_1, f_bc_2 ]
-    # ibc_placements = [ 'lower', 'lower', 'lower' ]  
-
-    ibc_types = [ 'dirichlet', 'dirichlet', 'dirichlet', 'dirichlet', 'dirichlet' ]                                                                                           # [-] Initial-Boundary condition types (e.g., dirichlet, neumann, etc.).
+    ibc_types = [ 'dirichlet', 'dirichlet', 'dirichlet', 'dirichlet', 'dirichlet' ]                                                                 # [-] Initial-Boundary condition types (e.g., dirichlet, neumann, etc.).
     ibc_dimensions = torch.tensor( [ 0, 1, 1, 2, 2 ], dtype = torch.uint8, device = device )
     ibc_condition_functions = [ f_ic, f_bc_1, f_bc_2, f_bc_3, f_bc_4 ]
     ibc_placements = [ 'lower', 'lower', 'upper', 'lower', 'upper' ]  
 
-    # ibc_types = [ 'dirichlet', 'yuan-li', 'yuan-li', 'yuan-li', 'yuan-li' ]
-    # ibc_dimensions = torch.tensor( [ 0, 1, 1, 2, 2 ], dtype = torch.uint8, device = device )
-    # ibc_condition_functions = [ f_ic, f_bc_1, f_bc_2, f_bc_3, f_bc_4 ]
-    # ibc_placements = [ 'lower', 'lower', 'upper', 'lower', 'upper' ]  
-
     # Define the PDE name and type.
-    pde_name = 'Yuan-Li PDE: Circular ROA'                                                                                                            # [-] PDE name.
-    pde_type = 'First Order'                                                                                                                   # [-] PDE type.
+    pde_name = 'Yuan-Li PDE: Circular ROA'                                                                                                          # [-] PDE name.
+    pde_type = 'First Order'                                                                                                                        # [-] PDE type.
 
     # Create the problem specifications object.
     problem_specifications = problem_specifications_class( num_inputs, num_outputs, temporal_domain, spatial_domain, domain_type, residual_function, residual_code, temporal_code, flow_functions, ibc_types, ibc_dimensions, ibc_condition_functions, ibc_placements, pde_name, pde_type, save_path, load_path )

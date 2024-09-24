@@ -9,7 +9,6 @@
 # Import standard libraries.
 import os
 import sys
-import math
 import torch
 import random
 import numpy as np
@@ -39,8 +38,7 @@ np.random.seed( 0 )
 torch.manual_seed( 0 )
 
 # Set the computational device.
-device = 'cuda:9' if torch.cuda.is_available(  ) else 'cpu'
-# device = 'cpu'
+device = 'cuda' if torch.cuda.is_available(  ) else 'cpu'
 
 # Define the save options.
 save_path = r'./ann/closed_roa/save'                                                                    # [-] Relative path to the directory in which to save network data, figures, etc.

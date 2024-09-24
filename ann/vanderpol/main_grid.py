@@ -30,7 +30,7 @@ from main_eval import BASE_CONFIG, eval_vanderpol
 LOAD_FLAG = True                                            # [T/F] True = Attempt to resume a previous, unfinished grid search. False - Start a new grid search, replacing any existing searches with the same name.
 
 # Define the number of times to repeat each configuration in the grid.
-NUM_REPEATS = 1                 # [#] Number of times each configuration in the grid search is run.
+NUM_REPEATS = 1                                             # [#] Number of times each configuration in the grid search is run.
 
 # Define the save directory for all grid search runs.
 SAVE_DIR = r'./ann/vanderpol/save'
@@ -95,18 +95,6 @@ SEARCH_SPACE = {
 #     'learning_rate':       [ float( 5e-4 ), float( 5e-3 ), float( 5e-2 ) ],                                   # [-] Learning Rate
 # }
 
-# # Define the search space. TEST PARAMETERS.
-# SEARCH_SPACE = {
-#     'c_IC': [ float( 1.0 ) ],                                                               # [-] Initial Condition Loss Coefficient
-#     'c_BC': [ float( 1.0 ) ],                                                               # [-] Boundary Condition Loss Coefficient
-#     'c_residual':     [ float( 1e-5 ), float( 1e-4 ), float( 1e-3 ) ],                      # [-] Residual Loss Coefficient
-#     'c_variational':  [ float( 1e-5 ), float( 1e-4 ), float( 1e-3 ) ],                      # [-] Variational Loss Coefficient
-#     'c_monotonicity': [ float( 1e2 ) ],                                                     # [-] Monotonicity Loss Coefficient
-#     'hidden_layer_widths': [ int( 175 ) ],                                                  # [#] Number of neurons per hidden layer.
-#     'num_hidden_layers':   [ int( 5 ) ],                                                    # [#] Number of hidden layers.
-#     'learning_rate':       [ float( 5e-4 ) ],                                               # [-] Learning Rate.
-# }
-
 
 #%% ---------------------------------------- IMPLEMENT MAIN FUNCTION ----------------------------------------
 
@@ -147,7 +135,7 @@ def main( base_config = BASE_CONFIG, num_repeats = NUM_REPEATS, search_id = SEAR
     # -------------------- INITIALIZE GRID SEARCH --------------------
 
     # Determine whether to load the previously tested configurations.
-    if load_flag:               # If we want to load a previously run grid search...
+    if load_flag:                                                                           # If we want to load a previously run grid search...
 
         # Open the previous configuration file.
         with open( configs_save_path, 'rb' ) as file:                                       # With the configuration file open... 

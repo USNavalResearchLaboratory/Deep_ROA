@@ -239,28 +239,28 @@ class ibc_data_class( pinn_data_class ):
     def is_output_data_valid( self, output_data, condition_type = None ):
 
         # Determine whether to use the stored condition type.
-        if condition_type is None:                                  # If a condition type was not provided...
+        if condition_type is None:                                                      # If a condition type was not provided...
 
             # Use the stored condition type.
             condition_type = self.condition_type
 
         # Determine whether the output data is valid.
-        if isinstance( output_data, list ):                         # If the output data is a non-empty torch tensor...
+        if isinstance( output_data, list ):                                             # If the output data is a non-empty torch tensor...
 
             # Ensure that each of the list entries are non-empty tensors.
             valid_flag = all( ( torch.is_tensor( output_data[ k ] ) and ( output_data[ k ].numel(  ) != 0 ) ) for k in range( len( output_data ) ) )
 
-        elif torch.is_tensor( output_data ) and ( output_data.numel(  ) != 0 ):                     # If the output data is itself a non-empty tensor...
+        elif torch.is_tensor( output_data ) and ( output_data.numel(  ) != 0 ):         # If the output data is itself a non-empty tensor...
 
             # Set the valid flag to true.
             valid_flag = True
 
-        elif ( output_data is None ) and ( condition_type.lower(  ) == 'residual' ):                # If the output data is None and the condition type is residual...
+        elif ( output_data is None ) and ( condition_type.lower(  ) == 'residual' ):    # If the output data is None and the condition type is residual...
 
             # Set the valid flag to true.
             valid_flag = True
 
-        else:                                                                                       # Otherwise...
+        else:                                                                           # Otherwise...
 
             # Set the valid flag to false.
             valid_flag = False
@@ -273,7 +273,7 @@ class ibc_data_class( pinn_data_class ):
     def is_output_derivative_order_valid( self, output_derivative_order, condition_type = None ):
 
         # Determine whether to use the stored condition type.
-        if condition_type is None:                                  # If a condition type was not provided...
+        if condition_type is None:                                                                  # If a condition type was not provided...
 
             # Use the stored condition type.
             condition_type = self.condition_type
@@ -289,7 +289,7 @@ class ibc_data_class( pinn_data_class ):
             # Set the valid flag to true.
             valid_flag = True
 
-        elif ( output_derivative_order is None ) and ( condition_type.lower(  ) == 'residual' ):                # If the output data is None and the condition type is residual...
+        elif ( output_derivative_order is None ) and ( condition_type.lower(  ) == 'residual' ):    # If the output data is None and the condition type is residual...
 
             # Set the valid flag to true.
             valid_flag = True
@@ -307,7 +307,7 @@ class ibc_data_class( pinn_data_class ):
     def is_input_output_data_compatible( self, input_data, output_data, condition_type = None ):
 
         # Determine whether to use the stored condition type.
-        if condition_type is None:                                  # If a condition type was not provided...
+        if condition_type is None:                                                          # If a condition type was not provided...
 
             # Use the stored condition type.
             condition_type = self.condition_type
@@ -316,31 +316,31 @@ class ibc_data_class( pinn_data_class ):
         valid_flag = self.is_input_data_valid( input_data )
 
         # Determine whether to determine whether the output data is valid.
-        if valid_flag:                                                         # If the prior validity checks passed...
+        if valid_flag:                                                                      # If the prior validity checks passed...
 
             # Determine whether the output data is valid.            
             valid_flag &= self.is_output_data_valid( output_data )
 
         # Determine whether to determined whether the input and output data have the same number of data points.
-        if valid_flag:                                                         # If the prior validity checks passed...
+        if valid_flag:                                                                      # If the prior validity checks passed...
 
             # Determine whether to evaluate the output data as a list or as a tensor.
-            if isinstance( output_data, list ):                                 # If the output data is a list...
+            if isinstance( output_data, list ):                                             # If the output data is a list...
 
                 # Ensure that each of the list entries are valid.
                 valid_flag = all( ( input_data.shape[ 0 ] == output_data[ k ].shape[ 0 ] ) for k in range( len( output_data ) ) )
 
-            elif torch.is_tensor( output_data ):                                # If the output data is a tensor...
+            elif torch.is_tensor( output_data ):                                            # If the output data is a tensor...
 
                 # Determine whether the input and output data have the same number of data points.
                 valid_flag &= input_data.shape[ 0 ] == output_data.shape[ 0 ]
 
-            elif ( output_data is None ) and ( condition_type.lower(  ) == 'residual' ):                                           # If the output data is None...
+            elif ( output_data is None ) and ( condition_type.lower(  ) == 'residual' ):    # If the output data is None...
 
                 # Set the valid flag to true.
                 valid_flag = True
 
-            else:                                                               # Otherwise...
+            else:                                                                           # Otherwise...
 
                 # Throw an error.
                 raise ValueError( f'Output data type not recognized.' )
@@ -433,13 +433,13 @@ class ibc_data_class( pinn_data_class ):
     def get_plotting_data( self, plot_type = 'all' ):
 
         # Retrieve the data to plot.
-        if plot_type.lower(  ) == 'all':                             # If we want to plot all of the data in this data set...
+        if plot_type.lower(  ) == 'all':                            # If we want to plot all of the data in this data set...
 
             # Set the input and output plotting data.
             input_plotting_data = self.input_data
             output_plotting_data = self.output_data
 
-        elif plot_type.lower(  ) == 'batch':                         # If we want to plot the batch data in this data set...
+        elif plot_type.lower(  ) == 'batch':                        # If we want to plot the batch data in this data set...
 
             # Set the input and output plotting data.
             input_plotting_data = self.input_data_batch
@@ -579,7 +579,7 @@ class ibc_data_class( pinn_data_class ):
             # Set the input data.
             input_data = self.augment_input_output_data_tensor( input_data )
 
-        else:                                                   # Otherwise...
+        else:                                                               # Otherwise...
 
             # Throw an error.
             raise ValueError( f'Invalid input data: {input_data}' )
@@ -898,7 +898,7 @@ class ibc_data_class( pinn_data_class ):
         input_data, num_data_points, output_data, num_output_sources, batch_number, batch_size = self.setup_batch_computing( input_data, output_data, batch_number, batch_size )
 
         # Determine how to stage the batch.
-        if batch_size is not None:                          # If the batch size is not None...
+        if batch_size is not None:                                                          # If the batch size is not None...
 
             # Compute the batch indexes.
             lower_batch_index = batch_number*batch_size
@@ -911,27 +911,27 @@ class ibc_data_class( pinn_data_class ):
             input_data_batch = input_data[ lower_batch_index:upper_batch_index, ... ]
 
             # Determine whether to retrieve a batch of the output data.
-            if isinstance( output_data, list ) and output_data:                           # If the output data is a non-empty list...
+            if isinstance( output_data, list ) and output_data:                             # If the output data is a non-empty list...
 
                 # Retrieve a batch of the output data from the list.
                 output_data_batch = [ output_data[ k ][ lower_batch_index:upper_batch_index, ... ] for k in range( num_output_sources ) ]
 
-            elif torch.is_tensor( output_data ) and ( output_data.numel(  ) != 0 ):       # If the output data is a non-empty tensor...
+            elif torch.is_tensor( output_data ) and ( output_data.numel(  ) != 0 ):         # If the output data is a non-empty tensor...
 
                 # Retrieve a batch of the output data from the tensor.
                 output_data_batch = output_data[ lower_batch_index:upper_batch_index, ... ]
 
-            elif output_data is None:                                                          # If the output data is None...
+            elif output_data is None:                                                       # If the output data is None...
 
                 # Set the output data batch to be None.
                 output_data_batch = None
 
-            else:                                       # Otherwise...
+            else:                                                                           # Otherwise...
 
                 # Throw an error.
                 raise ValueError( f'Invalid output data: {self.output_data}' )
 
-        else:                                                                                       # Otherwise...
+        else:                                                                               # Otherwise...
 
             # Stage all of the data.
             input_data_batch = input_data

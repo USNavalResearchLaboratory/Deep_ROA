@@ -87,7 +87,7 @@ class domain_class(  ):
     def preprocess_spatial_domain( self, spatial_domain = None ):
 
         # Determine whether to use the stored spatial domain.
-        if spatial_domain is None:                 # If the spatial domain was not provided....
+        if spatial_domain is None:                      # If the spatial domain was not provided....
 
             # Set the spatial domain to be the stored value.
             spatial_domain = self.spatial_domain
@@ -170,15 +170,15 @@ class domain_class(  ):
         if torch.is_tensor( temporal_domain ) and ( temporal_domain.numel(  ) != 0 ) and ( ( temporal_domain.dim(  ) == 1 ) or ( temporal_domain.dim(  ) == 2 ) ):                     # If the temporal domain is valid...
 
             # Set the valid flag to true.
-            b_valid = True
+            valid_flag = True
 
         else:                                                                                                                                                                           # Otherwise...
 
             # Set the valid flag to false.
-            b_valid = False
+            valid_flag = False
 
         # Return the valid flag.
-        return b_valid
+        return valid_flag
 
 
     # Implement a function to validate a spatial domain.
@@ -188,15 +188,15 @@ class domain_class(  ):
         if torch.is_tensor( spatial_domain ) and ( spatial_domain.numel(  ) != 0 ) and ( ( spatial_domain.dim(  ) == 1 ) or ( spatial_domain.dim(  ) == 2 ) ):                     # If the spatial domain is valid...
 
             # Set the valid flag to true.
-            b_valid = True
+            valid_flag = True
 
         else:                                                                                                                                                                       # Otherwise...
 
             # Set the valid flag to false.
-            b_valid = False
+            valid_flag = False
 
         # Return the valid flag.
-        return b_valid
+        return valid_flag
 
 
     #%% ------------------------------------------------------------ GET FUNCTIONS ------------------------------------------------------------
@@ -283,7 +283,7 @@ class domain_class(  ):
         if self.is_temporal_domain_valid( temporal_domain ):                    # If the temporal domain is valid...
 
             # Determine whether it is necessary to unsqueeze the second dimension.
-            if temporal_domain.dim(  ) == 1:                        # If the temporal domain is one dimensional...
+            if temporal_domain.dim(  ) == 1:                                    # If the temporal domain is one dimensional...
 
                 # Unsqueeze the second dimension.
                 temporal_domain.unsqueeze_( 1 )

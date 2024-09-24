@@ -30,29 +30,16 @@ from main_eval import BASE_CONFIG, eval_closed_roa
 LOAD_FLAG = True                                            # [T/F] True = Attempt to resume a previous, unfinished grid search. False - Start a new grid search, replacing any existing searches with the same name.
 
 # Define the number of times to repeat each configuration in the grid.
-NUM_REPEATS = 1                 # [#] Number of times each configuration in the grid search is run.
+NUM_REPEATS = 1                                             # [#] Number of times each configuration in the grid search is run.
 
 # Define the save directory for all grid search runs.
 SAVE_DIR = r'./ann/closed_roa/save'
 
 # Define the folder in which to save results for this particular grid search.
 SEARCH_ID = 'run1_coarse_grid'
-# SEARCH_ID = 'run2_fine_grid'
 
 
 #%% ---------------------------------------- DEFINE GRID SEARCH SPACE ----------------------------------------
-
-# # Define the search space. SHAY'S SPACE
-# SEARCH_SPACE = {
-#     'c_IC': [ float( 17 ), float( 22.1 ), float( 27 ) ],
-#     'c_BC': [ float( 27 ), float( 31.1 ), float( 36 ) ],
-#     'c_residual':     [ float( 64 ), float( 69.1 ), float( 74 ) ],
-#     'c_variational':  [ float( 35 ), float( 39.1 ), float( 43 ) ],
-#     'c_monotonicity': [ float( 75 ), float( 80.1 ), float( 85 ) ],
-#     'hidden_layer_widths': [ int( 125 ), int( 150 ), int( 175 ) ],
-#     'num_hidden_layers':   [ int( 3 ), int( 4 ), int( 5 ) ],
-#     'learning_rate':       [ float( 0.01 ), float( 0.005 ), float( 0.001 ) ],
-# }
 
 # # Define the search space. Run 1 - Coarse grid.
 # SEARCH_SPACE = {
@@ -78,17 +65,6 @@ SEARCH_SPACE = {
     'learning_rate':       [ float( 0.005 ) ],
 }
 
-# # Define the search space. SINGLE TEST PARAMETERS.
-# SEARCH_SPACE = {
-#     'c_IC': [ float( 1.0 ) ],
-#     'c_BC': [ float( 1.0 ) ],
-#     'c_residual':     [ float( 1 ) ],
-#     'c_variational':  [ float( 1 ) ],
-#     'c_monotonicity': [ float( 1e3 ) ],
-#     'hidden_layer_widths': [ int( 175 ) ],
-#     'num_hidden_layers':   [ int( 5 ) ],
-#     'learning_rate':       [ float( 0.005 ) ],
-# }
 
 #%% ---------------------------------------- IMPLEMENT MAIN FUNCTION ----------------------------------------
 
@@ -130,7 +106,7 @@ def main( base_config = BASE_CONFIG, num_repeats = NUM_REPEATS, search_id = SEAR
     # -------------------- INITIALIZE GRID SEARCH --------------------
 
     # Determine whether to load the previously tested configurations.
-    if load_flag:               # If we want to load a previously run grid search...
+    if load_flag:                                                                           # If we want to load a previously run grid search...
 
         # Open the previous configuration file.
         with open( configs_save_path, 'rb' ) as file:                                       # With the configuration file open... 

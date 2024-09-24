@@ -42,11 +42,6 @@ class classification_utilities_class(  ):
         self.plotting_utilities = plotting_utilities_class(  )
 
 
-    #%% ------------------------------------------------------------ VALIDATION FUNCTIONS ------------------------------------------------------------
-
-
-
-
     #%% ------------------------------------------------------------ CLASSIFICATION POINTS FUNCTIONS ------------------------------------------------------------
 
     # Implement a function to generate classification points randomly.
@@ -110,32 +105,3 @@ class classification_utilities_class(  ):
         # Return the contour data.
         return contour_data
 
-
-    # Implement a function to generate classification points along the ROA boundary.
-
-
-    # Implement a function to generate classification points using the user specified algorithm.
-
-
-    #%% ------------------------------------------------------------ NETWORK CLASSIFICATION FUNCTIONS ------------------------------------------------------------
-
-    # Implement a function to determine the network's classification of a point by referencing provided network input and output data.
-
-
-    # Implement a function to determine the network's classification of a point by referencing a provided network and its input data.
-
-
-    # Implement a function to determine the network's classification of a point given user specified network information.
-
-
-    #%% ------------------------------------------------------------ 'TRUE' CLASSIFICATION FUNCTIONS ------------------------------------------------------------
-
-    # Implement a function to determine the true classification of a point by referencing a provided analytical or numerical solution.
-
-
-
-    # Implement a function to determine an approximately 'true' classification of a point by determining whether its network classification changes over a finite time horizon.
-
-
-
-    # Implement a function to determine the true classification of a point by checking a user provided energy function.

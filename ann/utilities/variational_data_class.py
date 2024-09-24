@@ -97,38 +97,6 @@ class variational_data_class( pinn_data_class ):
 
     #%% ------------------------------------------------------------ SETUP FUNCTIONS ------------------------------------------------------------
 
-    # # Implement a function to setup the shuffle indexes.
-    # def setup_shuffle_indexes( self, shuffle_indexes = None, finite_elements = None ):
-
-    #     # Setup the finite elements.
-    #     finite_elements = self.preprocess_finite_elements( finite_elements )
-
-    #     # Determine whether to generate shuffle shuffle_indexes.
-    #     if shuffle_indexes is None:                     # If shuffle shuffle_indexes where not provided...
-
-    #         # Generate shuffled shuffle_indexes.
-    #         shuffle_indexes = torch.randperm( finite_elements.num_elements, dtype = torch.int64, device = self.device )
-
-    #     # Return the shuffle indexes.
-    #     return shuffle_indexes
-
-
-    # # Implement a function to setup the number of elements.
-    # def setup_num_elements( self, num_elements = None, finite_elements = None ):
-
-    #     # Setup the finite elements.
-    #     finite_elements = self.preprocess_finite_elements( finite_elements )
-
-    #     # Determine whether to use the stored number of elements.
-    #     if num_elements is None:                                 # If the number of elements was not provided...
-
-    #         # Use the stored number of elements.
-    #         num_elements = finite_elements.num_elements
-
-    #     # Return the number of elements.
-    #     return num_elements
-
-
     # Implement a function to setup finite elements.
     def setup_elements( self, finite_elements = None, batch_number = None, batch_size = None ):
 

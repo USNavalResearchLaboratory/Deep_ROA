@@ -171,18 +171,18 @@ class pde_class(  ):
     def is_name_valid( self, name ):
 
         # Determine whether the given name is valid.
-        if isinstance( name, str ):                         # If the name is valid...
+        if isinstance( name, str ):                             # If the name is valid...
 
             # Set the valid flag to true.
-            b_valid = True
+            valid_flag = True
 
-        else:                                               # Otherwise...
+        else:                                                   # Otherwise...
 
             # Set the valid flag to false.
-            b_valid = False
+            valid_flag = False
 
         # Return the valid flag.
-        return b_valid
+        return valid_flag
 
 
     # Implement a function to validate the pde type.
@@ -192,15 +192,15 @@ class pde_class(  ):
         if isinstance( type, str ) and ( ( type.lower(  ) == '' ) or ( type.lower(  ) == 'hyperbolic' ) or ( type.lower(  ) == 'parabolic' ) or ( type.lower(  ) == 'elliptic' ) or ( type.lower(  ) == 'first order' ) ):
 
             # Set the valid flag to true.
-            b_valid = True
+            valid_flag = True
 
-        else:                                           # Otherwise...
+        else:                                                   # Otherwise...
 
             # Set the valid flag to false.
-            b_valid = False
+            valid_flag = False
 
         # Return the valid flag.
-        return b_valid
+        return valid_flag
 
 
     # Implement a function to validate the pde domain.
@@ -210,15 +210,15 @@ class pde_class(  ):
         if isinstance( domain, domain_class ):                  # If the domain is valid...
 
             # Set the valid flag to true.
-            b_valid = True
+            valid_flag = True
 
         else:                                                   # Otherwise...
 
             # Set the valid flag to false.
-            b_valid = False
+            valid_flag = False
 
         # Return the valid flag.
-        return b_valid
+        return valid_flag
 
 
     # Implement a function to validate the pde initial-boundary conditions.
@@ -228,45 +228,45 @@ class pde_class(  ):
         if isinstance( initial_boundary_conditions, list ) and initial_boundary_conditions:                                         # If the initial boundary conditions variable is a list and is not empty...
 
             # Initialize the valid flag to true.
-            b_valid = True
+            valid_flag = True
 
             # Initialize a loop counter variable.
             k = torch.tensor( 0, dtype = torch.int64, device = self.device )
 
             # Ensure that each member of the list is an initial-boundary condition object.
-            while b_valid and ( k < len( initial_boundary_conditions ) ):                           # While we have not found an invalid initial-boundary condition and have not yet checked each of the initial-boundary condition...
+            while valid_flag and ( k < len( initial_boundary_conditions ) ):                           # While we have not found an invalid initial-boundary condition and have not yet checked each of the initial-boundary condition...
 
                 # Determine whether this initial boundary condition is valid.
-                b_valid &= isinstance( initial_boundary_conditions[ k ], initial_boundary_condition_class )
+                valid_flag &= isinstance( initial_boundary_conditions[ k ], initial_boundary_condition_class )
 
                 # Advance the loop counter.
                 k += 1
         
-        else:                                                                                                                   # Otherwise...
+        else:                                                                                       # Otherwise...
 
             # Set the valid flag to false.
-            b_valid = False
+            valid_flag = False
 
         # Return the valid flag.
-        return b_valid
+        return valid_flag
 
 
     # Implement a function to validate the residual function.
     def is_residual_function_valid( self, residual_function ):
 
         # Determine whether the residual function is valid.
-        if callable( residual_function ):                                   # Determine whether the residual function is valid...
+        if callable( residual_function ):                                                   # Determine whether the residual function is valid...
             
             # Set the valid flag to true.
-            b_valid = True
+            valid_flag = True
 
         else:                                                                               # Otherwise...
 
             # Set the valid flag to false.
-            b_valid = False
+            valid_flag = False
 
         # Return the valid flag.
-        return b_valid
+        return valid_flag
 
 
     # Implement a function to validate the spatiotemporal pde order.
@@ -276,15 +276,15 @@ class pde_class(  ):
         if torch.is_tensor( spatiotemporal_order ) and ( spatiotemporal_order.numel(  ) != 0 ) and ( spatiotemporal_order.dtype == torch.bool ):                  # If the spatiotemporal order is valid...
 
             # Set the valid flag to true.
-            b_valid = True
+            valid_flag = True
 
         else:                                                                                                                                                       # Otherwise...
 
             # Set the valid flag to false.
-            b_valid = False
+            valid_flag = False
 
         # Return the valid flag.
-        return b_valid
+        return valid_flag
 
 
     #%% ------------------------------------------------------------ SET FUNCTIONS ------------------------------------------------------------

@@ -273,22 +273,11 @@ def eval_spiral_roa( config: dict = BASE_CONFIG ) -> int:
     f_bc_3 = lambda s: A0/( 1 + torch.exp( -S0*( torch.norm( s[ :, 1: ] - P0_shift, 2, dim = 1, keepdim = True ) - R0 ) ) ) + z0_shift            # [-] Boundary condition function.
     f_bc_4 = lambda s: A0/( 1 + torch.exp( -S0*( torch.norm( s[ :, 1: ] - P0_shift, 2, dim = 1, keepdim = True ) - R0 ) ) ) + z0_shift            # [-] Boundary condition function.
 
-    # f_ic = lambda s: A0/( 1 + torch.exp( -S0*( torch.norm( s[ :, 1: ] - P0_shift, 2, dim = 1, keepdim = True ) - R0 ) ) ) + z0_shift                # [-] Initial condition function.
-    # f_bc_1 = lambda s: torch.zeros( ( s.shape[ 0 ], 1 ), dtype = torch.float32, device = device )                                                   # [-] Boundary condition function 1.
-    # f_bc_2 = lambda s: torch.zeros( ( s.shape[ 0 ], 1 ), dtype = torch.float32, device = device )                                                   # [-] Boundary condition function 2.
-    # f_bc_3 = lambda s: torch.zeros( ( s.shape[ 0 ], 1 ), dtype = torch.float32, device = device )                                                   # [-] Boundary condition function 3.
-    # f_bc_4 = lambda s: torch.zeros( ( s.shape[ 0 ], 1 ), dtype = torch.float32, device = device )                                                   # [-] Boundary condition function 4.
-
     # Define the initial-boundary condition information.
     ibc_types = [ 'dirichlet', 'dirichlet', 'dirichlet', 'dirichlet', 'dirichlet' ]                                                               # [-] Initial-Boundary condition types (e.g., dirichlet, neumann, etc.).
     ibc_dimensions = torch.tensor( [ 0, 1, 1, 2, 2 ], dtype = torch.uint8, device = device )
     ibc_condition_functions = [ f_ic, f_bc_1, f_bc_2, f_bc_3, f_bc_4 ]
     ibc_placements = [ 'lower', 'lower', 'upper', 'lower', 'upper' ]  
-
-    # ibc_types = [ 'dirichlet', 'yuan-li', 'yuan-li', 'yuan-li', 'yuan-li' ]
-    # ibc_dimensions = torch.tensor( [ 0, 1, 1, 2, 2 ], dtype = torch.uint8, device = device )
-    # ibc_condition_functions = [ f_ic, f_bc_1, f_bc_2, f_bc_3, f_bc_4 ]
-    # ibc_placements = [ 'lower', 'lower', 'upper', 'lower', 'upper' ]  
 
     # Define the PDE name and type.
     pde_name = 'Yuan-Li PDE: Spiral ROA'                                                                                                       # [-] PDE name.

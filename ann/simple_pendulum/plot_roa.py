@@ -9,7 +9,6 @@
 # Import standard libraries.
 import os
 import sys
-import math
 import torch
 import random
 import numpy as np
@@ -39,8 +38,7 @@ np.random.seed( 0 )
 torch.manual_seed( 0 )
 
 # Set the computational device.
-device = 'cuda:9' if torch.cuda.is_available(  ) else 'cpu'
-# device = 'cpu'
+device = 'cuda' if torch.cuda.is_available(  ) else 'cpu'
 
 # Define the save options.
 save_path = r'./ann/simple_pendulum/save'                                                                    # [-] Relative path to the directory in which to save network data, figures, etc.
@@ -103,11 +101,6 @@ Zs_BO = np.loadtxt( load_path + '/Zs_BO.csv', delimiter = ',', dtype = np.float3
 
 
 #%% ---------------------------------------- PLOT THE NETWORK RESULTS ----------------------------------------
-
-# fig_final_prediction, ax_final_prediction = pinn_grid.plot_network_final_prediction( pinn_grid.network.plotting_data, pinn_grid.domain, pinn_grid.network, projection_dimensions = None, projection_values = None, level = torch.tensor( 0, dtype = torch.float32, device = pinn_grid.pinn_options.device ), fig = None, save_directory = save_path, as_surface = True, as_stream = True, as_contour = True, show_plot = False )
-
-# fig_final_prediction, ax_final_prediction = pinn_BO.plot_network_final_prediction( pinn_BO.network.plotting_data, pinn_BO.domain, pinn_BO.network, projection_dimensions = None, projection_values = None, level = torch.tensor( 0, dtype = torch.float32, device = pinn_BO.pinn_options.device ), fig = None, save_directory = save_path, as_surface = True, as_stream = True, as_contour = True, show_plot = False )
-
 
 # Plot the flow field.
 fig, ax = pinn_grid.plot_flow_field( plotting_data = pinn_grid.network.plotting_data, flow_functions = pinn_grid.flow_functions, projection_dimensions = torch.tensor( [ 0 ], dtype = torch.uint8, device = device ), projection_values = torch.tensor( [ pinn_grid.problem_specifications.temporal_domain[ -1 ] ], dtype = torch.float32, device = pinn_grid.pinn_options.device ), fig = None, input_labels = None, title_string = 'Flow Field', save_directory = save_path, as_surface = False, as_stream = True, as_contour = False, show_plot = False )

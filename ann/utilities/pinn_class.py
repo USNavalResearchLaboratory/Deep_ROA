@@ -610,7 +610,7 @@ class pinn_class(  ):
     def preprocess_classification_data( self, classification_data, num_spatial_dimensions, domain, plot_time, level, level_set_guesses, newton_tolerance, newton_max_iterations, exploration_radius, num_exploration_points, unique_tolerance, classification_noise_magnitude, num_noisy_samples_per_level_set_point, domain_subset_type ):
 
         # Determine whether to generate the classification data at which to compute the classification loss.
-        if classification_data is None:                 # If the classification data was not provided...
+        if classification_data is None:                                 # If the classification data was not provided...
 
             # Determine whether to generate the classification data.
             if ( num_spatial_dimensions is not None ) and ( domain is not None ) and ( plot_time is not None ):
@@ -994,7 +994,7 @@ class pinn_class(  ):
         initial_boundary_condition_data = [  ]
 
         # Create the data associated with each initial-boundary condition.
-        for k1 in range( num_initial_boundary_conditions ):                      # Iterate through each of the initial-boundary conditions...
+        for k1 in range( num_initial_boundary_conditions ):     # Iterate through each of the initial-boundary conditions...
 
             # Retrieve the number of condition functions.
             num_condition_functions = torch.tensor( len( initial_boundary_conditions[ k1 ].condition_functions ), dtype = torch.uint8, device = self.pinn_options.device )
@@ -1152,15 +1152,15 @@ class pinn_class(  ):
     def data_percent2data_quantity( self, p = None, num_total = None, condition_type = 'initial', application = 'training' ):
 
         # Determine whether to use the stored data percent.
-        if p is None:                       # If no data percent was provided...
+        if p is None:                                                       # If no data percent was provided...
 
             # Determine which stored value to use.
-            if condition_type.lower(  ) == 'initial':                        # If we want to convert the data percentage to a data quantity for the initial condition data...
+            if condition_type.lower(  ) == 'initial':                       # If we want to convert the data percentage to a data quantity for the initial condition data...
 
                 # Use the stored percent initial condition data.
                 p = self.hyperparameters.p_initial
 
-            elif condition_type.lower(  ) == 'boundary':                        # If we want to convert the data percentage to a data quantity for the boundary condition data...
+            elif condition_type.lower(  ) == 'boundary':                    # If we want to convert the data percentage to a data quantity for the boundary condition data...
 
                 # Use the stored percent boundary condition data.
                 p = self.hyperparameters.p_boundary
@@ -1176,20 +1176,20 @@ class pinn_class(  ):
                 raise ValueError( 'Invalid condition type: {condition_type}' )
 
         # Determine whether to use the stored total training data quantity.
-        if num_total is None:                       # If no total data quantity was provided...
+        if num_total is None:                                               # If no total data quantity was provided...
 
             # Determine whether to use the stored training or testing data quantity.
-            if application.lower(  ) == 'training':                             # If we want to reference the total quantity of training data...
+            if application.lower(  ) == 'training':                         # If we want to reference the total quantity of training data...
 
                 # Use the stored total training data quantity.
                 num_total = self.hyperparameters.num_training_data
 
-            elif application.lower(  ) == 'testing':                            # If we want to reference the total quantity of testing data...
+            elif application.lower(  ) == 'testing':                        # If we want to reference the total quantity of testing data...
 
                 # Use the stored total testing data quantity.
                 num_total = self.hyperparameters.num_testing_data
 
-            else:                                                               # Otherwise...
+            else:                                                           # Otherwise...
 
                 # Throw an error.
                 raise ValueError( f'Invalid application type: {application}' )
@@ -1205,27 +1205,27 @@ class pinn_class(  ):
     def condition_type2output_order( self, condition_type ):
 
         # Determine how to define the output derivative order.
-        if condition_type.lower(  ) == 'dirichlet':                     # If the initial condition type is 'dirichlet'...
+        if condition_type.lower(  ) == 'dirichlet':                         # If the initial condition type is 'dirichlet'...
 
             # Set the output derivative order to zero.
             output_derivative_order = torch.zeros( size = ( 1, 1 ), dtype = torch.uint8, device = self.pinn_options.device )
 
-        elif condition_type.lower(  ) == 'neumann':                     # If the initial condition type is 'neumann'...
+        elif condition_type.lower(  ) == 'neumann':                         # If the initial condition type is 'neumann'...
 
             # Set the output derivative order to one.
             output_derivative_order = torch.ones( size = ( 1, 1 ), dtype = torch.uint8, device = self.pinn_options.device )
 
-        elif condition_type.lower(  ) == 'cauchy':                     # If the initial condition type is 'cauchy'...
+        elif condition_type.lower(  ) == 'cauchy':                          # If the initial condition type is 'cauchy'...
 
             # Set the output derivative order to be zero, one.
             output_derivative_order = torch.tensor( [ 0, 1 ], dtype = torch.uint8, device = self.pinn_options.device )
 
-        elif condition_type.lower(  ) == 'yuan-li':                     # If the initial condition type is 'yuan-li'...
+        elif condition_type.lower(  ) == 'yuan-li':                         # If the initial condition type is 'yuan-li'...
 
             # Set the output derivative order to be two.
             output_derivative_order = 2*torch.ones( ( 1, 1 ), dtype = torch.uint8, device = self.pinn_options.device )
 
-        else:                                                                                   # Otherwise...
+        else:                                                               # Otherwise...
 
             # Throw an error.
             raise ValueError( f'Invalid specific condition type: {condition_type}' )
@@ -1248,7 +1248,7 @@ class pinn_class(  ):
             # Set the element centers to be None.
             xs_element_centers = None
 
-        else:                                                       # Otherwise... ( i.e., the element computation type is not recognized... )
+        else:                                                               # Otherwise... ( i.e., the element computation type is not recognized... )
 
             # Throw an error.
             raise ValueError( f'Invalid element computation option: {element_computation_option}' )
@@ -1272,7 +1272,7 @@ class pinn_class(  ):
         element_volume = element_volume_percent*domain_volume
 
         # Determine how to compute the element scale.
-        if element_type.lower(  ) == 'rectangular':                 # If the element type is rectangular...
+        if element_type.lower(  ) == 'rectangular':                         # If the element type is rectangular...
 
             # Compute the domain ranges.
             domain_ranges = domain.compute_ranges(  )
@@ -1290,7 +1290,7 @@ class pinn_class(  ):
             element_scale = torch.ones( domain.num_spatiotemporal_dimensions, dtype = torch.float32, device = self.pinn_options.device )
 
             # Set the scale of each element dimension.
-            for k in range( domain.num_spatiotemporal_dimensions ):                     # Iterate through each of the spatiotemporal dimensions...
+            for k in range( domain.num_spatiotemporal_dimensions ):         # Iterate through each of the spatiotemporal dimensions...
 
                 # Set the scale of this element dimension.
                 element_scale[ k ] = ps[ k ]*element_size

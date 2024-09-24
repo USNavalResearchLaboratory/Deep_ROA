@@ -1326,7 +1326,7 @@ class neural_network_class( torch.nn.Module ):
     def is_residual_function_code_compatible( self, residual_function = None, residual_code = None, num_residual_function_inputs = None ):
 
         # Determine whether to use the stored residual function.
-        if residual_function is None:               # If the residual function was not provided...
+        if residual_function is None:                                                           # If the residual function was not provided...
 
             # Use the stored residual function.
             residual_function = self.residual_function
@@ -2718,7 +2718,6 @@ class neural_network_class( torch.nn.Module ):
 
             # Compute the gradients associated with the loss.
             batch_loss.backward(  )
-            # batch_loss.backward( retain_graph = True )
 
             # Perform an optimizer step on this batch.
             self.optimizer.step(  )
@@ -3085,12 +3084,12 @@ class neural_network_class( torch.nn.Module ):
                     # Throw an error.
                     raise ValueError( f'Invalid derivative code: {derivative_code}' )
 
-        elif torch.is_tensor( derivative_code ):                  # If the  derivative code is a tensor...
+        elif torch.is_tensor( derivative_code ):                    # If the  derivative code is a tensor...
 
             # Retrieve the unique entries of the derivative code tensor.
             unique_derivative_code = derivative_code.unique(  )
 
-        else:                                                   # Otherwise... (i.e., the derivative code is not recognized...)    
+        else:                                                       # Otherwise... (i.e., the derivative code is not recognized...)    
 
             # Throw an error.
             raise ValueError( f'Invalid derivative code: {derivative_code}' )
@@ -3101,12 +3100,12 @@ class neural_network_class( torch.nn.Module ):
             # Determine which dimension derivatives are required based on the derivative code.
             for k in range( num_inputs ):                           # Iterate through each of the unique derivatives...
 
-                if any( unique_derivative_code == k ):                    # If this input is in the unique derivative code...
+                if any( unique_derivative_code == k ):              # If this input is in the unique derivative code...
 
                     # Indicate that a derivative with respect to this input dimension is required for the derivative calculation.
                     derivative_requirements[ k ] = True
 
-                else:                                                   # Otherwise... (If this input is not in the unique derivative code...)  
+                else:                                               # Otherwise... (If this input is not in the unique derivative code...)  
 
                     # Indicate that a derivative with respect to this input dimension is not required for the derivative calculation.
                     derivative_requirements[ k ] = False
@@ -3199,7 +3198,7 @@ class neural_network_class( torch.nn.Module ):
         num_required_derivatives = self.compute_num_required_derivatives( derivative_code )
 
         # Determine whether there are any network derivatives.
-        if num_required_derivatives is None:                                             # If there are no derivatives to compute...
+        if num_required_derivatives is None:                                        # If there are no derivatives to compute...
 
             # Set the network derivatives to None.
             network_derivatives = None
@@ -3207,7 +3206,7 @@ class neural_network_class( torch.nn.Module ):
         else:                                                                       # Otherwise... (i.e., if the number of network derivatives is not none...)
 
             # Determine whether to embed the derivative code tensor in a list.
-            if torch.is_tensor( derivative_code ):                                    # If the derivative code is itself a tensor...
+            if torch.is_tensor( derivative_code ):                                  # If the derivative code is itself a tensor...
 
                 # Embed the derivative code tensor in a list.
                 derivative_code = [ derivative_code ]
@@ -3216,21 +3215,21 @@ class neural_network_class( torch.nn.Module ):
             network_derivatives = [  ]
 
             # Compute each of the network derivatives.
-            for k1 in range( num_required_derivatives ):             # Iterate through each of the network derivatives...
+            for k1 in range( num_required_derivatives ):                            # Iterate through each of the network derivatives...
 
                 # Determine whether there are derivatives to compute associated with this network derivative.
-                if derivative_code[ k1 ] is not None:             # If this derivative code list entry is not None...
+                if derivative_code[ k1 ] is not None:                               # If this derivative code list entry is not None...
 
                     # Initialize this network derivative to the network output.
                     network_derivative = network_output
 
                     # Compute any necessary derivatives for this network derivative.
-                    for k2 in range( derivative_code[ k1 ].numel(  ) ):                                   # Iterate through each of the derivatives that are required for this residual input...
+                    for k2 in range( derivative_code[ k1 ].numel(  ) ):             # Iterate through each of the derivatives that are required for this residual input...
 
                         # Compute the derivatives associated with this residual input.
                         network_derivative = self.compute_derivative( network_derivative, network_input_tuple[ derivative_code[ k1 ][ k2 ] ] )
 
-                else:                                           # Otherwise... ( i.e., this derivative code list entry is None... )
+                else:                                                               # Otherwise... ( i.e., this derivative code list entry is None... )
 
                     # Set the network derivative to be the network inputs.
                     network_derivative = torch.cat( network_input_tuple, dim = 1 )
@@ -3320,10 +3319,10 @@ class neural_network_class( torch.nn.Module ):
     def check_early_stop_criteria( self ):
 
         # Set the early stop flag to false.
-        b_early_stop = False
+        early_stop_flag = False
 
         # Return the early stop false.
-        return b_early_stop
+        return early_stop_flag
 
 
     #%% ------------------------------------------------------------ UTILITY FUNCTIONS ------------------------------------------------------------
@@ -3670,7 +3669,7 @@ class neural_network_class( torch.nn.Module ):
             new_percent_complete = self.compute_percent_completion( batch_number, num_batches )
 
             # Determine whether to print out batch information.
-            if ( ( new_percent_complete - old_percent_complete ) >= batch_print_frequency ):                                 # If this is a batch whose information we would like to print...
+            if ( ( new_percent_complete - old_percent_complete ) >= batch_print_frequency ):    # If this is a batch whose information we would like to print...
 
                 # Print out batch information.
                 self.print_batch_info( batch_number, batch_loss, new_percent_complete, batch_duration )
@@ -4227,8 +4226,6 @@ class neural_network_class( torch.nn.Module ):
             # Set the 1D style.
             D1_style_correct = '.g'
             D1_style_incorrect = '.y'
-            D1_style_correct_forecast = 'xg'
-            D1_style_incorrect_forecast = 'xy'
 
             # Compute the correct indexes.
             correct_indexes = torch.squeeze( actual_classifications == network_classifications )
@@ -4237,15 +4234,9 @@ class neural_network_class( torch.nn.Module ):
             classification_data_correct_input = torch.unsqueeze( classification_data[ correct_indexes, 1 ], 1 )
             classification_data_correct_output = torch.unsqueeze( classification_data[ correct_indexes, 2 ], 1 )
 
-            classification_data_forecast_correct_input = torch.unsqueeze( classification_data_forecast[ correct_indexes, 1 ], 1 )
-            classification_data_forecast_correct_output = torch.unsqueeze( classification_data_forecast[ correct_indexes, 2 ], 1 )
-
             # Retrieve the incorrect classification points.
             classification_data_incorrect_input = torch.unsqueeze( classification_data[ ~correct_indexes, 1 ], 1 )
             classification_data_incorrect_output = torch.unsqueeze( classification_data[ ~correct_indexes, 2 ], 1 )
-
-            classification_data_forecast_incorrect_input = torch.unsqueeze( classification_data_forecast[ ~correct_indexes, 1 ], 1 )
-            classification_data_forecast_incorrect_output = torch.unsqueeze( classification_data_forecast[ ~correct_indexes, 2 ], 1 )
 
             # Determine whether there is correct classification data to plot.
             if ( classification_data_correct_input.numel(  ) != 0 ) and ( classification_data_correct_output.numel(  ) != 0 ):            # If there is correct classification data to plot...
@@ -4259,10 +4250,6 @@ class neural_network_class( torch.nn.Module ):
                 # Plot the incorrect classification data.
                 figs, axes = self.plotting_utilities.plot( classification_data_incorrect_input, classification_data_incorrect_output, projection_dimensions, projection_values, level, fig[ 0 ], input_labels, title_string, save_directory, as_surface, as_stream, as_contour, show_plot, D1_style_incorrect )
             
-            # Plot the forecasted classification data.
-            # figs, axes = self.plotting_utilities.plot( classification_data_forecast_correct_input, classification_data_forecast_correct_output, projection_dimensions, projection_values, level, fig[ 0 ], input_labels, title_string, save_directory, as_surface, as_stream, as_contour, show_plot, D1_style_correct_forecast )
-            # figs, axes = self.plotting_utilities.plot( classification_data_forecast_incorrect_input, classification_data_forecast_incorrect_output, projection_dimensions, projection_values, level, fig[ 0 ], input_labels, title_string, save_directory, as_surface, as_stream, as_contour, show_plot, D1_style_incorrect_forecast )
-
         else:                                                                   # Otherwise...
 
             # Create the figure and axes.

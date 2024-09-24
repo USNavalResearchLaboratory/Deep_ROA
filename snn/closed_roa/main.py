@@ -264,7 +264,8 @@ p_boundary = torch.tensor( 0.25, dtype = torch.float16, device = device )       
 p_residual = torch.tensor( 0.5, dtype = torch.float16, device = device )                                # [%] Percentage of training and testing data associated with the residual.
 
 # Define the number of training epochs.
-num_epochs = torch.tensor( 400, dtype = torch.int32, device = device )                                  # [#] Number of training epochs to perform.
+num_epochs = torch.tensor( 10, dtype = torch.int32, device = device )                                  # [#] Number of training epochs to perform.
+# num_epochs = torch.tensor( 400, dtype = torch.int32, device = device )                                  # [#] Number of training epochs to perform.
 # num_epochs = torch.tensor( 1000, dtype = torch.int32, device = device )                                  # [#] Number of training epochs to perform.
 
 # Define the residual batch size.

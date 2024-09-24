@@ -19,7 +19,6 @@
 # Import standard libraries.
 import torch
 
-
 # Import custom libraries.
 from tensor_utilities_class import tensor_utilities_class as tensor_utilities_class
 from plotting_utilities_class import plotting_utilities_class as plotting_utilities_class
@@ -98,12 +97,12 @@ class finite_element_class:
     def is_integration_order_valid( self, integration_order ):
 
         # Determine whether the gauss-legendre order is valid.
-        if ( integration_order == 1 ) or ( integration_order == 2 ):                  # If the gauss-legendre order is one or two...
+        if ( integration_order == 1 ) or ( integration_order == 2 ):                # If the gauss-legendre order is one or two...
 
             # Set the valid flag to true.
             valid_flag = True
 
-        else:                                                                               # Otherwise...
+        else:                                                                       # Otherwise...
 
             # Set the valid flag to false.
             valid_flag = False
@@ -134,18 +133,18 @@ class finite_element_class:
     def is_num_basis_functions_valid( self, num_basis_functions, num_points_per_element = None ):
 
         # Determine whether to use the stored number of points per element.
-        if num_points_per_element is None:              # If the number of points per element was not provided...
+        if num_points_per_element is None:                                                              # If the number of points per element was not provided...
 
             # Set the number of points per element to be the stored number of points per element.
             num_points_per_element = self.num_points_per_element
         
         # Determine whether the number of basis functions is valid.
-        if ( num_basis_functions >= 1 ) and ( num_basis_functions <= self.num_points_per_element ):                 # If the number of desired basis functions is greater than or equal to one and less than or equal to the number of points per element...
+        if ( num_basis_functions >= 1 ) and ( num_basis_functions <= self.num_points_per_element ):     # If the number of desired basis functions is greater than or equal to one and less than or equal to the number of points per element...
 
             # Set the valid flag to be true.
             valid_flag = True
 
-        else:                                                                                                       # Otherwise...
+        else:                                                                                           # Otherwise...
 
             # Set the valid flag to be false.
             valid_flag = False
@@ -176,7 +175,7 @@ class finite_element_class:
     def is_element_centers_valid( self, xs_element_centers, num_dimensions = None ):
 
         # Determine whether to use the stored number of dimensions.
-        if num_dimensions is None:              # If the number of dimensions is None...
+        if num_dimensions is None:                                      # If the number of dimensions is None...
 
             # Set the number of dimensions to be the stored value.
             num_dimensions = self.num_dimensions
@@ -200,12 +199,12 @@ class finite_element_class:
     def is_element_type_valid( self, element_type ):
 
         # Determine whether the element type is valid.
-        if element_type.lower(  ) in ( 'rectangular', 'rectangle', 'cartesian' ):             # If the element type is 'rectangular'...
+        if element_type.lower(  ) in ( 'rectangular', 'rectangle', 'cartesian' ):               # If the element type is 'rectangular'...
 
             # Set the valid flag to true.
             valid_flag = True
 
-        else:                                                   # Otherwise...
+        else:                                                                                   # Otherwise...
 
             # Set the valid flag to false.
             valid_flag = False
@@ -259,7 +258,7 @@ class finite_element_class:
     def preprocess_num_elements( self, num_elements ):
 
         # Determine whether to use the stored number of elements.
-        if num_elements is None:        # If the number of elements was not provided...
+        if num_elements is None:                        # If the number of elements was not provided...
 
             # Set the number of elements to be the stored value.
             num_elements = self.num_elements
@@ -272,7 +271,7 @@ class finite_element_class:
     def preprocess_num_basis_functions( self, num_basis_functions, integration_order, num_dimensions, set_flag ):
 
         # Determine whether to use the stored number of basis functions.
-        if num_basis_functions is None:                # If no number of basis functions was provided...
+        if num_basis_functions is None:                 # If no number of basis functions was provided...
 
             # Determine whether to use the number of basis functions or to generate new ones.
             if self.num_basis_functions is None:        # If there are no stored number of basis functions...
@@ -280,7 +279,7 @@ class finite_element_class:
                 # Compute the number of basis functions.
                 num_basis_functions = self.compute_num_basis_functions( integration_order, num_dimensions, set_flag )
 
-            else:                                   # Otherwise...
+            else:                                       # Otherwise...
 
                 # Set the number of basis functions to be the existing values.
                 num_basis_functions = self.num_basis_functions
@@ -293,15 +292,15 @@ class finite_element_class:
     def preprocess_num_points_per_element( self, num_points_per_element, integration_order, num_dimensions, set_flag = False ):
 
         # Determine whether to use the stored number of points per element.
-        if num_points_per_element is None:                # If no number of points per element was provided...
+        if num_points_per_element is None:                  # If no number of points per element was provided...
 
             # Determine whether to use the stored gauss-legendre template points or to generate new ones.
-            if self.num_points_per_element is None:        # If there are no stored gauss-legendre template points...
+            if self.num_points_per_element is None:         # If there are no stored gauss-legendre template points...
 
                 # Compute the number of points per element.
                 num_points_per_element = self.compute_num_points_per_element( integration_order, num_dimensions, set_flag )
 
-            else:                                   # Otherwise...
+            else:                                           # Otherwise...
 
                 # Set the number of points per element to be the existing values.
                 num_points_per_element = self.num_points_per_element
@@ -380,12 +379,12 @@ class finite_element_class:
         if ws_template_weights is None:             # If the template weights was not provided...
 
             # Determine whether to set the template integration weights to be the stored value.
-            if self.ws_template_weights is None:                    # If there are no stored template weights...
+            if self.ws_template_weights is None:    # If there are no stored template weights...
 
                 # Determine whether to compute the template integration weights.
                 ws_template_weights = self.compute_template_weights( integration_order, set_flag )
 
-            else:                                                   # Otherwise... ( i.e., there are stored template weights... )
+            else:                                   # Otherwise... ( i.e., there are stored template weights... )
 
                 # Set the template integration weights to be the stored value.
                 ws_template_weights = self.ws_template_weights
@@ -1087,7 +1086,6 @@ class finite_element_class:
         local_domain = [ xis_1D_template_integration_points ]*num_dimensions
 
         # Create a list of the element template points.
-        # xis_template_integration_points = torch.meshgrid( *local_domain )
         xis_template_integration_points = torch.meshgrid( *local_domain, indexing = 'ij' )
 
         # Convert the element template points list to an element template points tensor.
@@ -1154,7 +1152,6 @@ class finite_element_class:
         index_template = torch.tensor( range( integration_order + 1 ), dtype = torch.uint8, device = self.device )
 
         # Create a list of the indexes to use when combining the basis functions.
-        # indexes = torch.meshgrid( *[ index_template for _ in range( num_dimensions ) ] )
         indexes = torch.meshgrid( *[ index_template for _ in range( num_dimensions ) ], indexing = 'ij' )
 
         # Convert the element template points list to an element template points tensor.
@@ -1165,14 +1162,13 @@ class finite_element_class:
 
         # Create lists of each combination of basis functions.
         g_list = [ [ gs_template_basis_functions[ indexes[ k1, k2 ] ] for k2 in range( num_dimensions ) ] for k1 in range( num_points_per_element ) ]
-        # g_list = [ [ gs_template_basis_functions[ int( indexes[ k1 ][ k2 ] ) ] for k2 in range( num_dimensions ) ] for k1 in range( num_points_per_element ) ]
 
         # Create an tensor to store the basis functions evaluated over the template element.
         G_basis_values = torch.zeros( ( 1, num_basis_functions, num_points_per_element ), dtype = torch.float32, device = self.device )
 
         # Compute the value of each basis function at each point in template element.
-        for k1 in range( num_basis_functions ):                                # Iterate through each basis function...
-            for k2 in range( num_points_per_element ):                     # Iterate through each template element point...
+        for k1 in range( num_basis_functions ):                             # Iterate through each basis function...
+            for k2 in range( num_points_per_element ):                      # Iterate through each template element point...
 
                 # Initialize the basis function value associated with this basis function and template element point.
                 g = torch.tensor( 1, dtype = torch.float32, device = self.device )
@@ -1347,13 +1343,13 @@ class finite_element_class:
     def generate_element_data( self, xs_element_centers ):
 
         # Construct the integration points for every element in the space.
-        xs_integration_points = self.compute_integration_points( xs_element_centers )                             # ND Gauss-Legendre Integration Points.
+        xs_integration_points = self.compute_integration_points( xs_element_centers )                       # ND Gauss-Legendre Integration Points.
 
         # Define the number of elements.
         num_elements = torch.tensor( xs_element_centers.shape[ 0 ], dtype = torch.int64, device = self.device )
 
         # Construct the basis evaluation matrix.
-        G_basis_values = self.compute_basis_values( num_elements )                                        # Basis Functions Evaluated at the Integration Points.
+        G_basis_values = self.compute_basis_values( num_elements )                                          # Basis Functions Evaluated at the Integration Points.
 
         # Construct the integration weight matrix.
         W_integration_weights = self.compute_integration_weights( num_elements )
@@ -1539,7 +1535,7 @@ class finite_element_class:
                 W_integration_weights_batch = W_integration_weights[ lower_batch_index:upper_batch_index, ... ]
                 sigma_jacobian_batch = sigma_jacobian[ lower_batch_index:upper_batch_index, ... ]
 
-            else:                                                                                       # Otherwise... ( i.e., the batch size was not provided... )
+            else:                                               # Otherwise... ( i.e., the batch size was not provided... )
 
                 # Stage all of the data.
                 xs_integration_points_batch = xs_integration_points
@@ -1547,7 +1543,7 @@ class finite_element_class:
                 W_integration_weights_batch = W_integration_weights
                 sigma_jacobian_batch = sigma_jacobian
 
-        else:                                                                                           # Otherwise... ( i.e., there are no elements... )
+        else:                                                   # Otherwise... ( i.e., there are no elements... )
 
             # Set the element batch information to None.
             xs_integration_points_batch = None

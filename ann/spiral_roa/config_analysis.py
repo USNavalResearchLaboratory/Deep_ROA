@@ -9,8 +9,6 @@
 import dill as pkl
 import numpy as np
 
-# Import custom libraries.
-
 
 #%% ---------------------------------------- READ IN GRID SEARCH CONFIGURATIONS ----------------------------------------
 
@@ -97,20 +95,6 @@ print( f'learning_rate: {min_config["learning_rate"]}' )
 print( f'Minimum Loss (Config #{min_loss_index}): {min_loss} [%]' )
 print( '------------------------------------------------------------------' )
 
-# print( '\n' )
-# print( '-------------------- MINIMUM AVERAGE LOSS INFORMATION --------------------' )
-# print( f'Minimum Config (Config #{min_avg_loss_index}): {min_avg_config}' )
-# print( f'c_IC: {min_avg_config["c_IC"]}' )
-# print( f'c_BC: {min_avg_config["c_BC"]}' )
-# print( f'c_residual: {min_avg_config["c_residual"]}' )
-# print( f'c_variational: {min_avg_config["c_variational"]}' )
-# print( f'c_monotonicity: {min_avg_config["c_monotonicity"]}' )
-# print( f'hidden_layer_widths: {min_avg_config["hidden_layer_widths"]}' )
-# print( f'num_hidden_layers: {min_avg_config["num_hidden_layers"]}' )
-# print( f'learning_rate: {min_avg_config["learning_rate"]}' )
-# print( f'Minimum Loss (Config #{min_avg_loss_index}): {min_avg_loss} [%]' )
-# print( '--------------------------------------------------------------------------' )
-
 print( '\n' )
 print( '-------------------- MAXIMUM LOSS INFORMATION --------------------' )
 print( f'Maximum Config (Config #{max_loss_index}): {max_config}' )
@@ -125,20 +109,6 @@ print( f'learning_rate: {max_config["learning_rate"]}' )
 print( f'Maximum Loss (Config #{max_loss_index}): {max_loss} [%]' )
 print( '------------------------------------------------------------------' )
 
-# print( '\n' )
-# print( '-------------------- MAXIMUM AVERAGE LOSS INFORMATION --------------------' )
-# print( f'Maximum Config (Config #{max_avg_loss_index}): {max_avg_config}' )
-# print( f'c_IC: {max_avg_config["c_IC"]}' )
-# print( f'c_BC: {max_avg_config["c_BC"]}' )
-# print( f'c_residual: {max_avg_config["c_residual"]}' )
-# print( f'c_variational: {max_avg_config["c_variational"]}' )
-# print( f'c_monotonicity: {max_avg_config["c_monotonicity"]}' )
-# print( f'hidden_layer_widths: {max_avg_config["hidden_layer_widths"]}' )
-# print( f'num_hidden_layers: {max_avg_config["num_hidden_layers"]}' )
-# print( f'learning_rate: {max_avg_config["learning_rate"]}' )
-# print( f'Maximum Loss (Config #{max_avg_loss_index}): {max_avg_loss} [%]' )
-# print( '--------------------------------------------------------------------------' )
-
 print( '\n' )
 print( '-------------------- SUMMARY INFORMATION --------------------' )
 print( f'# of Configs: {num_completed_configs} / {num_configs} ({percent_configs_completed} [%])' )
@@ -146,4 +116,3 @@ print( f'Minimum Loss: {min_loss} [%] (Avg. {min_avg_loss} [%])' )
 print( f'Maximum Loss: {max_loss} [%] (Avg. {max_avg_loss} [%])' )
 print( f'Loss Range: {loss_range} [%]' )
 print( '-------------------------------------------------------------' )
-

@@ -27,37 +27,19 @@ from main_eval import BASE_CONFIG, eval_pattern_roa
 
 # Define whether to attempt to continue an earlier grid search.
 LOAD_FLAG = False
-# LOAD_FLAG = True                                            # [T/F] True = Attempt to resume a previous, unfinished grid search. False - Start a new grid search, replacing any existing searches with the same name.
+# LOAD_FLAG = True                                          # [T/F] True = Attempt to resume a previous, unfinished grid search. False - Start a new grid search, replacing any existing searches with the same name.
 
 # Define the number of times to repeat each configuration in the grid.
-NUM_REPEATS = 1                 # [#] Number of times each configuration in the grid search is run.
+NUM_REPEATS = 1                                             # [#] Number of times each configuration in the grid search is run.
 
 # Define the save directory for all grid search runs.
 SAVE_DIR = r'./ann/pattern_roa/save'
 
 # Define the folder in which to save results for this particular grid search.
-# SEARCH_ID = 'run1_coarse_grid'
-# SEARCH_ID = 'run2_fine_grid'
-# SEARCH_ID = 'run3_coarse_grid_different_BCs'
-# SEARCH_ID = 'run4_fine_grid_different_BCs'
 SEARCH_ID = 'run5_larger_coarse_grid_closed_BCs'
-# SEARCH_ID = 'run6_larger_coarse_grid_open_BCs'
-# SEARCH_ID = 'run7_testing'
 
 
 #%% ---------------------------------------- DEFINE GRID SEARCH SPACE ----------------------------------------
-
-# # Define the search space. SHAY'S SPACE
-# SEARCH_SPACE = {
-#     'c_IC': [ float( 17 ), float( 22.1 ), float( 27 ) ],
-#     'c_BC': [ float( 27 ), float( 31.1 ), float( 36 ) ],
-#     'c_residual':     [ float( 64 ), float( 69.1 ), float( 74 ) ],
-#     'c_variational':  [ float( 35 ), float( 39.1 ), float( 43 ) ],
-#     'c_monotonicity': [ float( 75 ), float( 80.1 ), float( 85 ) ],
-#     'hidden_layer_widths': [ int( 125 ), int( 150 ), int( 175 ) ],
-#     'num_hidden_layers':   [ int( 3 ), int( 4 ), int( 5 ) ],
-#     'learning_rate':       [ float( 0.01 ), float( 0.005 ), float( 0.001 ) ],
-# }
 
 # # Define the search space. Run 1 - Coarse grid.
 # SEARCH_SPACE = {
@@ -105,18 +87,6 @@ SEARCH_SPACE = {
 #     'hidden_layer_widths': [ int( 125 ), int( 250 ), int( 500 ) ],
 #     'num_hidden_layers':   [ int( 3 ), int( 5 ), int( 7 ) ],
 #     'learning_rate':       [ float( 5e-4 ), float( 5e-3 ), float( 5e-2 ) ],
-# }
-
-# # Define the search space. TEST PARAMETERS.
-# SEARCH_SPACE = {
-#     'c_IC': [ float( 1.0 ) ],                                                               # [-] Initial Condition Loss Coefficient
-#     'c_BC': [ float( 1.0 ) ],                                                               # [-] Boundary Condition Loss Coefficient
-#     'c_residual':     [ float( 1e-4 ) ],                                                    # [-] Residual Loss Coefficient
-#     'c_variational':  [ float( 1e-5 ) ],                                                    # [-] Variational Loss Coefficient
-#     'c_monotonicity': [ float( 1e2 ) ],                                                     # [-] Monotonicity Loss Coefficient
-#     'hidden_layer_widths': [ int( 175 ) ],                                                  # [#] Number of neurons per hidden layer.
-#     'num_hidden_layers':   [ int( 5 ) ],                                                    # [#] Number of hidden layers.
-#     'learning_rate':       [ float( 5e-4 ) ],                                               # [-] Learning Rate.
 # }
 
 
@@ -190,9 +160,6 @@ def main( base_config = BASE_CONFIG, num_repeats = NUM_REPEATS, search_id = SEAR
 
         # Compute the total number of completed configurations.
         num_completed_configs = len( avg_config_losses )
-
-        # Compute the number of completed configurations.        
-        num_total_configs = len( named_parameter_configs )
 
     else:                                                                                   # Otherwise...
 

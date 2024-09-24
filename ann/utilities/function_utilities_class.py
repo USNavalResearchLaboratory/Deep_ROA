@@ -87,18 +87,18 @@ class function_utilities_class(  ):
     def evaluate_functions( self, input_data, functions, as_tensor = True ):
 
         # Determine how to evaluate the functions.
-        if callable( functions ):                   # If the functions argument is callable...
+        if callable( functions ):                           # If the functions argument is callable...
 
             # Evaluate the function.
             output_data = self.evaluate_function( input_data, functions )
 
-        else:                                       # Otherwise... ( i.e., the functions argument is a list... )
+        else:                                               # Otherwise... ( i.e., the functions argument is a list... )
 
             # Evaluate each of the functions.
             output_data = [ self.evaluate_function( input_data, functions[ k ] ) for k in range( len( functions ) ) ]
 
         # Determine whether to concatenate the output data.
-        if as_tensor and isinstance( output_data, list ):                                   # If we want to concatenate the output data...
+        if as_tensor and isinstance( output_data, list ):   # If we want to concatenate the output data...
 
             # Concatenate the output data.
             output_data = torch.cat( tuple( output_data ), dim = -1 )

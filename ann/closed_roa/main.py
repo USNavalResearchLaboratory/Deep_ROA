@@ -50,7 +50,7 @@ np.random.seed( 0 )                                                     # [#] Nu
 torch.manual_seed( 0 )                                                  # [#] Torch random seed.
 
 # Set the computational device.
-device = 'cuda:0' if torch.cuda.is_available(  ) else 'cpu'             # [str] Computational device: 'cpu, 'cuda', 'cuda:0', etc.
+device = 'cuda' if torch.cuda.is_available(  ) else 'cpu'             # [str] Computational device: 'cpu, 'cuda', 'cuda:0', etc.
 
 # Retrieve the starting time.
 start_time = time.time(  )                                              # [s] Starting time.
@@ -189,7 +189,8 @@ p_boundary = torch.tensor( 0.25, dtype = torch.float16, device = device )       
 p_residual = torch.tensor( 0.5, dtype = torch.float16, device = device )                            # [%] Percentage of training and testing data associated with the residual.
 
 # Define the number of training epochs.
-num_epochs = torch.tensor( int( 400 ), dtype = torch.int32, device = device )                       # [#] Number of training epochs to perform.
+num_epochs = torch.tensor( int( 10 ), dtype = torch.int32, device = device )                        # [#] Number of training epochs to perform.
+# num_epochs = torch.tensor( int( 400 ), dtype = torch.int32, device = device )                     # [#] Number of training epochs to perform.
 
 # Define the residual batch size.
 residual_batch_size = torch.tensor( int( 10e3 ), dtype = torch.int32, device = device )             # [#] Training batch size. # This works for variational loss integration order 1.

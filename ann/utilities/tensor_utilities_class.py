@@ -219,7 +219,7 @@ class tensor_utilities_class(  ):
             slice_indexes[ k ] = torch.argmin( torch.abs( grid[ ..., k ] - target_values[ k ] ), dim = k )[ (0,)*( grid.dim() - 2 ) ]
 
             # Determine how to proceed given the minimum value.
-            if ( min_value != 0 ):                  # If the minium value is zero...
+            if ( min_value != 0 ):                                          # If the minium value is zero...
 
                 # Determine how to respond to a non-exact match.
                 if ( recourse.lower(  ) == 'ignore' ):                      # If the non-zero recourse is set to ignore...
@@ -310,7 +310,7 @@ class tensor_utilities_class(  ):
     def newtons_method_scalar( self, f, x, tol, max_iterations ):
 
         # Determine whether the input needs its requires grad flag updated.
-        if not x.requires_grad:                 # If the input does not require grad...
+        if not x.requires_grad:                                                                 # If the input does not require grad...
 
             # Ensure that the input point has its require derivative flag set to true.
             x.requires_grad = True
@@ -549,7 +549,7 @@ class tensor_utilities_class(  ):
     def ensure_flattened_grid_is_tensor( self, flattened_grid ):
 
         # Ensure that the flattened grid input and flattened grid output are tensors.
-        if isinstance( flattened_grid, list ) or isinstance( flattened_grid, tuple ):           # If the flattened grid is a list or tuple...
+        if isinstance( flattened_grid, list ) or isinstance( flattened_grid, tuple ):               # If the flattened grid is a list or tuple...
 
             # Retrieve the number of dimensions.
             num_dimensions = len( flattened_grid )
@@ -561,17 +561,17 @@ class tensor_utilities_class(  ):
             flattened_grid_tensor = torch.empty( ( num_grid_points, num_dimensions ), dtype = torch.float32, device = flattened_grid[ 0 ].device )
 
             # Store the flatten grid list entries into the flattened grid tensor.
-            for k in range( num_dimensions ):               # Iterate through each of the dimensions...
+            for k in range( num_dimensions ):                                                       # Iterate through each of the dimensions...
 
                 # Store the flattened grid list entries associated with this dimension.
                 flattened_grid_tensor[ :, k ] = flattened_grid[ k ]
 
-        elif torch.is_tensor( flattened_grid ):                                                       # If the flattened grid is a tensor...
+        elif torch.is_tensor( flattened_grid ):                                                     # If the flattened grid is a tensor...
 
             # Set the flattened grid tensor to be the provided flattened grid.
             flattened_grid_tensor = flattened_grid
         
-        else:                                                                                               # Otherwise... ( i.e., the flattened grid type is not recognized... )
+        else:                                                                                       # Otherwise... ( i.e., the flattened grid type is not recognized... )
 
             # Throw an error.
             raise ValueError( f'Invalid flattened grid: {flattened_grid}' )
@@ -1008,23 +1008,23 @@ class tensor_utilities_class(  ):
         spherical_coordinate[ 0 ] = radius*torch.rand( 1, dtype = torch.float32, device = radius.device )
 
         # Compute the spherical coordinate components associated with each angular coordinate.
-        for k in range( num_dimensions - 1 ):                   # Iterate through each angular coordinate...
+        for k in range( num_dimensions - 1 ):           # Iterate through each angular coordinate...
 
             spherical_coordinate[ k + 1 ] = math.pi*torch.rand( 1, dtype = torch.float32, device = radius.device )
 
         # Determine whether there is a final angular coordinate to double.
-        if num_dimensions > 1:              # If there is more than one dimension...
+        if num_dimensions > 1:                          # If there is more than one dimension...
 
             # Double the final angular coordinate.
             spherical_coordinate[ -1 ] *= 2
 
-        elif num_dimensions == 1:           # If there is only one dimension...
+        elif num_dimensions == 1:                       # If there is only one dimension...
 
             # Randomly generate whether to switch the sign associated with this point.
             sign_flag = torch.randint( 2, ( 1, ), device = radius.device )
 
             # Determine whether to switch the sign on this point.
-            if sign_flag:               # If we want to switch signs on this point...
+            if sign_flag:                               # If we want to switch signs on this point...
 
                 # Switch the sign associated with this point.
                 spherical_coordinate[ 0 ] *= -1
@@ -1131,7 +1131,6 @@ class tensor_utilities_class(  ):
         jacobian = self.compute_function_jacobians( function, level_set_seed )
 
         # Compute the level set subspace. THIS ASSUMES THAT THE FUNCTION ONLY HAS A SINGLE SCALAR OUTPUT SUCH AS IN THE CASE OF OUR ROA STABILITY ESTIMATE.
-        # level_set_subspace = self.jacobian2orthogonal_subspace( jacobian )
         level_set_subspace = self.gradients2orthogonal_subspaces( jacobian[ :, 0, : ] )
 
         # Generate the nearby level set points in the subspace.
@@ -1142,14 +1141,6 @@ class tensor_utilities_class(  ):
 
         # Restructure the nearby level set points.
         level_set_points = torch.squeeze( torch.vstack( torch.tensor_split( level_set_points, level_set_points.shape[ -1 ], dim = -1 ) ), dim = -1 )
-
-        # print( '-------------------------------------------------------------------------------------' )
-        # print( f'jacobian = {jacobian/torch.linalg.norm( jacobian, ord = 2, dim = 0, keepdim = True )}' )
-        # print( f'level_set_subspace = {level_set_subspace/torch.linalg.norm( level_set_subspace, ord = 2, dim = 0, keepdim = True )}' )
-        # print( f'level_set_subspace_points = {level_set_subspace_points/torch.linalg.norm( level_set_subspace_points, ord = 2, dim = 1, keepdim = True )}' )
-        # print( f'level_set_seed = {level_set_seed}' )
-        # print( f'level_set_points = {level_set_points}' )
-        # print( '-------------------------------------------------------------------------------------' )
 
         # Return the nearby level set points.
         return level_set_points
@@ -1265,12 +1256,12 @@ class tensor_utilities_class(  ):
                     # Generate sample points in the jacobian subspaces.
                     jacobian_subspace_points_sample = self.generate_subspace_sample_points( torch.unsqueeze( level_set_jacobian_subspaces[ k1, ... ], dim = 0 ), distribution_widths[ k1, k2 ], num_samples[ k2 ], match_sign = True )
 
-                    if k2 == 0:             # If this is the first set of samples...
+                    if k2 == 0:                                 # If this is the first set of samples...
 
                         # Take the diagonal of the jacobian subspace points.
                         jacobian_subspace_points[ k1, :, :num_samples[ 0 ] ] = jacobian_subspace_points_sample
 
-                    else:                   # Otherwise... (i.e., if this is the second set of samples...)
+                    else:                                       # Otherwise... (i.e., if this is the second set of samples...)
 
                         # Take the diagonal of the jacobian subspace points.
                         jacobian_subspace_points[ k1, :, num_samples[ 0 ]: ] = jacobian_subspace_points_sample
@@ -1288,36 +1279,10 @@ class tensor_utilities_class(  ):
             level_set_points_noisy[ level_set_points_noisy < domain_boundaries[ ..., 0 ] ] = domain_boundaries[ ..., 0 ][ level_set_points_noisy < domain_boundaries[ ..., 0 ] ]
             level_set_points_noisy[ level_set_points_noisy > domain_boundaries[ ..., 1 ] ] = domain_boundaries[ ..., 1 ][ level_set_points_noisy > domain_boundaries[ ..., 1 ] ]
 
-        else:                                               # Otherwise...
+        else:                                                   # Otherwise...
 
             # Set the noisy level set points to be empty.
             level_set_points_noisy = level_set_points
-
-        # DEBUGGING CODE
-
-        # # # Retrieve the indexes associated with any of the noisy level set points that happen to be out of bounds.
-        # # # indexes = torch.unique( torch.floor( torch.where( level_set_points_noisy[ :, 0 ] > spatial_domain[ 1, 0 ] )[ 0 ]/num_noisy_samples_per_level_set_point ) ).int(  )
-        # # indexes_long = torch.where( level_set_points_noisy[ :, 0 ] > spatial_domain[ 1, 0 ] )[ 0 ].int(  )
-        # # indexes_short = torch.unique( indexes_long % num_level_set_points ).int(  )
-
-        # # level_set_points_oob = level_set_points[ indexes_short, : ]
-        # # level_set_points_noisy_oob = level_set_points_noisy[ indexes_long, : ]
-        # # level_set_jacobian_subspaces_oob = torch.squeeze( level_set_jacobian_subspaces[ indexes_short, : ], dim = -1 )
-        # # distribution_widths_oob = distribution_widths[ indexes_short, : ]
-
-        # spatial_domain_points = torch.tensor( [ [ spatial_domain[ 0, 0 ], spatial_domain[ 1, 0 ], spatial_domain[ 1, 0 ], spatial_domain[ 0, 0 ], spatial_domain[ 0, 0 ] ], [ spatial_domain[ 0, 1 ], spatial_domain[ 0, 1 ], spatial_domain[ 1, 1 ], spatial_domain[ 1, 1 ], spatial_domain[ 0, 1 ] ] ], dtype = spatial_domain.dtype, device = spatial_domain.device )
-
-        # # indexes = torch.where( level_set_points_noisy[ :, 0 ] > spatial_domain[ 1, 0 ] )[ 0 ]/num_noisy_samples_per_level_set_point
-        # import matplotlib.pyplot as plt
-        # fig = plt.figure(  ); plt.xlabel( 'x0' ), plt.ylabel( 'x1' ), plt.title( 'Debugging Plot' )
-        # plt.plot( spatial_domain_points[ 0, : ].detach(  ).cpu(  ).numpy(  ), spatial_domain_points[ 1, : ].detach(  ).cpu(  ).numpy(  ), '-k' )
-        # plt.plot( level_set_points[ :, 0 ].detach(  ).cpu(  ).numpy(  ), level_set_points[ :, 1 ].detach(  ).cpu(  ).numpy(  ), '.r' )
-        # plt.plot( level_set_points_noisy[ :, 0 ].detach(  ).cpu(  ).numpy(  ), level_set_points_noisy[ :, 1 ].detach(  ).cpu(  ).numpy(  ), '.b' )
-        # plt.quiver( level_set_points[ :, 0 ].detach(  ).cpu(  ).numpy(  ), level_set_points[ :, 1 ].detach(  ).cpu(  ).numpy(  ), level_set_jacobian_subspaces[ :, 0, 0 ].detach(  ).cpu(  ).numpy(  ), level_set_jacobian_subspaces[ :, 1, 0 ].detach(  ).cpu(  ).numpy(  ), facecolor = 'm' )
-        # # plt.plot( level_set_points_oob[ :, 0 ].detach(  ).cpu(  ).numpy(  ), level_set_points_oob[ :, 1 ].detach(  ).cpu(  ).numpy(  ), '.b' )
-        # # plt.quiver( level_set_points_oob[ :, 0 ].detach(  ).cpu(  ).numpy(  ), level_set_points_oob[ :, 1 ].detach(  ).cpu(  ).numpy(  ), level_set_jacobian_subspaces_oob[ :, 0 ].detach(  ).cpu(  ).numpy(  ), level_set_jacobian_subspaces_oob[ :, 1 ].detach(  ).cpu(  ).numpy(  ), facecolor = 'b' )
-        # # plt.plot( level_set_points_noisy_oob[ :, 0 ].detach(  ).cpu(  ).numpy(  ), level_set_points_noisy_oob[ :, 1 ].detach(  ).cpu(  ).numpy(  ), '.b' )
-        # plt.savefig( r'./ann/closed_roa/save' + '/' + 'Debug.png' )
 
         # Return the noisy level set points.
         return level_set_points_noisy
@@ -1352,17 +1317,17 @@ class tensor_utilities_class(  ):
     def get_number_of_dimensions( self, data ):
 
         # Determine how to retrieve the number of dimensions from a flattened or expanded grid.
-        if torch.is_tensor( data ):                         # If the data is a tensor...
+        if torch.is_tensor( data ):                                         # If the data is a tensor...
 
             # Set the number of dimensions to be the number of entries in the last dimension.
             num_dimensions = torch.tensor( data.shape[ -1 ], dtype = torch.uint8, device = data.device )
 
-        elif isinstance( data, list ) or isinstance( data, tuple ):                      # If the data is a list or tuple...
+        elif isinstance( data, list ) or isinstance( data, tuple ):         # If the data is a list or tuple...
 
             # Set the number of dimension to be the number of entries in the last dimension of each list entry.
             num_dimensions = [ torch.tensor( data[ k ].shape[ -1 ], dtype = torch.uint8, device = data[ k ].device ) for k in range( len( data ) ) ]
 
-        else:                                               # Otherwise... (i.e., the data type is not recognized...)
+        else:                                                               # Otherwise... (i.e., the data type is not recognized...)
 
             # Throw an error.
             raise ValueError( f'Invalid data object: {data}' )
@@ -1375,7 +1340,7 @@ class tensor_utilities_class(  ):
     def get_number_of_sources( self, data, device = None ):
 
         # Determine whether to infer the device.
-        if device is None:              # If no device was provided...
+        if device is None:                                                              # If no device was provided...
 
             # Infer the device from the given data.
             device = data.device
@@ -1439,7 +1404,7 @@ class tensor_utilities_class(  ):
         k = torch.tensor( 0, dtype = torch.int64, device = data.device )
 
         # Remove the non-unique tensor entries.
-        while k < data.numel(  ):               # While we have not yet checked every entry...
+        while k < data.numel(  ):                                                           # While we have not yet checked every entry...
 
             # Retrieve this data entry.
             point = data[ k, : ]
@@ -1448,12 +1413,12 @@ class tensor_utilities_class(  ):
             remaining_data = data[ ( k + 1 ):, : ]
 
             # Determine whether the current data point is unique.
-            if self.is_point_in_batch( point, remaining_data, tolerance ):              # If this entry is non-unique up to some tolerance...
+            if self.is_point_in_batch( point, remaining_data, tolerance ):                  # If this entry is non-unique up to some tolerance...
 
                 # Remove this entry from the data set.
                 data = torch.cat( ( data[ :k, : ], data[ ( k + 1 ):, : ] ), dim = 0 )
 
-            else:                                                                       # Otherwise... ( i.e., if this entry is unique... )
+            else:                                                                           # Otherwise... ( i.e., if this entry is unique... )
             
                 # Advance the counter.
                 k += 1

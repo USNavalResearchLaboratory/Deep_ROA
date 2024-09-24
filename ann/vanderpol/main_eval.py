@@ -19,7 +19,6 @@
 # Import standard libraries.
 import os
 import sys
-import math
 import time
 import torch
 import random
@@ -171,25 +170,25 @@ def eval_vanderpol( config: dict = BASE_CONFIG ) -> int:
     start_time_pinn_options = time.time(  )
 
     # Define the save options.
-    save_path = str( config[ 'paths' ][ 'save_path' ] )                                                                                                             # [-] Relative path to the directory in which to save network data, figures, etc.
-    save_frequency = torch.tensor( int( config[ 'saving_parameters' ][ 'save_frequency' ] ), dtype = torch.int16, device = device )                                 # [#] Number of epochs after which to save intermediate networks during training. e.g., 1 = Save after every training epoch, 10 = Save after every ten training epochs, 100 = Save after every hundred training epochs.
-    save_flag = bool( config[ 'saving_parameters' ][ 'save_flag' ] )                                                                                                # [T/F] Flag that determines whether to save networks during and after training, as well as training and network analysis plots.
+    save_path = str( config[ 'paths' ][ 'save_path' ] )                                                                                                                                         # [-] Relative path to the directory in which to save network data, figures, etc.
+    save_frequency = torch.tensor( int( config[ 'saving_parameters' ][ 'save_frequency' ] ), dtype = torch.int16, device = device )                                                             # [#] Number of epochs after which to save intermediate networks during training. e.g., 1 = Save after every training epoch, 10 = Save after every ten training epochs, 100 = Save after every hundred training epochs.
+    save_flag = bool( config[ 'saving_parameters' ][ 'save_flag' ] )                                                                                                                            # [T/F] Flag that determines whether to save networks during and after training, as well as training and network analysis plots.
 
     # Define the load options.
-    load_path = str( config[ 'paths' ][ 'load_path' ] )                                                                                                             # [-] Relative path to the directory from which to load network data.
-    load_flag = bool( config[ 'runtime' ][ 'load_flag' ] )                                                                                                          # [T/F] Flag that determines whether to load network data from the given load directory before training.
+    load_path = str( config[ 'paths' ][ 'load_path' ] )                                                                                                                                         # [-] Relative path to the directory from which to load network data.
+    load_flag = bool( config[ 'runtime' ][ 'load_flag' ] )                                                                                                                                      # [T/F] Flag that determines whether to load network data from the given load directory before training.
 
     # Define the training options.
-    train_flag = bool( config[ 'runtime' ][ 'train_flag' ] )                                                                                                        # [T/F] Flag that determines whether to train the network after creation or loading.
+    train_flag = bool( config[ 'runtime' ][ 'train_flag' ] )                                                                                                                                    # [T/F] Flag that determines whether to train the network after creation or loading.
 
     # Define the printing options.
-    batch_print_frequency = torch.tensor( float( config[ 'printing_parameters' ][ 'batch_print_frequency' ] ), dtype = torch.float32, device = device )             # [%] Percent of batches after which to print training information (during an epoch that has been selected for printing).
-    epoch_print_frequency = torch.tensor( float( config[ 'printing_parameters' ][ 'epoch_print_frequency' ] ), dtype = torch.float32, device = device )             # [%] Percent of epochs after which to print training information.
-    print_flag = bool( config[ 'printing_parameters' ][ 'print_flag' ] )                                                                                            # [T/F] Flag that determines whether to print more or less information when printing.
+    batch_print_frequency = torch.tensor( float( config[ 'printing_parameters' ][ 'batch_print_frequency' ] ), dtype = torch.float32, device = device )                                         # [%] Percent of batches after which to print training information (during an epoch that has been selected for printing).
+    epoch_print_frequency = torch.tensor( float( config[ 'printing_parameters' ][ 'epoch_print_frequency' ] ), dtype = torch.float32, device = device )                                         # [%] Percent of epochs after which to print training information.
+    print_flag = bool( config[ 'printing_parameters' ][ 'print_flag' ] )                                                                                                                        # [T/F] Flag that determines whether to print more or less information when printing.
 
     # Define the plotting options.
-    num_plotting_samples = torch.tensor( int( config[ 'plotting_parameters' ][ 'num_plotting_samples' ] ), dtype = torch.int16, device = device )                   # [#] Number of sample points to use per dimension when plotting network results.
-    plot_flag = bool( config[ 'plotting_parameters' ][ 'plot_flag' ] )                                                                                              # [T/F] Flag that determines whether training and network analysis plots are created.
+    num_plotting_samples = torch.tensor( int( config[ 'plotting_parameters' ][ 'num_plotting_samples' ] ), dtype = torch.int16, device = device )                                               # [#] Number of sample points to use per dimension when plotting network results.
+    plot_flag = bool( config[ 'plotting_parameters' ][ 'plot_flag' ] )                                                                                                                          # [T/F] Flag that determines whether training and network analysis plots are created.
 
     # Define the verbosity setting.
     verbose_flag = bool( config[ 'runtime' ][ 'verbose_flag' ] )                                                                                                                                # [T/F] Flag that determines whether to print more or less information when printing.
@@ -248,10 +247,10 @@ def eval_vanderpol( config: dict = BASE_CONFIG ) -> int:
 
     # Define the initial condition parameters.
     R0 = torch.tensor( 0.25, dtype = torch.float32, device = device )
-    A0 = torch.tensor( 2, dtype = torch.float32, device = device )
-    S0 = torch.tensor( 20, dtype = torch.float32, device = device )
-    P0_shift = torch.tensor( [ 0, 0 ], dtype = torch.float32, device = device )
-    z0_shift = -A0/2                                                                                                                          # [-] Initial condition output offset.
+    A0 = torch.tensor( 2.0, dtype = torch.float32, device = device )
+    S0 = torch.tensor( 20.0, dtype = torch.float32, device = device )
+    P0_shift = torch.tensor( [ 0.0, 0.0 ], dtype = torch.float32, device = device )
+    z0_shift = -A0/2                                                                                                                                # [-] Initial condition output offset.
 
     # Define the flow functions.
     flow_function1 = lambda s: torch.unsqueeze( -s[ :, 2 ], dim = 1 )
@@ -268,31 +267,20 @@ def eval_vanderpol( config: dict = BASE_CONFIG ) -> int:
     temporal_code = [ torch.tensor( [ 0 ], dtype = torch.uint8, device = device ) ]                                                                                                                                                                          # [-] Temporal code.  Determines how to compute the temporal derivative of the network output.      
 
     # Define the initial-boundary condition functions.
-    f_ic = lambda s: A0/( 1 + torch.exp( -S0*( torch.norm( s[ :, 1: ] - P0_shift, 2, dim = 1, keepdim = True ) - R0 ) ) ) + z0_shift              # [-] Initial condition function.
-    f_bc_1 = lambda s: A0/( 1 + torch.exp( -S0*( torch.norm( s[ :, 1: ] - P0_shift, 2, dim = 1, keepdim = True ) - R0 ) ) ) + z0_shift            # [-] Boundary condition function.
-    f_bc_2 = lambda s: A0/( 1 + torch.exp( -S0*( torch.norm( s[ :, 1: ] - P0_shift, 2, dim = 1, keepdim = True ) - R0 ) ) ) + z0_shift            # [-] Boundary condition function.
-    f_bc_3 = lambda s: A0/( 1 + torch.exp( -S0*( torch.norm( s[ :, 1: ] - P0_shift, 2, dim = 1, keepdim = True ) - R0 ) ) ) + z0_shift            # [-] Boundary condition function.
-    f_bc_4 = lambda s: A0/( 1 + torch.exp( -S0*( torch.norm( s[ :, 1: ] - P0_shift, 2, dim = 1, keepdim = True ) - R0 ) ) ) + z0_shift            # [-] Boundary condition function.
-
-    # f_ic = lambda s: A0/( 1 + torch.exp( -S0*( torch.norm( s[ :, 1: ] - P0_shift, 2, dim = 1, keepdim = True ) - R0 ) ) ) + z0_shift                # [-] Initial condition function.
-    # f_bc_1 = lambda s: torch.zeros( ( s.shape[ 0 ], 1 ), dtype = torch.float32, device = device )                                                   # [-] Boundary condition function 1.
-    # f_bc_2 = lambda s: torch.zeros( ( s.shape[ 0 ], 1 ), dtype = torch.float32, device = device )                                                   # [-] Boundary condition function 2.
-    # f_bc_3 = lambda s: torch.zeros( ( s.shape[ 0 ], 1 ), dtype = torch.float32, device = device )                                                   # [-] Boundary condition function 3.
-    # f_bc_4 = lambda s: torch.zeros( ( s.shape[ 0 ], 1 ), dtype = torch.float32, device = device )                                                   # [-] Boundary condition function 4.
+    f_ic = lambda s: A0/( 1 + torch.exp( -S0*( torch.norm( s[ :, 1: ] - P0_shift, 2, dim = 1, keepdim = True ) - R0 ) ) ) + z0_shift                # [-] Initial condition function.
+    f_bc_1 = lambda s: A0/( 1 + torch.exp( -S0*( torch.norm( s[ :, 1: ] - P0_shift, 2, dim = 1, keepdim = True ) - R0 ) ) ) + z0_shift              # [-] Boundary condition function.
+    f_bc_2 = lambda s: A0/( 1 + torch.exp( -S0*( torch.norm( s[ :, 1: ] - P0_shift, 2, dim = 1, keepdim = True ) - R0 ) ) ) + z0_shift              # [-] Boundary condition function.
+    f_bc_3 = lambda s: A0/( 1 + torch.exp( -S0*( torch.norm( s[ :, 1: ] - P0_shift, 2, dim = 1, keepdim = True ) - R0 ) ) ) + z0_shift              # [-] Boundary condition function.
+    f_bc_4 = lambda s: A0/( 1 + torch.exp( -S0*( torch.norm( s[ :, 1: ] - P0_shift, 2, dim = 1, keepdim = True ) - R0 ) ) ) + z0_shift              # [-] Boundary condition function.
 
     # Define the initial-boundary condition information.
-    ibc_types = [ 'dirichlet', 'dirichlet', 'dirichlet', 'dirichlet', 'dirichlet' ]                                                               # [-] Initial-Boundary condition types (e.g., dirichlet, neumann, etc.).
+    ibc_types = [ 'dirichlet', 'dirichlet', 'dirichlet', 'dirichlet', 'dirichlet' ]                                                                 # [-] Initial-Boundary condition types (e.g., dirichlet, neumann, etc.).
     ibc_dimensions = torch.tensor( [ 0, 1, 1, 2, 2 ], dtype = torch.uint8, device = device )
     ibc_condition_functions = [ f_ic, f_bc_1, f_bc_2, f_bc_3, f_bc_4 ]
     ibc_placements = [ 'lower', 'lower', 'upper', 'lower', 'upper' ]  
 
-    # ibc_types = [ 'dirichlet', 'yuan-li', 'yuan-li', 'yuan-li', 'yuan-li' ]
-    # ibc_dimensions = torch.tensor( [ 0, 1, 1, 2, 2 ], dtype = torch.uint8, device = device )
-    # ibc_condition_functions = [ f_ic, f_bc_1, f_bc_2, f_bc_3, f_bc_4 ]
-    # ibc_placements = [ 'lower', 'lower', 'upper', 'lower', 'upper' ]  
-
     # Define the PDE name and type.
-    pde_name = 'Yuan-Li PDE: Vanderpol'                                                                                                       # [-] PDE name.
+    pde_name = 'Yuan-Li PDE: Vanderpol'                                                                                                             # [-] PDE name.
     pde_type = 'First Order'                                                                                                                        # [-] PDE type.
 
     # Create the problem specifications object.
