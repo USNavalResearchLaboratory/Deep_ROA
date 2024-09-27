@@ -64,7 +64,7 @@ class residual_data_class( pinn_data_class ):
     def preprocess_num_data_points( self, num_data_points = None ):
 
         # Determine whether to use the stored number of data points.
-        if num_data_points is None:                                 # If the number of data points was not provided...
+        if num_data_points is None:                         # If the number of data points was not provided...
 
             # Use the stored number of data points.
             num_data_points = self.num_data_points
@@ -198,12 +198,12 @@ class residual_data_class( pinn_data_class ):
     def get_plotting_data( self, plot_type = 'all' ):
 
         # Retrieve the data to plot.
-        if plot_type.lower(  ) == 'all':                             # If we want to plot all of the data in this data set...
+        if plot_type.lower(  ) == 'all':                            # If we want to plot all of the data in this data set...
 
             # Set the input and output plotting data.
             input_plotting_data = self.input_data
 
-        elif plot_type.lower(  ) == 'batch':                         # If we want to plot the batch data in this data set...
+        elif plot_type.lower(  ) == 'batch':                        # If we want to plot the batch data in this data set...
 
             # Set the input and output plotting data.
             input_plotting_data = self.input_data_batch
@@ -245,7 +245,7 @@ class residual_data_class( pinn_data_class ):
     def validate_input_data( self, input_data, set_flag = False ):
 
         # Determine whether to set the input data.
-        if self.is_input_data_valid( input_data ):                          # If the input data is valid...
+        if self.is_input_data_valid( input_data ):              # If the input data is valid...
 
             # Set the input data.
             input_data = self.augment_input_data_tensor( input_data )
@@ -320,7 +320,7 @@ class residual_data_class( pinn_data_class ):
             # Retrieve a batch of the input data.
             input_data_batch = input_data[ lower_batch_index:upper_batch_index, ... ]
 
-        else:                                                                                       # Otherwise...
+        else:                                               # Otherwise...
 
             # Stage all of the data.
             input_data_batch = input_data

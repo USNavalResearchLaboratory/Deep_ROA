@@ -142,7 +142,7 @@ class pinn_data_manager_class(  ):
     def preprocess_boundary_condition_data( self, boundary_condition_data = None ):
 
         # Determine whether to use the stored boundary condition data.
-        if boundary_condition_data is None:                              # If boundary condition data was not provided...
+        if boundary_condition_data is None:                     # If boundary condition data was not provided...
 
             # Use the stored boundary condition data.
             boundary_condition_data = self.boundary_condition_data
@@ -155,7 +155,7 @@ class pinn_data_manager_class(  ):
     def preprocess_boundary_condition_batch_size( self, boundary_condition_batch_size = None ):
 
         # Determine whether to use the stored boundary condition batch size.
-        if boundary_condition_batch_size is None:                        # If the boundary condition batch size is None...
+        if boundary_condition_batch_size is None:               # If the boundary condition batch size is None...
 
             # Use the stored boundary condition batch size.
             boundary_condition_batch_size = self.boundary_condition_batch_size
@@ -181,7 +181,7 @@ class pinn_data_manager_class(  ):
     def preprocess_residual_batch_size( self, residual_batch_size = None ):
 
         # Determine whether to use the stored residual batch size.
-        if residual_batch_size is None:                              # If residual batch size was not provided...
+        if residual_batch_size is None:                         # If residual batch size was not provided...
 
             # Use the stored residual batch size.
             residual_batch_size = self.residual_batch_size
@@ -197,7 +197,7 @@ class pinn_data_manager_class(  ):
         variational_data = self.preprocess_variational_data( variational_data )
 
         # Determine whether to use the stored batch size.
-        if batch_size is None:                  # If the batch size was not provided...
+        if batch_size is None:                              # If the batch size was not provided...
 
             # Set the batch size to be the stored value.
             batch_size = variational_data.batch_size
@@ -210,7 +210,7 @@ class pinn_data_manager_class(  ):
     def preprocess_num_points_per_initial_condition( self, num_points_per_initial_condition = None ):
 
         # Determine whether to use the stored number of points per initial condition.
-        if num_points_per_initial_condition is None:         # If the number of points per initial condition was not provided...
+        if num_points_per_initial_condition is None:        # If the number of points per initial condition was not provided...
 
             # Set the number of points per initial condition to be the stored value.
             num_points_per_initial_condition = self.num_points_per_initial_condition
@@ -390,12 +390,12 @@ class pinn_data_manager_class(  ):
     def is_residual_data_valid( self, residual_data ):
 
         # Determine whether the given residual data is valid.
-        if isinstance( residual_data, residual_data_class ):                        # If the residual data is itself a residual data object...
+        if isinstance( residual_data, residual_data_class ):                # If the residual data is itself a residual data object...
 
             # Set the valid flag to true.
             valid_flag = True
 
-        elif isinstance( residual_data, list ):                                 # If the residual data is a list...
+        elif isinstance( residual_data, list ):                             # If the residual data is a list...
 
             # Ensure that each of the list entries are residual data objects.
             valid_flag = all( isinstance( residual_data[ k ], residual_data_class ) for k in range( len( residual_data ) ) )
@@ -413,12 +413,12 @@ class pinn_data_manager_class(  ):
     def is_variational_data_valid( self, variational_data ):
 
         # Determine whether the given variational data is valid.
-        if isinstance( variational_data, variational_data_class ):                        # If the variational data is itself a residual data object...
+        if isinstance( variational_data, variational_data_class ):          # If the variational data is itself a residual data object...
 
             # Set the valid flag to true.
             valid_flag = True
 
-        elif isinstance( variational_data, list ):                                 # If the variational data is a list...
+        elif isinstance( variational_data, list ):                          # If the variational data is a list...
 
             # Ensure that each of the list entries are variational data objects.
             valid_flag = all( isinstance( variational_data[ k ], variational_data_class ) for k in range( len( variational_data ) ) )
@@ -438,10 +438,10 @@ class pinn_data_manager_class(  ):
     def validate_initial_condition_data( self, initial_condition_data, set_flag = False ):
 
         # Determine whether to set the initial condition data.
-        if self.is_ibc_data_valid( initial_condition_data ):                   # If the initial condition data is valid...
+        if self.is_ibc_data_valid( initial_condition_data ):                    # If the initial condition data is valid...
 
             # Determine whether to embed the initial condition data in a list.
-            if isinstance( initial_condition_data, ibc_data_class ):           # If the initial condition data is itself a pinn data object...
+            if isinstance( initial_condition_data, ibc_data_class ):            # If the initial condition data is itself a pinn data object...
 
                 # Embed the initial condition data in a list.
                 initial_condition_data = [ initial_condition_data ]
@@ -1087,17 +1087,17 @@ class pinn_data_manager_class(  ):
     def print( self, header_flag = True, print_type = 'manager' ):
 
         # Determine how to print the pinn manager data.
-        if print_type.lower(  ) in ( 'manager', 'summary' ):                   # If the print type is manager...
+        if print_type.lower(  ) in ( 'manager', 'summary' ):            # If the print type is manager...
 
             # Print the manager data.
             self.print_summary( header_flag )
 
-        elif print_type.lower(  ) in ( 'constituent', 'summaries' ):             # If the print type is constituent...
+        elif print_type.lower(  ) in ( 'constituent', 'summaries' ):    # If the print type is constituent...
 
             # Print the constituent data summaries.
             self.print_constituent_summaries( header_flag )
 
-        else:                                                   # Otherwise... ( i.e., the print type is not recognized... )
+        else:                                                           # Otherwise... ( i.e., the print type is not recognized... )
 
             # Throw an error.
             raise ValueError( f'Invalid print type: {print_type}' )
@@ -1128,10 +1128,10 @@ class pinn_data_manager_class(  ):
             axes = [  ]
 
             # Determine whether to plot the initial condition data.
-            if ( plot_type1.lower(  ) == 'all' ) or ( plot_type1.lower(  ) == 'initial' ):                  # If we want to plot the initial condition data...
+            if ( plot_type1.lower(  ) == 'all' ) or ( plot_type1.lower(  ) == 'initial' ):          # If we want to plot the initial condition data...
 
                 # Plot the data associated with each initial condition.
-                for k in range( num_initial_conditions ):                                              # Iterate through each of the initial conditions...
+                for k in range( num_initial_conditions ):                                           # Iterate through each of the initial conditions...
 
                     # Plot the initial condition data.
                     fig_initial, ax_initial = initial_condition_data[ k ].plot( None, None, initial_condition_data[ k ].dimension_labels, projection_dimensions, projection_values, level, fig, plot_type2, save_directory, as_surface, as_stream, as_contour, show_plot )
@@ -1141,10 +1141,10 @@ class pinn_data_manager_class(  ):
                     axes.append( ax_initial )
 
             # Determine whether to plot the boundary condition data.
-            if ( plot_type1.lower(  ) == 'all' ) or ( plot_type1.lower(  ) == 'boundary' ):                 # If we want to plot the boundary condition data...
+            if ( plot_type1.lower(  ) == 'all' ) or ( plot_type1.lower(  ) == 'boundary' ):         # If we want to plot the boundary condition data...
 
                 # Plot the data associated with each boundary condition.
-                for k in range( num_boundary_conditions ):                                             # Iterate through each of the boundary conditions...
+                for k in range( num_boundary_conditions ):                                          # Iterate through each of the boundary conditions...
 
                     # Plot the boundary condition data.
                     fig_boundary, ax_boundary = boundary_condition_data[ k ].plot( None, None, boundary_condition_data[ k ].dimension_labels, projection_dimensions, projection_values, level, fig, plot_type2, save_directory, as_surface, as_stream, as_contour, show_plot )
@@ -1154,7 +1154,7 @@ class pinn_data_manager_class(  ):
                     axes.append( ax_boundary )
 
             # Determine whether to plot the residual data.
-            if ( plot_type1.lower(  ) == 'all' ) or ( plot_type1.lower(  ) == 'residual' ):                 # If we want to plot the residual data...
+            if ( plot_type1.lower(  ) == 'all' ) or ( plot_type1.lower(  ) == 'residual' ):         # If we want to plot the residual data...
 
                 # Plot the residual condition data.
                 fig_residual, ax_residual = residual_data.plot( None, residual_data.dimension_labels, projection_dimensions, projection_values, level, None, fig, plot_type2, save_directory, as_surface, as_stream, as_contour, show_plot )
@@ -1163,7 +1163,7 @@ class pinn_data_manager_class(  ):
                 figs.append( fig_residual )
                 axes.append( ax_residual )
 
-        else:                                                                                               # Otherwise...
+        else:                                                                                       # Otherwise...
 
             # Throw an error.
             raise ValueError( f'Invalid primary plotting type: {plot_type1}' )

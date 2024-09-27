@@ -14,13 +14,6 @@
 # This file implements a class for storing and managing printing utilities information.
 
 
-#%% ------------------------------------------------------------ IMPORT LIBRARIES ------------------------------------------------------------
-
-# Import standard libraries.
-
-# Import custom libraries.
-
-
 #%% ------------------------------------------------------------ SAVE-LOAD UTILITIES CLASS ------------------------------------------------------------
 
 # Implement the printing utilities class.

@@ -138,7 +138,7 @@ class pinn_class(  ):
     def preprocess_domain( self, domain = None ):
 
         # Determine whether to use the stored domain.
-        if domain is None:          # If the domain was not provided...
+        if domain is None:                  # If the domain was not provided...
 
             # Set the domain to be the stored value.
             domain = self.domain
@@ -281,7 +281,7 @@ class pinn_class(  ):
     def preprocess_network( self, network = None ):
 
         # Determine whether to use the stored network.
-        if network is None:                     # If the network was not provided...
+        if network is None:                         # If the network was not provided...
 
             # Set the network to be the stored value.
             network = self.network
@@ -294,7 +294,7 @@ class pinn_class(  ):
     def preprocess_train_flag( self, train_flag = None ):
 
         # Determine whether to use the stored training flag.
-        if train_flag is None:          # If the training flag was not provided...
+        if train_flag is None:                      # If the training flag was not provided...
 
             # Set the training flag to be the stored value.
             train_flag = self.pinn_options.train_flag
@@ -307,7 +307,7 @@ class pinn_class(  ):
     def preprocess_save_directory( self, save_directory = None ):
 
         # Determine whether to set the save directory to be the stored value.
-        if save_directory is None:              # If no save directory was provided...
+        if save_directory is None:                  # If no save directory was provided...
 
             # Set the save directory to be the stored value.
             save_directory = self.pinn_options.save_directory
@@ -320,7 +320,7 @@ class pinn_class(  ):
     def preprocess_load_directory( self, load_directory = None ):
 
         # Determine whether to set the load directory to be the stored value.
-        if load_directory is None:              # If no load directory was provided...
+        if load_directory is None:                  # If no load directory was provided...
 
             # Set the load directory to be the stored value.
             load_directory = self.pinn_options.load_directory
@@ -333,7 +333,7 @@ class pinn_class(  ):
     def preprocess_pde( self, pde = None ):
 
         # Determine whether to use the stored pde.
-        if pde is None:                 # If the pde was not provided...
+        if pde is None:                             # If the pde was not provided...
 
             # Set the pde to be the stored value.
             pde = self.pde
@@ -359,7 +359,7 @@ class pinn_class(  ):
     def preprocess_plotting_data( self, plotting_data = None ):
 
         # Determine whether to use the stored plotting data.
-        if plotting_data is None:          # If the input data was not provided...
+        if plotting_data is None:               # If the input data was not provided...
 
             # Use the stored plotting data.
             plotting_data = self.network.plotting_data
@@ -592,12 +592,12 @@ class pinn_class(  ):
             # Preprocess the spatial classification noise magnitude.
             classification_noise_magnitude = self.network.preprocess_classification_noise_magnitude_spatial( classification_noise_magnitude )
 
-        elif domain_subset_type.lower(  ) == 'spatiotemporal':                                                     # If the domain subset type is spatiotemporal...
+        elif domain_subset_type.lower(  ) == 'spatiotemporal':                                      # If the domain subset type is spatiotemporal...
 
             # Preprocess the spatiotemporal classification noise magnitude.
             classification_noise_magnitude = self.network.preprocess_classification_noise_magnitude_spatiotemporal( classification_noise_magnitude )
 
-        else:                                                                                               # Otherwise...
+        else:                                                                                       # Otherwise...
 
             # Throw an error.
             raise ValueError( f'Invalid domain subset type: {domain_subset_type}' )
@@ -1001,7 +1001,7 @@ class pinn_class(  ):
     def generate_initial_boundary_condition_data( self, num_samples = None, num_timesteps = None, domain = None, initial_boundary_conditions = None, application = 'training' ):
 
         # Determine whether to use the stored number of timesteps.
-        if num_timesteps is None:               # If the number of timesteps was not provided...
+        if num_timesteps is None:                               # If the number of timesteps was not provided...
 
             # Use the stored number of timesteps.
             num_timesteps = self.hyperparameters.num_timesteps
@@ -1016,7 +1016,7 @@ class pinn_class(  ):
         initial_boundary_condition_data = [  ]
 
         # Create the data associated with each initial-boundary condition.
-        for k1 in range( num_initial_boundary_conditions ):                      # Iterate through each of the initial-boundary conditions...
+        for k1 in range( num_initial_boundary_conditions ):     # Iterate through each of the initial-boundary conditions...
 
             # Retrieve the number of condition functions.
             num_condition_functions = torch.tensor( len( initial_boundary_conditions[ k1 ].condition_functions ), dtype = torch.uint8, device = self.pinn_options.device )
@@ -1178,17 +1178,17 @@ class pinn_class(  ):
     def dimension_label2ibc_specific_type( self, dimension_label ):
 
         # Determine the general initial-boundary condition type associated with this condition.
-        if ( dimension_label.lower(  ) == 't' ) or ( dimension_label.lower(  ) == 'temporal' ):                           # If the dimension label is 'temporal'...
+        if ( dimension_label.lower(  ) == 't' ) or ( dimension_label.lower(  ) == 'temporal' ):                         # If the dimension label is 'temporal'...
             
             # Set the general initial-boundary condition type to be 'initial.'
             general_type = 'initial'
 
-        elif ( dimension_label.lower(  ) == 'x' ) or ( dimension_label.lower(  ) == 'spatial' ):                          # If the dimension label is 'spatial'...
+        elif ( dimension_label.lower(  ) == 'x' ) or ( dimension_label.lower(  ) == 'spatial' ):                        # If the dimension label is 'spatial'...
 
             # Set the general initial-boundary condition type to be 'boundary.'
             general_type = 'boundary'
 
-        else:                                                                                                               # Otherwise...
+        else:                                                                                                           # Otherwise...
 
             # Throw an error.
             raise ValueError( f'Invalid dimension label: {dimension_label}' )
@@ -1204,28 +1204,28 @@ class pinn_class(  ):
         if p is None:                       # If no data percent was provided...
 
             # Determine which stored value to use.
-            if condition_type.lower(  ) == 'initial':                        # If we want to convert the data percentage to a data quantity for the initial condition data...
+            if condition_type.lower(  ) == 'initial':                                                               # If we want to convert the data percentage to a data quantity for the initial condition data...
 
                 # Use the stored percent initial condition data.
                 p = self.hyperparameters.p_initial
 
-            elif condition_type.lower(  ) == 'boundary':                        # If we want to convert the data percentage to a data quantity for the boundary condition data...
+            elif condition_type.lower(  ) == 'boundary':                                                            # If we want to convert the data percentage to a data quantity for the boundary condition data...
 
                 # Use the stored percent boundary condition data.
                 p = self.hyperparameters.p_boundary
 
-            elif ( condition_type.lower(  ) == 'residual' ) or ( condition_type.lower(  ) == 'variational' ):                        # If we want to convert the data percentage to a data quantity for the residual data...
+            elif ( condition_type.lower(  ) == 'residual' ) or ( condition_type.lower(  ) == 'variational' ):       # If we want to convert the data percentage to a data quantity for the residual data...
 
                 # Use the stored percent residual data.
                 p = self.hyperparameters.p_residual
 
-            else:                                                           # Otherwise...
+            else:                                                                                                   # Otherwise...
 
                 # Throw an error.
                 raise ValueError( 'Invalid condition type: {condition_type}' )
 
         # Determine whether to use the stored total training data quantity.
-        if num_total is None:                       # If no total data quantity was provided...
+        if num_total is None:                                                   # If no total data quantity was provided...
 
             # Determine whether to use the stored training or testing data quantity.
             if application.lower(  ) == 'training':                             # If we want to reference the total quantity of training data...
@@ -1269,12 +1269,12 @@ class pinn_class(  ):
             # Set the output derivative order to be zero, one.
             output_derivative_order = torch.tensor( [ 0, 1 ], dtype = torch.uint8, device = self.pinn_options.device )
 
-        elif condition_type.lower(  ) == 'yuan-li':                     # IF the initial condition type is 'yuan-li'...
+        elif condition_type.lower(  ) == 'yuan-li':                     # If the initial condition type is 'yuan-li'...
 
             # Set the output derivative order to be two.
             output_derivative_order = 2*torch.ones( ( 1, 1 ), dtype = torch.uint8, device = self.pinn_options.device )
 
-        else:                                                                                   # Otherwise...
+        else:                                                           # Otherwise...
 
             # Throw an error.
             raise ValueError( f'Invalid specific condition type: {condition_type}' )
@@ -1321,7 +1321,7 @@ class pinn_class(  ):
         element_volume = element_volume_percent*domain_volume
 
         # Determine how to compute the element scale.
-        if element_type.lower(  ) == 'rectangular':                 # If the element type is rectangular...
+        if element_type.lower(  ) == 'rectangular':                     # If the element type is rectangular...
 
             # Compute the domain ranges.
             domain_ranges = domain.compute_ranges(  )
@@ -1339,7 +1339,7 @@ class pinn_class(  ):
             element_scale = torch.ones( domain.num_spatiotemporal_dimensions, dtype = torch.float32, device = self.pinn_options.device )
 
             # Set the scale of each element dimension.
-            for k in range( domain.num_spatiotemporal_dimensions ):                     # Iterate through each of the spatiotemporal dimensions...
+            for k in range( domain.num_spatiotemporal_dimensions ):     # Iterate through each of the spatiotemporal dimensions...
 
                 # Set the scale of this element dimension.
                 element_scale[ k ] = ps[ k ]*element_size

@@ -84,15 +84,15 @@ class initial_boundary_condition_class(  ):
         if torch.is_tensor( id ) and ( ( id.dtype == torch.uint8 ) or ( id.dtype == torch.int8 ) or ( id.dtype == torch.int16 ) or ( id.dtype == torch.int32 ) or ( id.dtype == torch.int64 ) ) and ( id > 0 ):                  # If the id is valid...
 
             # Set the valid flag to true.
-            b_valid = True
+            valid_flag = True
 
         else:                                                                               # Otherwise...
 
             # Set the valid flag to false.
-            b_valid = False
+            valid_flag = False
 
         # Return the valid flag.
-        return b_valid
+        return valid_flag
 
 
     # Implement a function to validate the initial-boundary condition name.
@@ -102,15 +102,15 @@ class initial_boundary_condition_class(  ):
         if isinstance( name, str ):                     # If the name is valid...
 
             # Set the valid flag to true.
-            b_valid = True
+            valid_flag = True
 
         else:                                           # Otherwise...
 
             # Set the valid flag to false.
-            b_valid = False
+            valid_flag = False
 
         # Return the valid flag.
-        return b_valid
+        return valid_flag
 
 
     # Implement a function to validate the general initial-boundary condition type.
@@ -120,15 +120,15 @@ class initial_boundary_condition_class(  ):
         if isinstance( general_type, str ) and ( ( general_type.lower(  ) == 'initial' ) or ( general_type.lower(  ) == 'boundary' ) or ( general_type.lower(  ) == 'ic' ) or ( general_type.lower(  ) == 'bc' ) ):
 
             # Set the valid flag to true.
-            b_valid = True
+            valid_flag = True
 
         else:                                           # Otherwise...
 
             # Set the valid flag to false.
-            b_valid = False
+            valid_flag = False
 
         # Return the valid flag.
-        return b_valid
+        return valid_flag
 
 
     # Implement a function to validate the specific initial-boundary condition type.
@@ -138,15 +138,15 @@ class initial_boundary_condition_class(  ):
         if isinstance( specific_type, str ) and ( ( specific_type.lower(  ) == 'dirichlet' ) or ( specific_type.lower(  ) == 'neumann' ) or ( specific_type.lower(  ) == 'cauchy' ) or ( specific_type.lower(  ) == 'yuan-li' ) ):                      # If specific type is recognized...
 
             # Set the valid flag to true.
-            b_valid = True
+            valid_flag = True
 
         else:                                                                                                                                                                                               # Otherwise...
 
             # Set the valid flag to false.
-            b_valid = False
+            valid_flag = False
 
         # Return the valid flag.
-        return b_valid
+        return valid_flag
 
 
     # Implement a function to validate the initial-boundary condition dimension.
@@ -156,15 +156,15 @@ class initial_boundary_condition_class(  ):
         if torch.is_tensor( dimension ) and ( ( dimension.dtype == torch.uint8 ) or ( dimension.dtype == torch.int8 ) or ( dimension.dtype == torch.int16 ) or ( dimension.dtype == torch.int32 ) or ( dimension.dtype == torch.int64 ) ) and ( dimension >= 0 ):                  # If the dimension is valid...
 
             # Set the valid flag to true.
-            b_valid = True
+            valid_flag = True
 
         else:                                                                                                                                                                                                                                                                       # Otherwise...
 
             # Set the valid flag to false.
-            b_valid = False
+            valid_flag = False
 
         # Return the valid flag.
-        return b_valid
+        return valid_flag
 
 
     # Implement a function to validate the initial-boundary condition function.
@@ -174,7 +174,7 @@ class initial_boundary_condition_class(  ):
         if callable( condition_functions ):                                                                     # If the condition functions variable is itself a callable function...
             
             # Set the valid flag to true.
-            b_valid = True
+            valid_flag = True
 
         elif isinstance( condition_functions, list ) and len( condition_functions ) > 0:                        # If the condition functions variable is a list...
 
@@ -182,17 +182,16 @@ class initial_boundary_condition_class(  ):
             num_condition_functions = len( condition_functions )
 
             # Initialize a loop variable.
-            # k = 0
             k = torch.tensor( 0, dtype = torch.int64, device = self.device )
 
             # Set the valid flag to true.
-            b_valid = True
+            valid_flag = True
 
             # Determine whether all of the condition functions are in fact functions.
-            while b_valid and ( k < num_condition_functions ):                                                  # If all of the condition function entries have so far been functions and we have not yet checked all of the condition function entries...
+            while valid_flag and ( k < num_condition_functions ):                                               # If all of the condition function entries have so far been functions and we have not yet checked all of the condition function entries...
 
                 # Check whether this condition function entry is in fact a function.
-                b_valid &= callable( condition_functions[ k ] )
+                valid_flag &= callable( condition_functions[ k ] )
 
                 # Advance the loop variable.
                 k += 1
@@ -200,10 +199,10 @@ class initial_boundary_condition_class(  ):
         else:                                                                                                   # Otherwise...
 
             # Set the valid flag to false.
-            b_valid = False
+            valid_flag = False
 
         # Return the valid flag.
-        return b_valid
+        return valid_flag
 
 
     # Implement a function to validate the initial-boundary condition placement.
@@ -213,15 +212,15 @@ class initial_boundary_condition_class(  ):
         if isinstance( placement, str ) and ( ( placement.lower(  ) == 'left' ) or ( placement.lower(  ) == 'right' ) or ( placement.lower(  ) == 'lower' ) or ( placement.lower(  ) == 'upper' ) or ( placement.lower(  ) == 'bottom' ) or ( placement.lower(  ) == 'top' ) ):
 
             # Set the valid flag to true.
-            b_valid = True
+            valid_flag = True
 
         else:                                           # Otherwise...
 
             # Set the valid flag to false.
-            b_valid = False
+            valid_flag = False
 
         # Return the valid flag.
-        return b_valid
+        return valid_flag
 
 
     #%% ------------------------------------------------------------ SET FUNCTIONS ------------------------------------------------------------
@@ -300,7 +299,7 @@ class initial_boundary_condition_class(  ):
     def set_num_condition_functions( self, num_condition_functions, set_flag = True ):
 
         # Determine whether to set the number of condition functions.
-        if set_flag:                                # If we want to set the number of condition functions...
+        if set_flag:                # If we want to set the number of condition functions...
 
             # Set the number of condition functions.
             self.num_condition_functions = num_condition_functions
@@ -344,7 +343,7 @@ class initial_boundary_condition_class(  ):
     def validate_general_type( self, general_type, set_flag = False ):
 
         # Determine whether to set the initial-boundary condition general type.
-        if not self.is_general_type_valid( general_type ):                          # If the general type is not valid...
+        if not self.is_general_type_valid( general_type ):                      # If the general type is not valid...
 
             # Throw an error.
             raise ValueError( f'Invalid general type: {general_type}' )
@@ -360,7 +359,7 @@ class initial_boundary_condition_class(  ):
     def validate_specific_type( self, specific_type, set_flag = False ):
 
         # Determine whether to set the initial-boundary condition specific type.
-        if not self.is_specific_type_valid( specific_type ):                          # If the specific type is not valid...
+        if not self.is_specific_type_valid( specific_type ):                    # If the specific type is not valid...
 
             # Throw an error.
             raise ValueError( f'Invalid specific type: {specific_type}' )
@@ -376,7 +375,7 @@ class initial_boundary_condition_class(  ):
     def validate_dimension( self, dimension, set_flag = False ):
 
         # Determine whether to set the initial-boundary condition dimension.
-        if not self.is_dimension_valid( dimension ):                          # If the dimension is not valid...
+        if not self.is_dimension_valid( dimension ):                            # If the dimension is not valid...
 
             # Throw an error.
             raise ValueError( f'Invalid dimension: {dimension}' )
@@ -400,7 +399,7 @@ class initial_boundary_condition_class(  ):
                 # Embed the condition functions into a list.
                 condition_functions = [ condition_functions ]
 
-        else:                                                   # Otherwise...
+        else:                                                                                   # Otherwise...
 
             # Throw an error.
             raise ValueError( f'Invalid condition function: {condition_functions}' )
@@ -495,7 +494,7 @@ class initial_boundary_condition_class(  ):
         num_condition_functions = self.compute_number_of_condition_functions( condition_functions )
 
         # Determine whether to create a list of None values for figures.
-        if fig is None:                 # If no figure was provided...
+        if fig is None:                                 # If no figure was provided...
 
             # Create a list of Nones.
             fig = [ None ]*num_condition_functions
@@ -505,7 +504,7 @@ class initial_boundary_condition_class(  ):
         axes = [  ]
 
         # Plot each of the initial-boundary condition functions.
-        for k in range( num_condition_functions ):                     # Iterate through each condition function...
+        for k in range( num_condition_functions ):      # Iterate through each condition function...
 
             # Modify the title string.
             title_string_modified = title_string + f' (Cond. Number {k})'

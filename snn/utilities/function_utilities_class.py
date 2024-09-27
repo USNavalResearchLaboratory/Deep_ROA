@@ -104,26 +104,26 @@ class function_utilities_class(  ):
         temporal_grid_flag = self.tensor_utilities.is_grid_temporal( input_data )
 
         # Determine how to evaluate the functions.
-        if callable( functions ):                   # If the functions argument is callable...
+        if callable( functions ):                               # If the functions argument is callable...
 
             # Evaluate the function.
             output_data = self.evaluate_function( input_data, functions )
 
-        else:                                       # Otherwise... ( i.e., the functions argument is a list... )
+        else:                                                   # Otherwise... ( i.e., the functions argument is a list... )
 
             # Evaluate each of the functions.
             output_data = [ self.evaluate_function( input_data, functions[ k ] ) for k in range( len( functions ) ) ]
 
         # Determine whether to concatenate the output data.
-        if as_tensor and isinstance( output_data, list ):                                   # If we want to concatenate the output data...
+        if as_tensor and isinstance( output_data, list ):       # If we want to concatenate the output data...
 
             # Determine whether the input data is a temporal grid.
-            if temporal_grid_flag:              # If the input data is a temporal grid...
+            if temporal_grid_flag:                              # If the input data is a temporal grid...
 
                 # Concatenate the output data.
                 output_data = torch.cat( tuple( output_data ), dim = -2 )
             
-            else:                               # Otherwise... (If the intput data is a nontemporal grid...)
+            else:                                               # Otherwise... (If the intput data is a nontemporal grid...)
 
                 # Concatenate the output data.
                 output_data = torch.cat( tuple( output_data ), dim = -1 )

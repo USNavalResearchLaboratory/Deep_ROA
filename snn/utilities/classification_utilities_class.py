@@ -42,11 +42,6 @@ class classification_utilities_class(  ):
         self.plotting_utilities = plotting_utilities_class(  )
 
 
-    #%% ------------------------------------------------------------ VALIDATION FUNCTIONS ------------------------------------------------------------
-
-
-
-
     #%% ------------------------------------------------------------ CLASSIFICATION POINTS FUNCTIONS ------------------------------------------------------------
 
     # Implement a function to generate classification points randomly.
@@ -61,9 +56,6 @@ class classification_utilities_class(  ):
 
     # Implement a function to retrieve ROA boundary points from provided network input and output data.
     def generate_roa_boundary_points_data( self, network_input_data, network_output_data, level = None, device = 'cpu' ):
-
-        # Generate a dummy figure.
-        
 
         # Retrieve the contour set.
         contour_set = plt.contour( self.plotting_utilities.plot_process( network_input_data[ ..., 0 ] ), self.plotting_utilities.plot_process( network_input_data[ ..., 1 ] ), self.plotting_utilities.plot_process( network_output_data[ ..., 0 ] ), levels = [ self.plotting_utilities.plot_process( level ) ], colors = 'red', linewidths = 2.0 )
@@ -92,7 +84,7 @@ class classification_utilities_class(  ):
     def generate_roa_boundary_points( self, network_input_data, network_info, level = None, device = 'cpu' ):
 
         # Determine whether the network info is a network object.
-        if type( network_info ).__name__ == 'neural_network_class':                # If the provided network info is a neural network...
+        if type( network_info ).__name__ == 'neural_network_class':         # If the provided network info is a neural network...
 
             # Compute the contour data using the provided network.
             contour_data = self.generate_roa_boundary_points_network( network_input_data, network_info, level, device )
@@ -109,34 +101,3 @@ class classification_utilities_class(  ):
 
         # Return the contour data.
         return contour_data
-
-
-    # Implement a function to generate classification points along the ROA boundary.
-
-
-    # Implement a function to generate classification points using the user specified algorithm.
-
-
-    #%% ------------------------------------------------------------ NETWORK CLASSIFICATION FUNCTIONS ------------------------------------------------------------
-
-    # Implement a function to determine the network's classification of a point by referencing provided network input and output data.
-
-
-    # Implement a function to determine the network's classification of a point by referencing a provided network and its input data.
-
-
-    # Implement a function to determine the network's classification of a point given user specified network information.
-
-
-    #%% ------------------------------------------------------------ 'TRUE' CLASSIFICATION FUNCTIONS ------------------------------------------------------------
-
-    # Implement a function to determine the true classification of a point by referencing a provided analytical or numerical solution.
-
-
-
-    # Implement a function to determine an approximately 'true' classification of a point by determining whether its network classification changes over a finite time horizon.
-
-
-
-    # Implement a function to determine the true classification of a point by checking a user provided energy function.
-

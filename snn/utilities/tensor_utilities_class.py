@@ -224,7 +224,7 @@ class tensor_utilities_class(  ):
     def validate_grid_subgrid_indexes_compatibility( self, grid, subgrid_indexes, temporal_grid_flag = None ):
 
         # Determine whether it is necessary to determine whether the grid is temporal.
-        if temporal_grid_flag is None:              # If the temporal grid flag was not provided...
+        if temporal_grid_flag is None:                  # If the temporal grid flag was not provided...
 
             # Detetermine whether the grid is temporal.
             temporal_grid_flag = self.is_grid_temporal( grid, grid_expanded_flat_type = None )
@@ -253,14 +253,14 @@ class tensor_utilities_class(  ):
         slice_indexes = torch.empty_like( target_dims, dtype = torch.uint8, device = grid.device )
 
         # Compute each of the slice indexes.
-        for k in range( target_dims.numel(  ) ):                        # Iterate through each of the target dimensions (note: there is one slice index per target dimension)...
+        for k in range( target_dims.numel(  ) ):                            # Iterate through each of the target dimensions (note: there is one slice index per target dimension)...
 
             # Determine the slice index.
             min_value = torch.min( torch.abs( grid[ ..., k ] - target_values[ k ] ), dim = k )[ 0 ][ (0,)*( grid.dim() - 2 ) ]
             slice_indexes[ k ] = torch.argmin( torch.abs( grid[ ..., k ] - target_values[ k ] ), dim = k )[ (0,)*( grid.dim() - 2 ) ]
 
             # Determine how to proceed given the minimum value.
-            if ( min_value != 0 ):                  # If the minium value is zero...
+            if ( min_value != 0 ):                                          # If the minium value is zero...
 
                 # Determine how to respond to a non-exact match.
                 if ( recourse.lower(  ) == 'ignore' ):                      # If the non-zero recourse is set to ignore...
@@ -351,7 +351,7 @@ class tensor_utilities_class(  ):
     def newtons_method_scalar( self, f, x, tol, max_iterations ):
 
         # Determine whether the input needs its requires grad flag updated.
-        if not x.requires_grad:                 # If the input does not require grad...
+        if not x.requires_grad:                                                                 # If the input does not require grad...
 
             # Ensure that the input point has its require derivative flag set to true.
             x.requires_grad = True
@@ -416,12 +416,12 @@ class tensor_utilities_class(  ):
         xs = xs[ ~convergence_flags ]
 
         # Determine whether to re-evaluate our function.
-        if ( xs.numel(  ) != 0 ):               # If the number of input values is non-zero...
+        if ( xs.numel(  ) != 0 ):                                   # If the number of input values is non-zero...
 
             # Evaluate the function.
             ys = f( xs )
 
-        else:                                                           # Otherwise... (If the number of input values is zero...)
+        else:                                                       # Otherwise... (If the number of input values is zero...)
 
             # Set the function evaluation to be empty.
             ys = ys_complete[ False, 0, : ]
@@ -430,7 +430,7 @@ class tensor_utilities_class(  ):
         k = torch.tensor( 0, dtype = torch.int64, device = xs.device )
 
         # Perform newton's method to estimate the root.
-        while ( k < max_iterations ) and ( xs.numel(  ) != 0 ):             # While the maximum number of iterations have not yet been performed and the root has not yet been estimated with acceptable accuracy...
+        while ( k < max_iterations ) and ( xs.numel(  ) != 0 ):     # While the maximum number of iterations have not yet been performed and the root has not yet been estimated with acceptable accuracy...
 
             # Compute the derivative of the output with respect to the input.
             jacobians = self.compute_data_jacobians( xs, ys )
@@ -454,12 +454,12 @@ class tensor_utilities_class(  ):
             xs = xs[ ~convergence_flags ]
 
             # Determine whether to re-evaluate our function.
-            if ( xs.numel(  ) != 0 ):               # If the number of input values is non-zero...
+            if ( xs.numel(  ) != 0 ):                               # If the number of input values is non-zero...
 
                 # Evaluate the function.
                 ys = f( xs )
 
-            else:                                                           # Otherwise... (If the number of input values is zero...)
+            else:                                                   # Otherwise... (If the number of input values is zero...)
 
                 # Set the function evaluation to be empty.
                 ys = ys_complete[ False, 0, : ]
@@ -697,12 +697,12 @@ class tensor_utilities_class(  ):
                 # Store the flattened grid list entries associated with this dimension.
                 flattened_grid_tensor[ :, k ] = flattened_grid[ k ]
 
-        elif torch.is_tensor( flattened_grid ):                                                       # If the flattened grid is a tensor...
+        elif torch.is_tensor( flattened_grid ):             # If the flattened grid is a tensor...
 
             # Set the flattened grid tensor to be the provided flattened grid.
             flattened_grid_tensor = flattened_grid
         
-        else:                                                                                               # Otherwise... ( i.e., the flattened grid type is not recognized... )
+        else:                                               # Otherwise... ( i.e., the flattened grid type is not recognized... )
 
             # Throw an error.
             raise ValueError( f'Invalid flattened grid: {flattened_grid}' )
@@ -763,7 +763,7 @@ class tensor_utilities_class(  ):
         gradients = torch.empty( ( num_grid_points, num_inputs ), dtype = torch.float32, device = flat_grid_input.device )
 
         # Compute the derivatives.
-        for k in range( num_inputs ):              # Iterate through each of the inputs...
+        for k in range( num_inputs ):                       # Iterate through each of the inputs...
 
                 # Compute the gradients of this output with respect to this input.
                 gradients[ :, k ] = self.compute_data_derivatives( flat_grid_input[ :, k ], flat_grid_output )
@@ -776,7 +776,7 @@ class tensor_utilities_class(  ):
     def compute_data_gradients( self, grid_input, grid_output ):
 
         # Determine whether the grid input needs to be flattened.
-        if not self.is_grid_flat( grid_input ):            # If the input grid is expanded...
+        if not self.is_grid_flat( grid_input ):             # If the input grid is expanded...
 
             # Flattened the expanded input grid.
             grid_input = self.flatten_grid( grid_input )
@@ -1227,7 +1227,6 @@ class tensor_utilities_class(  ):
     def cartesian_coordinates2subspace_coordinates( self, subspace, cartesian_coordinates ):
 
         # Compute the subspace coordinates.
-        # subspace_coordinates = subspace*torch.transpose( cartesian_coordinates, 0, 1 )
         subspace_coordinates = torch.bmm( subspace, torch.repeat_interleave( torch.unsqueeze( torch.transpose( cartesian_coordinates, 0, 1 ), dim = 0 ), subspace.shape[ 0 ], dim = 0 ) )
 
         # Return the subspace coordinates.
@@ -1262,7 +1261,6 @@ class tensor_utilities_class(  ):
         jacobian = self.compute_function_jacobians( function, level_set_seed )
 
         # Compute the level set subspace. THIS ASSUMES THAT THE FUNCTION ONLY HAS A SINGLE SCALAR OUTPUT SUCH AS IN THE CASE OF OUR ROA STABILITY ESTIMATE.
-        # level_set_subspace = self.jacobian2orthogonal_subspace( jacobian )
         level_set_subspace = self.gradients2orthogonal_subspaces( jacobian[ :, 0, : ] )
 
         # Generate the nearby level set points in the subspace.
@@ -1337,48 +1335,6 @@ class tensor_utilities_class(  ):
 
         # Return the explored level set points.
         return explored_level_set_points
-
-    # # Implement a function to generate points nearby a level set.
-    # def generate_noisy_level_set( self, level_function, level, level_set_guess, newton_tolerance, newton_max_iterations, exploration_radius, num_exploration_points, unique_tolerance, noise_magnitude, num_noisy_samples_per_level_set_point, spatial_domain ):
-
-    #     # Compute the level set points.
-    #     level_set_points = self.generate_level_set( level_function, level, level_set_guess, newton_tolerance, newton_max_iterations, exploration_radius, num_exploration_points, unique_tolerance )
-
-    #     # Determine whether there is a level set to process.
-    #     if level_set_points.numel(  ) != 0:                 # If the level set points exist...
-
-    #         # Retrieve the number of level set points.
-    #         num_level_set_points = level_set_points.shape[ 0 ]
-
-    #         # Retrieve the number of dimensions.
-    #         num_dims = level_set_points.shape[ 1 ]
-
-    #         # Compute the level function jacobian at the level set points.
-    #         level_set_jacobians = self.compute_function_jacobians( level_function, level_set_points )
-    #         level_set_jacobian_subspaces = torch.transpose( level_set_jacobians, 1, 2 )
-
-    #         # Generate sample points in the jacobian subspaces.
-    #         jacobian_subspace_points = self.generate_subspace_sample_points( level_set_jacobian_subspaces, noise_magnitude, num_level_set_points )
-    #         # jacobian_subspace_points = self.generate_subspace_sample_points( level_set_jacobian_subspaces, noise_magnitude, 1 )
-
-    #         # Take the diagonal of the jacobian subspace points.
-    #         jacobian_subspace_points = torch.transpose( torch.diagonal( jacobian_subspace_points, dim1 = 0, dim2 = 2 ), 0, 1 )
-
-    #         # Compute the noisy level set points.
-    #         # level_set_points_noisy = torch.unsqueeze( level_set_points, dim = -1 ) + jacobian_subspace_points
-    #         level_set_points_noisy = level_set_points + jacobian_subspace_points
-
-    #         # # Restructure the noisy level set points.
-    #         # level_set_points_noisy = torch.squeeze( torch.vstack( torch.tensor_split( level_set_points_noisy, level_set_points_noisy.shape[ -1 ], dim = -1 ) ), dim = -1 )
-
-    #     else:                                               # Otherwise...
-
-    #         # Set the noisy level set points to be empty.
-    #         level_set_points_noisy = level_set_points
-
-    #     # Return the noisy level set points.
-    #     return level_set_points_noisy
-
 
 
     # Implement a function to generate points nearby a level set.
@@ -1466,32 +1422,6 @@ class tensor_utilities_class(  ):
             # Set the noisy level set points to be empty.
             level_set_points_noisy = level_set_points
 
-        # DEBUGGING CODE
-
-        # # # Retrieve the indexes associated with any of the noisy level set points that happen to be out of bounds.
-        # # # indexes = torch.unique( torch.floor( torch.where( level_set_points_noisy[ :, 0 ] > spatial_domain[ 1, 0 ] )[ 0 ]/num_noisy_samples_per_level_set_point ) ).int(  )
-        # # indexes_long = torch.where( level_set_points_noisy[ :, 0 ] > spatial_domain[ 1, 0 ] )[ 0 ].int(  )
-        # # indexes_short = torch.unique( indexes_long % num_level_set_points ).int(  )
-
-        # # level_set_points_oob = level_set_points[ indexes_short, : ]
-        # # level_set_points_noisy_oob = level_set_points_noisy[ indexes_long, : ]
-        # # level_set_jacobian_subspaces_oob = torch.squeeze( level_set_jacobian_subspaces[ indexes_short, : ], dim = -1 )
-        # # distribution_widths_oob = distribution_widths[ indexes_short, : ]
-
-        # spatial_domain_points = torch.tensor( [ [ spatial_domain[ 0, 0 ], spatial_domain[ 1, 0 ], spatial_domain[ 1, 0 ], spatial_domain[ 0, 0 ], spatial_domain[ 0, 0 ] ], [ spatial_domain[ 0, 1 ], spatial_domain[ 0, 1 ], spatial_domain[ 1, 1 ], spatial_domain[ 1, 1 ], spatial_domain[ 0, 1 ] ] ], dtype = spatial_domain.dtype, device = spatial_domain.device )
-
-        # # indexes = torch.where( level_set_points_noisy[ :, 0 ] > spatial_domain[ 1, 0 ] )[ 0 ]/num_noisy_samples_per_level_set_point
-        # import matplotlib.pyplot as plt
-        # fig = plt.figure(  ); plt.xlabel( 'x0' ), plt.ylabel( 'x1' ), plt.title( 'Debugging Plot' )
-        # plt.plot( spatial_domain_points[ 0, : ].detach(  ).cpu(  ).numpy(  ), spatial_domain_points[ 1, : ].detach(  ).cpu(  ).numpy(  ), '-k' )
-        # plt.plot( level_set_points[ :, 0 ].detach(  ).cpu(  ).numpy(  ), level_set_points[ :, 1 ].detach(  ).cpu(  ).numpy(  ), '.r' )
-        # plt.plot( level_set_points_noisy[ :, 0 ].detach(  ).cpu(  ).numpy(  ), level_set_points_noisy[ :, 1 ].detach(  ).cpu(  ).numpy(  ), '.b' )
-        # plt.quiver( level_set_points[ :, 0 ].detach(  ).cpu(  ).numpy(  ), level_set_points[ :, 1 ].detach(  ).cpu(  ).numpy(  ), level_set_jacobian_subspaces[ :, 0, 0 ].detach(  ).cpu(  ).numpy(  ), level_set_jacobian_subspaces[ :, 1, 0 ].detach(  ).cpu(  ).numpy(  ), facecolor = 'm' )
-        # # plt.plot( level_set_points_oob[ :, 0 ].detach(  ).cpu(  ).numpy(  ), level_set_points_oob[ :, 1 ].detach(  ).cpu(  ).numpy(  ), '.b' )
-        # # plt.quiver( level_set_points_oob[ :, 0 ].detach(  ).cpu(  ).numpy(  ), level_set_points_oob[ :, 1 ].detach(  ).cpu(  ).numpy(  ), level_set_jacobian_subspaces_oob[ :, 0 ].detach(  ).cpu(  ).numpy(  ), level_set_jacobian_subspaces_oob[ :, 1 ].detach(  ).cpu(  ).numpy(  ), facecolor = 'b' )
-        # # plt.plot( level_set_points_noisy_oob[ :, 0 ].detach(  ).cpu(  ).numpy(  ), level_set_points_noisy_oob[ :, 1 ].detach(  ).cpu(  ).numpy(  ), '.b' )
-        # plt.savefig( r'./ann/closed_roa/save' + '/' + 'Debug.png' )
-
         # Return the noisy level set points.
         return level_set_points_noisy
 
@@ -1515,12 +1445,12 @@ class tensor_utilities_class(  ):
                 # Set the flat flag to true.
                 flat_flag = True
 
-            else:                                               # Otherwise...
+            else:                                                   # Otherwise...
 
                 # Set the flat flag to false.
                 flat_flag = False
             
-        elif grid.dim(  ) == 2:        # If the number of grid dimensions is greater than zero and less than equal to two...
+        elif grid.dim(  ) == 2:                                     # If the number of grid dimensions is greater than zero and less than equal to two...
 
             # Set the flat flag to true.
             flat_flag = True
@@ -1547,13 +1477,13 @@ class tensor_utilities_class(  ):
         k = torch.tensor( 0, dtype = torch.uint8, device = grid.device )
 
         # Determine the number of consistent grid dimensions.
-        while consistent_dimensions_flag and ( k < grid.dim(  ) ):              # While the grid dimensions are consistent and we have not yet examined all of the grid dimensions...
+        while consistent_dimensions_flag and ( k < grid.dim(  ) ):      # While the grid dimensions are consistent and we have not yet examined all of the grid dimensions...
 
             # Set the new dim size.
             new_dim_size = grid.shape[ k ]
 
             # Determine whether the old and new dimension sizes match.
-            if old_dim_size != new_dim_size:                    # If the old dimension size and the new dimension size do not match...
+            if old_dim_size != new_dim_size:                            # If the old dimension size and the new dimension size do not match...
             
                 # Set the consistent dimensions flag to false.
                 consistent_dimensions_flag = False
@@ -1575,30 +1505,30 @@ class tensor_utilities_class(  ):
     def is_grid_expanded( self, grid ):
 
         # Determine whether the given grid is flattened or expanded.
-        if grid.dim(  ) > 3:                                        # If the number of grid dimensions is greater than three...
+        if grid.dim(  ) > 3:                                            # If the number of grid dimensions is greater than three...
 
             # Set the expanded flag to true.
             expanded_flag = True
 
-        elif grid.dim(  ) == 3:                                 # If the number of grid dimensions is equal to three...
+        elif grid.dim(  ) == 3:                                         # If the number of grid dimensions is equal to three...
 
             # Determine whether the grid should be classified as flat.
-            if grid.shape[ 0 ] >= 10*grid.shape[ 1 ]:           # If the first dimension is much greater than the second dimension...
+            if grid.shape[ 0 ] >= 10*grid.shape[ 1 ]:                   # If the first dimension is much greater than the second dimension...
 
                 # Set the flat flag to true.
                 expanded_flag = False
 
-            else:                                               # Otherwise...
+            else:                                                       # Otherwise...
 
                 # Set the flat flag to false.
                 expanded_flag = True
             
-        elif grid.dim(  ) == 2:        # If the number of grid dimensions is greater than zero and less than equal to two...
+        elif grid.dim(  ) == 2:                                         # If the number of grid dimensions is greater than zero and less than equal to two...
 
             # Set the flat flag to true.
             expanded_flag = False
 
-        else:                                                       # Otherwise... ( i.e., the number of grid dimensions is not valid... )
+        else:                                                           # Otherwise... ( i.e., the number of grid dimensions is not valid... )
 
             # Throw an error.
             raise ValueError( f'Invalid number of grid dimensions: {grid.dim(  )}' )
@@ -1634,17 +1564,17 @@ class tensor_utilities_class(  ):
     def is_expanded_grid_temporal( self, grid ):
 
         # Determine whether the expanded grid is temporal.
-        if ( grid.shape[ -1 ] == ( grid.dim(  ) - 1 ) ):             # If the last value is equal to its index...
+        if ( grid.shape[ -1 ] == ( grid.dim(  ) - 1 ) ):                                    # If the last value is equal to its index...
 
             # Set the temporal grid flag to false.
             temporal_grid_flag = False
 
-        elif ( grid.shape[ -2 ] == ( grid.dim(  ) - 2 ) ) or ( grid.shape[ -2 ] == 1 ):          # If the second to last value is equal to its index...
+        elif ( grid.shape[ -2 ] == ( grid.dim(  ) - 2 ) ) or ( grid.shape[ -2 ] == 1 ):     # If the second to last value is equal to its index...
 
             # Set the temporal grid flag to true.
             temporal_grid_flag = True
 
-        else:                                                       # Otherwise...
+        else:                                                                               # Otherwise...
 
             # Set the temporal grid flag to false.
             temporal_grid_flag = False
@@ -1680,21 +1610,21 @@ class tensor_utilities_class(  ):
     def is_grid_temporal( self, grid, grid_expanded_flat_type = None ):
 
         # Determine whether there is a grid to analyze.
-        if grid != [  ]:                # If the grid is not empty...
+        if grid != [  ]:                                                # If the grid is not empty...
 
             # Determine whether it is necessary to compute the grid type.
-            if grid_expanded_flat_type is None:               # If the grid type was not provided...
+            if grid_expanded_flat_type is None:                         # If the grid type was not provided...
 
                 # Compute the grid type.
                 grid_expanded_flat_type = self.get_grid_expanded_flat_type( grid )
 
             # Determine how to determine whether the grid is temporal.
-            if grid_expanded_flat_type.lower(  ) == 'expanded':                 # If the grid expanded / flat type is expanded...
+            if grid_expanded_flat_type.lower(  ) == 'expanded':         # If the grid expanded / flat type is expanded...
 
                 # Detemine whether the grid is temporal.
                 temporal_grid_flag = self.is_expanded_grid_temporal( grid )
 
-            elif grid_expanded_flat_type.lower(  ) == 'flat':               # If the grid expanded / flat type is flat...
+            elif grid_expanded_flat_type.lower(  ) == 'flat':           # If the grid expanded / flat type is flat...
 
                 # Detemine whether the grid is temporal.
                 temporal_grid_flag = self.is_flattened_grid_temporal( grid )
@@ -1704,7 +1634,7 @@ class tensor_utilities_class(  ):
                 # Throw an error.
                 raise ValueError( 'Grid is neither expanded nor flat and is therefore invalid.' )
 
-        else:                               # Otherwise....
+        else:                                                           # Otherwise....
 
             # Set the temporal grid flag to false.
             temporal_grid_flag = False
@@ -1717,7 +1647,7 @@ class tensor_utilities_class(  ):
     def get_grid_temporal_type( self, grid, grid_expanded_flat_type = None ):
 
         # Determine whether it is necessary to compute the grid type.
-        if grid_expanded_flat_type is None:               # If the grid type was not provided...
+        if grid_expanded_flat_type is None:                                 # If the grid type was not provided...
 
             # Compute the grid type.
             grid_expanded_flat_type = self.get_grid_expanded_flat_type( grid )
@@ -1741,17 +1671,17 @@ class tensor_utilities_class(  ):
     def get_number_of_dimensions( self, data ):
 
         # Determine how to retrieve the number of dimensions from a flattened or expanded grid.
-        if torch.is_tensor( data ):                         # If the data is a tensor...
+        if torch.is_tensor( data ):                                     # If the data is a tensor...
 
             # Set the number of dimensions to be the number of entries in the last dimension.
             num_dimensions = torch.tensor( data.shape[ -1 ], dtype = torch.uint8, device = data.device )
 
-        elif isinstance( data, list ) or isinstance( data, tuple ):                      # If the data is a list or tuple...
+        elif isinstance( data, list ) or isinstance( data, tuple ):     # If the data is a list or tuple...
 
             # Set the number of dimension to be the number of entries in the last dimension of each list entry.
             num_dimensions = [ torch.tensor( data[ k ].shape[ -1 ], dtype = torch.uint8, device = data[ k ].device ) for k in range( len( data ) ) ]
 
-        else:                                               # Otherwise... (i.e., the data type is not recognized...)
+        else:                                                           # Otherwise... (i.e., the data type is not recognized...)
 
             # Throw an error.
             raise ValueError( f'Invalid data object: {data}' )
@@ -1764,7 +1694,7 @@ class tensor_utilities_class(  ):
     def get_number_of_sources( self, data, device = None ):
 
         # Determine whether to infer the device.
-        if device is None:              # If no device was provided...
+        if device is None:                                                              # If no device was provided...
 
             # Infer the device from the given data.
             device = data.device
@@ -1828,7 +1758,7 @@ class tensor_utilities_class(  ):
         k = torch.tensor( 0, dtype = torch.int64, device = data.device )
 
         # Remove the non-unique tensor entries.
-        while k < data.numel(  ):               # While we have not yet checked every entry...
+        while k < data.numel(  ):                                                       # While we have not yet checked every entry...
 
             # Retrieve this data entry.
             point = data[ k, : ]
@@ -1861,7 +1791,7 @@ class tensor_utilities_class(  ):
         close_enough_flags = torch.empty( num_points, dtype = torch.bool, device = points.device )
 
         # Determine whether each of the points are in the data set.
-        for k in range( num_points ):               # Iterate through each of the points...
+        for k in range( num_points ):                       # Iterate through each of the points...
 
             # Determine whether this point is in the batch.
             close_enough_flags[ k ] = self.is_point_in_batch( points[ k, : ], data, tolerance )
@@ -1908,7 +1838,7 @@ class tensor_utilities_class(  ):
         num_values = values.numel(  )
 
         # Substitute the specified value into the specified subgrid.
-        for k1 in range( num_timesteps ):           # Iterate through each timestep...
+        for k1 in range( num_timesteps ):               # Iterate through each timestep...
             for k2 in range( num_values ):              # Iterate through each of the values...
 
                 # Substitute the specified value into this subgrid.

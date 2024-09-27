@@ -70,7 +70,7 @@ class pde_class(  ):
     def preprocess_domain( self, domain = None ):
 
         # Determine whether to use the stored domain.
-        if domain is None:              # If the domain was not provided...
+        if domain is None:                          # If the domain was not provided...
 
             # Set the domain to be the stored value.
             domain = self.domain
@@ -83,7 +83,7 @@ class pde_class(  ):
     def preprocess_initial_boundary_conditions( self, initial_boundary_conditions = None ):
 
         # Determine whether to use the stored initial-boundary conditions.
-        if initial_boundary_conditions is None:             # If the initial-boundary conditions were not provided...
+        if initial_boundary_conditions is None:     # If the initial-boundary conditions were not provided...
 
             # Set the initial-boundary conditions to be the stored value.
             initial_boundary_conditions = self.initial_boundary_conditions
@@ -174,15 +174,15 @@ class pde_class(  ):
         if isinstance( name, str ):                         # If the name is valid...
 
             # Set the valid flag to true.
-            b_valid = True
+            valid_flag = True
 
         else:                                               # Otherwise...
 
             # Set the valid flag to false.
-            b_valid = False
+            valid_flag = False
 
         # Return the valid flag.
-        return b_valid
+        return valid_flag
 
 
     # Implement a function to validate the pde type.
@@ -192,15 +192,15 @@ class pde_class(  ):
         if isinstance( type, str ) and ( ( type.lower(  ) == '' ) or ( type.lower(  ) == 'hyperbolic' ) or ( type.lower(  ) == 'parabolic' ) or ( type.lower(  ) == 'elliptic' ) or ( type.lower(  ) == 'first order' ) ):
 
             # Set the valid flag to true.
-            b_valid = True
+            valid_flag = True
 
         else:                                           # Otherwise...
 
             # Set the valid flag to false.
-            b_valid = False
+            valid_flag = False
 
         # Return the valid flag.
-        return b_valid
+        return valid_flag
 
 
     # Implement a function to validate the pde domain.
@@ -210,45 +210,45 @@ class pde_class(  ):
         if isinstance( domain, domain_class ):                  # If the domain is valid...
 
             # Set the valid flag to true.
-            b_valid = True
+            valid_flag = True
 
         else:                                                   # Otherwise...
 
             # Set the valid flag to false.
-            b_valid = False
+            valid_flag = False
 
         # Return the valid flag.
-        return b_valid
+        return valid_flag
 
 
     # Implement a function to validate the pde initial-boundary conditions.
     def is_initial_boundary_conditions_valid( self, initial_boundary_conditions ):
 
         # Determine whether the initial-boundary conditions are valid.
-        if isinstance( initial_boundary_conditions, list ) and initial_boundary_conditions:                                         # If the initial boundary conditions variable is a list and is not empty...
+        if isinstance( initial_boundary_conditions, list ) and initial_boundary_conditions:             # If the initial boundary conditions variable is a list and is not empty...
 
             # Initialize the valid flag to true.
-            b_valid = True
+            valid_flag = True
 
             # Initialize a loop counter variable.
             k = torch.tensor( 0, dtype = torch.int64, device = self.device )
 
             # Ensure that each member of the list is an initial-boundary condition object.
-            while b_valid and ( k < len( initial_boundary_conditions ) ):                           # While we have not found an invalid initial-boundary condition and have not yet checked each of the initial-boundary condition...
+            while valid_flag and ( k < len( initial_boundary_conditions ) ):                            # While we have not found an invalid initial-boundary condition and have not yet checked each of the initial-boundary condition...
 
                 # Determine whether this initial boundary condition is valid.
-                b_valid &= isinstance( initial_boundary_conditions[ k ], initial_boundary_condition_class )
+                valid_flag &= isinstance( initial_boundary_conditions[ k ], initial_boundary_condition_class )
 
                 # Advance the loop counter.
                 k += 1
         
-        else:                                                                                                                   # Otherwise...
+        else:                                                                                           # Otherwise...
 
             # Set the valid flag to false.
-            b_valid = False
+            valid_flag = False
 
         # Return the valid flag.
-        return b_valid
+        return valid_flag
 
 
     # Implement a function to validate the residual function.
@@ -258,15 +258,15 @@ class pde_class(  ):
         if callable( residual_function ):                                   # Determine whether the residual function is valid...
             
             # Set the valid flag to true.
-            b_valid = True
+            valid_flag = True
 
-        else:                                                                               # Otherwise...
+        else:                                                               # Otherwise...
 
             # Set the valid flag to false.
-            b_valid = False
+            valid_flag = False
 
         # Return the valid flag.
-        return b_valid
+        return valid_flag
 
 
     # Implement a function to validate the spatiotemporal pde order.
@@ -276,15 +276,15 @@ class pde_class(  ):
         if torch.is_tensor( spatiotemporal_order ) and ( spatiotemporal_order.numel(  ) != 0 ) and ( spatiotemporal_order.dtype == torch.bool ):                  # If the spatiotemporal order is valid...
 
             # Set the valid flag to true.
-            b_valid = True
+            valid_flag = True
 
         else:                                                                                                                                                       # Otherwise...
 
             # Set the valid flag to false.
-            b_valid = False
+            valid_flag = False
 
         # Return the valid flag.
-        return b_valid
+        return valid_flag
 
 
     #%% ------------------------------------------------------------ SET FUNCTIONS ------------------------------------------------------------
@@ -313,7 +313,7 @@ class pde_class(  ):
     def set_domain( self, domain, set_flag = True ):
 
         # Determine whether to set the domain.
-        if set_flag:            # If we want to set the domain...
+        if set_flag:                # If we want to set the domain...
 
             # Set the domain.
             self.domain = domain
@@ -377,7 +377,7 @@ class pde_class(  ):
     def validate_domain( self, domain, set_flag = False ):
 
         # Determine whether to set the pde domain.
-        if not self.is_domain_valid( domain ):                          # If the pde domain is not valid...
+        if not self.is_domain_valid( domain ):                      # If the pde domain is not valid...
 
             # Throw an error.
             raise ValueError( f'Invalid domain: {domain}' )
@@ -393,7 +393,7 @@ class pde_class(  ):
     def validate_initial_boundary_conditions( self, initial_boundary_conditions, set_flag = False ):
 
         # Determine whether to set the pde initial-boundary conditions.
-        if not self.is_initial_boundary_conditions_valid( initial_boundary_conditions ):                          # If the pde initial-boundary conditions is not valid...
+        if not self.is_initial_boundary_conditions_valid( initial_boundary_conditions ):    # If the pde initial-boundary conditions is not valid...
 
             # Throw an error.
             raise ValueError( f'Invalid initial-boundary conditions: {initial_boundary_conditions}' )
@@ -409,7 +409,7 @@ class pde_class(  ):
     def validate_residual_function( self, residual_function, set_flag = False ):
 
         # Determine whether to set the pde domain.
-        if not self.is_residual_function_valid( residual_function ):                          # If the pde residual function is not valid...
+        if not self.is_residual_function_valid( residual_function ):                        # If the pde residual function is not valid...
 
             # Throw an error.
             raise ValueError( f'Invalid residual function: {residual_function}' )
@@ -511,7 +511,6 @@ class pde_class(  ):
 
         # Generate the grid for plotting the initial and boundary conditions.
         grid = self.tensor_utilities.generate_grid( domain.spatiotemporal_domain, num_points_per_dimension )
-        # grid = self.tensor_utilities.generate_grid( domain.spatiotemporal_domain, num_points_per_dimension, num_timesteps )
 
         # Define the tile dimensions.
         tile_dims = torch.ones( grid.dim(  ), dtype = torch.uint8, device = self.device )

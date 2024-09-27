@@ -63,7 +63,7 @@ class pinn_data_class(  ):
             # Set the valid flag to true.
             valid_flag = True
 
-        else:                                                                               # Otherwise...
+        else:                                           # Otherwise...
 
             # Set the valid flag to false.
             valid_flag = False
@@ -210,7 +210,7 @@ class pinn_data_class(  ):
     def validate_name( self, name, set_flag = False ):
 
         # Determine whether the name is valid.
-        if not self.is_name_valid( name ):                          # If the name is not valid...
+        if not self.is_name_valid( name ):                      # If the name is not valid...
 
             # Throw an error.
             raise ValueError( f'Invalid name: {name}' )
@@ -226,7 +226,7 @@ class pinn_data_class(  ):
     def validate_dimension_labels( self, dimension_labels, set_flag = False ):
 
         # Determine whether the dimension labels are valid.
-        if not self.is_dimension_labels_valid( dimension_labels ):                      # If the dimension labels are not valid...
+        if not self.is_dimension_labels_valid( dimension_labels ):              # If the dimension labels are not valid...
 
             # Throw an error.
             raise ValueError( f'Invalid dimension labels: {dimension_labels}' )
